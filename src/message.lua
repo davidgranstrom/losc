@@ -11,13 +11,33 @@ local OSCMessage = {}
 --   }
 -- end
 
+-- local msg = {
+--   address = "/foo/bar",
+--   types = 'isf',
+--   args = {
+--     123,
+--     'hello',
+--     123.456,
+--   }
+-- }
+
+-- local msg = {
+--   address = "/",
+--   types = 's',
+--   args = {
+--     'hej',
+--   }
+-- }
+
 local msg = {
-  address = "/foo/bar",
-  types = 'iTsf',
+  address = "/2345678",
+  types = 'isfss',
   args = {
     123,
     'hello',
-    123.456,
+    1.234,
+    'world',
+    'hi!',
   }
 }
 
@@ -30,6 +50,19 @@ local function add_to_packet(packet, type, value)
   else
     print('Warning: Unrecognized type ' .. type)
   end
+end
+
+local function add_message_arg(message, type, data, offset)
+  local value, index = 0
+  local unpack = Types.unpack[type]
+  if unpack then
+    value, index = unpack(data, offset)
+    assert(value, 'Error unpacking type ' .. type)
+    table.insert(message, value)
+  else
+    print('Warning: Unrecognized type ' .. type)
+  end
+  return index
 end
 
 function OSCMessage.pack(tbl)
@@ -53,8 +86,10 @@ function OSCMessage.pack(tbl)
   for type in types:gmatch('.') do
     if tbl.args then
       local item = tbl.args[index]
-      add_to_packet(packet, type, item)
-      index = index + 1
+      if item then
+        add_to_packet(packet, type, item)
+        index = index + 1
+      end
     end
   end
 
@@ -62,5 +97,28 @@ function OSCMessage.pack(tbl)
   return packet, #packet
 end
 
-function OSCMessage.unpack(data)
+function OSCMessage.unpack(data, offset)
+  local message = {}
+  local value, index
+  -- initial offset into data
+  offset = offset or 1
+  -- address
+  value, index = Types.unpack.s(data, offset)
+  message.address = value
+  -- type tag
+  value, index = Types.unpack.s(data, index)
+  assert(value:sub(1, 1) == ',', 'Error: malformed type tag.')
+  local types = value:sub(2) -- remove prefix
+  message.types = types
+  -- arguments
+  message.args = {}
+  for type in types:gmatch('.') do
+    index = add_message_arg(message.args, type, data, index)
+  end
+  return message
 end
+
+local data, size = OSCMessage.pack(msg)
+-- print('pack', inspect(data), size)
+local msg = OSCMessage.unpack(data)
+print(inspect(msg))
