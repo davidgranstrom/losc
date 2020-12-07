@@ -47,9 +47,7 @@ describe('Atomic', function()
           assert.is_true(math.abs(data[k] - value) < 0.0001)
         else
           value, offset = Atomic.unpack[k](v)
-          -- TODO: string is unpacked with NULL padding
-          print(inspect(value), offset)
-          -- assert.are.equal(data[k], value)
+          assert.are.equal(data[k], value)
         end
       end
     end)

@@ -4,6 +4,12 @@ local _unpack = string.unpack or require'struct'.unpack
 
 local Atomic = {}
 
+--- @brief Pack an OSC type
+Atomic.pack = {}
+
+--- @brief Unpack an OSC type
+Atomic.unpack = {}
+
 local function strsize(s)
   return 4 * (math.floor(#s / 4) + 1)
 end
@@ -11,9 +17,6 @@ end
 local function blobsize(b)
   return 4 * (math.floor((#b + 3) / 4))
 end
-
---- @brief Pack an OSC type
-Atomic.pack = {}
 
 -- 32-bit big-endian two's complement integer
 -- @returns buffer
@@ -45,9 +48,6 @@ Atomic.pack.b = function(value)
   return _pack('>!4I4' .. fmt, len, value)
 end
 
---- @brief Unpack an OSC type
-Atomic.unpack = {}
-
 -- Unpack an integer
 -- @returns Value and byte offset
 Atomic.unpack.i = function(data)
@@ -64,7 +64,8 @@ end
 -- @returns Value and byte offset
 Atomic.unpack.s = function(data)
   local fmt = 'c' .. #data
-  return _unpack('>!4' .. fmt, data)
+  local str, offset = _unpack('>!4' .. fmt, data)
+  return string.format('%s', str), offset
 end
 
 -- Unpack a blob
