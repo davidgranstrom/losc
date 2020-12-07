@@ -1,1 +1,2 @@
-env/
+# lua environment
+.env/
