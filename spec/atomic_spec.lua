@@ -2,19 +2,19 @@ local inspect = require'inspect'
 local Atomic = require'../src/atomic'
 
 describe('Atomic', function()
-  local types = 'ifsb'
+  local types = 'ifs'
   local packed_data = {}
   local data = {
     i = 123456789,
     f = 1.2345678,
     s = 'hello',
-    b = 'world123'
+    -- b = 'world123'
   }
 
   describe('pack', function()
     it('can handle the fundamental types', function()
-      for k, v in pairs(Atomic.pack) do
-        assert.not_nil(types:find(k))
+      for type in types:gmatch('.') do
+        assert.not_nil(Atomic.pack[type])
       end
     end)
 
@@ -29,8 +29,8 @@ describe('Atomic', function()
 
   describe('unpack', function()
     it('can handle the fundamental types', function()
-      for k, v in pairs(Atomic.unpack) do
-        assert.not_nil(types:find(k))
+      for type in types:gmatch('.') do
+        assert.not_nil(Atomic.unpack[type])
       end
     end)
 

@@ -64,7 +64,7 @@ end
 -- @returns Value and byte offset
 Atomic.unpack.s = function(data, offset)
   local str = _unpack('>!4s', data, offset)
-  return str, offset + strsize(str)
+  return str, strsize(str) + (offset or 1)
 end
 
 -- Unpack a blob
