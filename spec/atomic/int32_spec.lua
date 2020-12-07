@@ -1,18 +1,13 @@
-local AtomicInt32 = require'../../src/atomic/int32'
+local Atomic = require'../../src/atomic'
 
 describe('int32', function()
-  local atomic
+  local value = 123456789
   local expected_bytes = {7, 91, 205, 21}
-
-  setup(function()
-    atomic = AtomicInt32.new(123456789)
-  end)
+  local data
 
   describe('pack', function()
-    local data
-
     setup(function()
-      data = atomic:pack()
+      data = Atomic.pack.i(value)
     end)
 
     it('returns the correct byte representation', function()
@@ -21,22 +16,25 @@ describe('int32', function()
         assert.are.equal(expected_bytes[i], byte)
       end
     end)
+
+    it('returns a multiple of 32', function()
+      assert.are.equal(#data * 8 % 32, 0)
+    end)
   end)
 
   describe('unpack', function()
-    local offset
+    local i, offset
 
     setup(function()
-      offset = atomic:unpack()
+      i, offset = Atomic.unpack.i(data)
     end)
 
     it('returns the correct offset', function()
       assert.are.equal(offset, 5)
-      assert.are.equal(atomic.offset, 5)
     end)
 
     it('returns the correct value', function()
-      assert.are.equal(atomic.value, 123456789)
+      assert.are.equal(i, value)
     end)
   end)
 end)
