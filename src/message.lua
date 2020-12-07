@@ -4,68 +4,29 @@ local Types = require'atomic'
 -- TODO:
 -- validation
 -- error handling
+-- constructors
 
 local OSCMessage = {}
--- OSCMessage.__index = {}
--- function OSCMessage.new(address, ...)
---   local self = setmetatable({}, OSCMessage)
---   local args = {...}
---   self.message = {
---     address = address,
---   }
--- end
+OSCMessage.__index = {}
 
--- local msg = {
---   address = "/foo/bar",
---   types = 'isf',
---   args = {
---     123,
---     'hello',
---     123.456,
---   }
--- }
-
--- local msg = {
---   address = "/",
---   types = 's',
---   args = {
---     'hej',
---   }
--- }
-
-local msg = {
-  address = "/2345678",
-  types = 'iNsfss',
-  args = {
-    123,
-    'hello',
-    1.234,
-    'world',
-    'hi!',
+function OSCMessage.new(address, ...)
+  local self = setmetatable({}, OSCMessage)
+  local args = {...}
+  self.message = {
+    address = address,
   }
-}
+end
 
 local function add_to_packet(packet, type, value)
   local pack = Types.pack[type]
-  if pack then
-    local buffer = pack(value)
-    assert(buffer, 'Error packing type ' .. type)
-    table.insert(packet, buffer)
-  else
-    print('Warning: Unrecognized type ' .. type)
+  if not pack then
+    -- TODO: Or throw error?
+    print('Could not pack type ' .. type)
+    return
   end
-end
-
-local function add_message_arg(message, type, data, offset)
-  local value
-  local unpack = Types.unpack[type]
-  if unpack then
-    value, offset = unpack(data, offset)
-    table.insert(message, value)
-  else
-    print('Warning: Unrecognized type ' .. type)
-  end
-  return offset
+  local buffer = pack(value)
+  assert(buffer, 'Error packing type ' .. type)
+  table.insert(packet, buffer)
 end
 
 function OSCMessage.pack(tbl)
@@ -81,14 +42,13 @@ function OSCMessage.pack(tbl)
   add_to_packet(packet, 's', address)
   add_to_packet(packet, 's', ',' .. types)
   local index = 1
+  -- remove types that doesn't require argument data
   types = types:gsub('[TFNI]', '')
   for type in types:gmatch('.') do
-    if tbl.args then
-      local item = tbl.args[index]
-      if item then
-        add_to_packet(packet, type, item)
-        index = index + 1
-      end
+    local item = tbl[index]
+    if item then
+      add_to_packet(packet, type, item)
+      index = index + 1
     end
   end
   packet = table.concat(packet, '')
@@ -109,14 +69,11 @@ function OSCMessage.unpack(data, offset)
   local types = value:sub(2) -- remove prefix
   message.types = types
   -- arguments
-  message.args = {}
   for type in types:gmatch('.') do
-    index = add_message_arg(message.args, type, data, index)
+    value, index = Types.unpack[type](data, index)
+    message[#message + 1] = value
   end
   return message
 end
 
-local data, size = OSCMessage.pack(msg)
--- print('pack', inspect(data), size)
-local msg = OSCMessage.unpack(data)
-print(inspect(msg))
+return OSCMessage
