@@ -76,20 +76,21 @@ end
 
 -- Extended types
 
-Atomic.unpack.T = function(_, _)
-  return true, 0
+Atomic.unpack.T = function(_, offset)
+  return true, offset
 end
 
-Atomic.unpack.F = function(_, _)
-  return false, 0
+Atomic.unpack.F = function(_, offset)
+  return false, offset
 end
 
-Atomic.unpack.N = function(_, _)
-  return nil, 0
+Atomic.unpack.N = function(_, offset)
+  -- TODO: decide on what to return here..
+  return false, offset
 end
 
-Atomic.unpack.I = function(_, _)
-  return #INF, 0
+Atomic.unpack.I = function(_, offset)
+  return math.huge, offset
 end
 
 return Atomic

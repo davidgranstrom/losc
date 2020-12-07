@@ -1,6 +1,10 @@
 local inspect = require'inspect'
 local Types = require'atomic'
 
+-- TODO:
+-- validation
+-- error handling
+
 local OSCMessage = {}
 -- OSCMessage.__index = {}
 -- function OSCMessage.new(address, ...)
@@ -31,7 +35,7 @@ local OSCMessage = {}
 
 local msg = {
   address = "/2345678",
-  types = 'isfss',
+  types = 'iNsfss',
   args = {
     123,
     'hello',
@@ -53,34 +57,29 @@ local function add_to_packet(packet, type, value)
 end
 
 local function add_message_arg(message, type, data, offset)
-  local value, index = 0
+  local value
   local unpack = Types.unpack[type]
   if unpack then
-    value, index = unpack(data, offset)
-    assert(value, 'Error unpacking type ' .. type)
+    value, offset = unpack(data, offset)
     table.insert(message, value)
   else
     print('Warning: Unrecognized type ' .. type)
   end
-  return index
+  return offset
 end
 
 function OSCMessage.pack(tbl)
   assert(tbl.address, 'An OSC message must have an address.')
   assert(tbl.types, 'An OSC message must have at least one type.')
-
   local packet = {}
   local address = tbl.address
   local types = tbl.types
-
   -- prefix if missing
   if address:sub(1,1) ~= '/' then
     address = '/' .. address
   end
-
   add_to_packet(packet, 's', address)
   add_to_packet(packet, 's', ',' .. types)
-
   local index = 1
   types = types:gsub('[TFNI]', '')
   for type in types:gmatch('.') do
@@ -92,7 +91,6 @@ function OSCMessage.pack(tbl)
       end
     end
   end
-
   packet = table.concat(packet, '')
   return packet, #packet
 end
