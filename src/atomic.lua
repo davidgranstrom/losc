@@ -35,7 +35,7 @@ end
 Atomic.pack.s = function(value)
   local len = strsize(value)
   local fmt = 'c' .. len
-  value = value .. string.rep(string.char(0), len)
+  value = value .. string.rep(string.char(0), len - #value)
   return _pack('>!4' .. fmt, value)
 end
 
@@ -50,29 +50,46 @@ end
 
 -- Unpack an integer
 -- @returns Value and byte offset
-Atomic.unpack.i = function(data)
-  return _unpack('>!4i4', data)
+Atomic.unpack.i = function(data, offset)
+  return _unpack('>!4i4', data, offset)
 end
 
 -- Unpack a float
 -- @returns Value and byte offset
-Atomic.unpack.f = function(data)
-  return _unpack('>!4f', data)
+Atomic.unpack.f = function(data, offset)
+  return _unpack('>!4f', data, offset)
 end
 
 -- Unpack a string
 -- @returns Value and byte offset
-Atomic.unpack.s = function(data)
-  local fmt = 'c' .. #data
-  local str, offset = _unpack('>!4' .. fmt, data)
-  return string.format('%s', str), offset
+Atomic.unpack.s = function(data, offset)
+  local str = _unpack('>!4s', data, offset)
+  return str, offset + strsize(str)
 end
 
 -- Unpack a blob
 -- @returns Size of blob, value and byte offset
-Atomic.unpack.b = function(data)
+Atomic.unpack.b = function(data, offset)
   local fmt = 'c' .. #data - 4
-  return _unpack('>!4I4' .. fmt, data)
+  return _unpack('>!4I4' .. fmt, data, offset)
+end
+
+-- Extended types
+
+Atomic.unpack.T = function(_, _)
+  return true, 0
+end
+
+Atomic.unpack.F = function(_, _)
+  return false, 0
+end
+
+Atomic.unpack.N = function(_, _)
+  return nil, 0
+end
+
+Atomic.unpack.I = function(_, _)
+  return #INF, 0
 end
 
 return Atomic
