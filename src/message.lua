@@ -1,5 +1,5 @@
 local inspect = require'inspect'
-local Types = require'atomic'
+local Types = require'types'
 
 -- TODO:
 -- validation

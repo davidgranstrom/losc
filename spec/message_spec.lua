@@ -1,4 +1,3 @@
-local inspect = require'inspect'
 local Message = require'../src/message'
 
 describe('Message', function()

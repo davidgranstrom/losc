@@ -1,4 +1,4 @@
-local Atomic = require'../../src/atomic'
+local Types = require'../../src/types'
 
 describe('int32', function()
   local value = 123456789
@@ -7,7 +7,7 @@ describe('int32', function()
 
   describe('pack', function()
     setup(function()
-      data = Atomic.pack.i(value)
+      data = Types.pack.i(value)
     end)
 
     it('returns the correct byte representation', function()
@@ -26,7 +26,7 @@ describe('int32', function()
     local i, offset
 
     setup(function()
-      i, offset = Atomic.unpack.i(data)
+      i, offset = Types.unpack.i(data)
     end)
 
     it('returns the correct offset', function()
