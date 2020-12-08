@@ -1,13 +1,13 @@
 local Types = require'../src/types'
 
 describe('Types', function()
-  local types = 'ifs'
+  local types = 'ifsb'
   local packed_data = {}
   local data = {
     i = 123456789,
     f = 1.2345678,
     s = 'hello',
-    -- b = 'world123'
+    b = 'world123'
   }
 
   describe('pack', function()

@@ -44,7 +44,7 @@ end
 Types.pack.b = function(value)
   local len = blobsize(value)
   local fmt = 'c' .. len
-  value = value .. string.rep(string.char(0), len)
+  value = value .. string.rep(string.char(0), len - #value)
   return _pack('>!4I4' .. fmt, len, value)
 end
 
