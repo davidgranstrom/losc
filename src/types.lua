@@ -22,13 +22,13 @@ end
 -- 32-bit big-endian two's complement integer
 -- @returns buffer
 Types.pack.i = function(value)
-  return _pack('>!4i4', value)
+  return _pack('>i4', value)
 end
 
 -- 32-bit big-endian IEEE 754 floating point number
 -- @returns buffer
 Types.pack.f = function(value)
-  return _pack('>!4f', value)
+  return _pack('>f', value)
 end
 
 -- string
@@ -37,7 +37,7 @@ Types.pack.s = function(value)
   local len = strsize(value)
   local fmt = 'c' .. len
   value = value .. string.rep(string.char(0), len - #value)
-  return _pack('>!4' .. fmt, value)
+  return _pack('>' .. fmt, value)
 end
 
 -- blob
@@ -47,26 +47,26 @@ Types.pack.b = function(value)
   local aligned = blobsize(value)
   local fmt = 'c' .. aligned
   value = value .. string.rep(string.char(0), aligned - size)
-  return _pack('>!4I4' .. fmt, size, value)
+  return _pack('>I4' .. fmt, size, value)
 end
 
 -- Unpack an integer
 -- @returns Value and byte offset
 Types.unpack.i = function(data, offset)
-  return _unpack('>!4i4', data, offset)
+  return _unpack('>i4', data, offset)
 end
 
 -- Unpack a float
 -- @returns Value and byte offset
 Types.unpack.f = function(data, offset)
-  return _unpack('>!4f', data, offset)
+  return _unpack('>f', data, offset)
 end
 
 -- Unpack a string
 -- @returns Value and byte offset
 Types.unpack.s = function(data, offset)
   local fmt = is_lua53 and 'z' or 's'
-  local str = _unpack('>!4' .. fmt, data, offset)
+  local str = _unpack('>' .. fmt, data, offset)
   return str, strsize(str) + (offset or 1)
 end
 
@@ -74,8 +74,8 @@ end
 -- @returns Size of blob, value and byte offset
 Types.unpack.b = function(data, offset)
   local size, blob
-  size, offset = _unpack('>!4I4', data, offset)
-  blob, offset = _unpack('>!4c' .. size, data, offset)
+  size, offset = _unpack('>I4', data, offset)
+  blob, offset = _unpack('>c' .. size, data, offset)
   return size, blob, offset
 end
 
