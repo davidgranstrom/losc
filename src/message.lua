@@ -6,16 +6,16 @@ local Types = require'types'
 -- error handling
 -- constructors
 
-local OSCMessage = {}
-OSCMessage.__index = {}
+local Message = {}
+-- Message.__index = {}
 
-function OSCMessage.new(address, ...)
-  local self = setmetatable({}, OSCMessage)
-  local args = {...}
-  self.message = {
-    address = address,
-  }
-end
+-- function Message.new(address, ...)
+--   local self = setmetatable({}, Message)
+--   local args = {...}
+--   self.message = {
+--     address = address,
+--   }
+-- end
 
 local function add_to_packet(packet, type, value)
   local pack = Types.pack[type]
@@ -29,7 +29,7 @@ local function add_to_packet(packet, type, value)
   table.insert(packet, buffer)
 end
 
-function OSCMessage.pack(tbl)
+function Message.pack(tbl)
   assert(tbl.address, 'An OSC message must have an address.')
   assert(tbl.types, 'An OSC message must have at least one type.')
   local packet = {}
@@ -55,7 +55,7 @@ function OSCMessage.pack(tbl)
   return packet, #packet
 end
 
-function OSCMessage.unpack(data, offset)
+function Message.unpack(data, offset)
   local message = {}
   local value, index
   -- initial offset into data
@@ -76,4 +76,4 @@ function OSCMessage.unpack(data, offset)
   return message
 end
 
-return OSCMessage
+return Message
