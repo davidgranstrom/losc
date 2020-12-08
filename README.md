@@ -23,4 +23,24 @@ luarocks install struct
 
 The library will fall back on a pure lua struct implementation in case `struct` is not found.
 
+## Development
+
+It is recommended to set up a local build environment using `hererocks` to test with different lua versions.
+
+First install `hererocks` (requires python)
+
+```shell
+pip3 install git+https://github.com/luarocks/hererocks
+```
+
+Then install lua and rock dependencies (for development)
+
+```shell
+hererocks .env --lua 5.1 --luarocks latest
+# activate the hererocks environment
+source .env/bin/activate
+luarocks install struct inspect busted luacov 
+source .env/bin/activate
+```
+
 [osc]: http://opensoundcontrol.org/spec-1_0
