@@ -42,10 +42,11 @@ end
 -- blob
 -- @returns buffer
 Types.pack.b = function(value)
-  local len = blobsize(value)
-  local fmt = 'c' .. len
-  value = value .. string.rep(string.char(0), len - #value)
-  return _pack('>!4I4' .. fmt, len, value)
+  local size = #value
+  local aligned = blobsize(value)
+  local fmt = 'c' .. aligned
+  value = value .. string.rep(string.char(0), aligned - size)
+  return _pack('>!4I4' .. fmt, size, value)
 end
 
 -- Unpack an integer
@@ -70,8 +71,10 @@ end
 -- Unpack a blob
 -- @returns Size of blob, value and byte offset
 Types.unpack.b = function(data, offset)
-  local fmt = 'c' .. #data - 4
-  return _unpack('>!4I4' .. fmt, data, offset)
+  local size, blob
+  size, offset = _unpack('>!4I4', data, offset)
+  blob, offset = _unpack('>!4c' .. size, data, offset)
+  return size, blob, offset
 end
 
 -- Extended types
