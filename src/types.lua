@@ -1,4 +1,5 @@
 local inspect = require'inspect' -- debug only
+local is_lua53 = _VERSION:find('3') ~= nil
 local _pack = string.pack or require'struct'.pack
 local _unpack = string.unpack or require'struct'.unpack
 
@@ -64,7 +65,8 @@ end
 -- Unpack a string
 -- @returns Value and byte offset
 Types.unpack.s = function(data, offset)
-  local str = _unpack('>!4s', data, offset)
+  local fmt = is_lua53 and 'z' or 's'
+  local str = _unpack('>!4' .. fmt, data, offset)
   return str, strsize(str) + (offset or 1)
 end
 

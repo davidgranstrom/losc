@@ -1,3 +1,4 @@
+local inspect = require'inspect'
 local Types = require'../../src/types'
 
 describe('string', function()
