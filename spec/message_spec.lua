@@ -15,7 +15,7 @@ describe('Message', function()
 
     it('prepends / to address if missing', function()
       local m = {address = 'foo/bar', types = 'T'}
-      local msg = Message.unpack((Message.pack(m)))
+      local msg = Message.unpack(Message.pack(m))
       assert.are.equal('/foo/bar', msg.address)
     end)
 
@@ -26,9 +26,9 @@ describe('Message', function()
         123,
         'hello'
       }
-      local buffer, size = Message.pack(m)
+      local buffer = Message.pack(m)
       assert.not_nil(buffer)
-      assert.are.equal(size % 4, 0)
+      assert.are.equal(#buffer % 4, 0)
     end)
   end)
 

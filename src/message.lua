@@ -40,16 +40,14 @@ function Message.pack(tbl)
     end
   end
   packet = table.concat(packet, '')
-  return packet, #packet
+  return packet
 end
 
-function Message.unpack(data, offset)
+function Message.unpack(data)
   local message = {}
   local value, index
-  -- initial offset into data
-  offset = offset or 1
   -- address
-  value, index = Types.unpack.s(data, offset)
+  value, index = Types.unpack.s(data, 1)
   message.address = value
   -- type tag
   value, index = Types.unpack.s(data, index)
