@@ -17,15 +17,18 @@ function Message.pack(tbl)
   local packet = {}
   local address = tbl.address
   local types = tbl.types
-  -- prefix if missing
+  -- address (prefix if missing)
   if address:sub(1,1) ~= '/' then
     address = '/' .. address
   end
+  -- types
   packet[#packet + 1] = Types.pack.s(address)
   packet[#packet + 1] = Types.pack.s(',' .. types) 
   local arg_index = 1
   -- remove types that doesn't require argument data
-  types = types:gsub('[TFNI]', '')
+  local skip = string.format('[%s]', Types.pack.skip_types)
+  types = types:gsub(skip, '')
+  -- arguments
   for type in types:gmatch('.') do
     local item = tbl[arg_index]
     if item then

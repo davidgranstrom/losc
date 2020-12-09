@@ -5,10 +5,14 @@ local _unpack = string.unpack or require'struct'.unpack
 
 local Types = {}
 
---- @brief Pack an OSC type
+--- @brief OSC type packers
 Types.pack = {}
 
---- @brief Unpack an OSC type
+--- Types that only exists as type tag data (should not be packed)
+-- Custom types can be appended to this string.
+Types.pack.skip_types = 'TFNI'
+
+--- @brief OSC type unpackers
 Types.unpack = {}
 
 local function strsize(s)
