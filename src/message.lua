@@ -54,9 +54,12 @@ function Message.unpack(data, offset)
   local types = value:sub(2) -- remove prefix
   message.types = types
   -- arguments
+  local ok
   for type in types:gmatch('.') do
-    value, index = Types.unpack[type](data, index)
-    message[#message + 1] = value
+    ok, value, index = pcall(Types.unpack[type], data, index)
+    if ok then
+      message[#message + 1] = value
+    end
   end
   return message
 end
