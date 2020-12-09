@@ -1,10 +1,4 @@
-local inspect = require'inspect'
 local Types = require'types'
-
--- TODO:
--- validation
--- error handling
--- constructors
 
 local Message = {}
 
@@ -43,11 +37,12 @@ function Message.pack(tbl)
   return packet
 end
 
-function Message.unpack(data)
+function Message.unpack(data, offset)
   local message = {}
   local value, index
+  offset = offset or 1
   -- address
-  value, index = Types.unpack.s(data, 1)
+  value, index = Types.unpack.s(data, offset)
   message.address = value
   -- type tag
   value, index = Types.unpack.s(data, index)
@@ -62,7 +57,7 @@ function Message.unpack(data)
       message[#message + 1] = value
     end
   end
-  return message
+  return message, index
 end
 
 return Message
