@@ -43,7 +43,7 @@ describe('Bundle', function()
       assert.are.equal(#data % 4, 0)
     end)
 
-    it('can pack bundles within bundles', function()
+    it('can pack nested bundles', function()
       local bndl = {
         timetag = 1,
         {address = '/foo', types = 'iii', 1, 2, 3},
@@ -60,6 +60,19 @@ describe('Bundle', function()
       local data = Bundle.pack(bndl);
       assert.not_nil(data)
       assert.are.equal(#data % 4, 0)
+    end)
+
+    it('nested bundle timetag must be >= parent timetag', function()
+      local bndl = {
+        timetag = 123456,
+        {address = '/foo', types = 'iii', 1, 2, 3},
+        {
+          timetag = 0,
+        }
+      }
+      assert.has_errors(function()
+        Bundle.pack(bndl)
+      end)
     end)
   end)
 

@@ -19,7 +19,10 @@ local function pack(bndl, packet)
   packet[#packet + 1] = Types.pack.t(bndl.timetag)
   for _, item in ipairs(bndl) do
     if is_bundle(item) then
-      return pack(item, packet)
+      if item.timetag >= bndl.timetag then
+        return pack(item, packet)
+      end
+      error('nested bundle requires timetag greater than enclosing bundle.')
     end
     local message = Message.pack(item)
     packet[#packet + 1] = Types.pack.i(#message)
@@ -37,6 +40,10 @@ function Bundle.pack(tbl)
   return pack(tbl, packet)
 end
 
+function Bundle.unpack(data)
+
+end
+
 local bndl = {
   timetag = 1,
   {address = '/foo', types = 'iii', 1, 2, 3},
@@ -50,10 +57,8 @@ local bndl = {
     }
   }
 }
+-- local data = Bundle.pack(bndl)
+-- local bundle = Bundle.unpack(data)
+-- print(inspect(bundle))
 
--- print('size', #bndl)
--- local buffer = Bundle.pack(bndl)
-
--- function Bundle.unpack(data)
--- end
 return Bundle
