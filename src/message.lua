@@ -7,26 +7,8 @@ local Types = require'types'
 -- constructors
 
 local Message = {}
--- Message.__index = {}
 
--- function Message.new(address, ...)
---   local self = setmetatable({}, Message)
---   local args = {...}
---   self.message = {
---     address = address,
---   }
--- end
-
-local function add_to_packet(packet, type, value)
-  local pack = Types.pack[type]
-  if not pack then
-    -- TODO: Or throw error?
-    print('Could not pack type ' .. type)
-    return
-  end
-  local buffer = pack(value)
-  assert(buffer, 'Error packing type ' .. type)
-  table.insert(packet, buffer)
+function Message.validate(tbl)
 end
 
 function Message.pack(tbl)
@@ -39,16 +21,19 @@ function Message.pack(tbl)
   if address:sub(1,1) ~= '/' then
     address = '/' .. address
   end
-  add_to_packet(packet, 's', address)
-  add_to_packet(packet, 's', ',' .. types)
-  local index = 1
+  packet[#packet + 1] = Types.pack.s(address)
+  packet[#packet + 1] = Types.pack.s(',' .. types) 
+  local arg_index = 1
   -- remove types that doesn't require argument data
   types = types:gsub('[TFNI]', '')
   for type in types:gmatch('.') do
-    local item = tbl[index]
+    local item = tbl[arg_index]
     if item then
-      add_to_packet(packet, type, item)
-      index = index + 1
+      local ok, buffer = pcall(Types.pack[type], item)
+      if ok then
+        packet[#packet + 1] = buffer
+        arg_index = arg_index + 1
+      end
     end
   end
   packet = table.concat(packet, '')
