@@ -19,19 +19,37 @@ local function blobsize(b)
   return 4 * (math.floor((#b + 3) / 4))
 end
 
--- 32-bit big-endian two's complement integer
+--- 32-bit big-endian two's complement integer
+
+-- Pack a integer value.
 -- @returns buffer
 Types.pack.i = function(value)
   return _pack('>i4', value)
 end
 
--- 32-bit big-endian IEEE 754 floating point number
+-- Unpack integer data.
+-- @returns value, index of the bytes read + 1
+Types.unpack.i = function(data, offset)
+  return _unpack('>i4', data, offset)
+end
+
+--- 32-bit big-endian IEEE 754 floating point number
+
+-- Pack a float value.
 -- @returns buffer
 Types.pack.f = function(value)
   return _pack('>f', value)
 end
 
--- string
+-- Unpack float data.
+-- @returns value, index of the bytes read + 1
+Types.unpack.f = function(data, offset)
+  return _unpack('>f', data, offset)
+end
+
+--- String (null terminated)
+
+-- Pack a string value.
 -- @returns buffer
 Types.pack.s = function(value)
   local len = strsize(value)
@@ -40,7 +58,18 @@ Types.pack.s = function(value)
   return _pack('>' .. fmt, value)
 end
 
--- blob
+-- Unpack string data.
+-- @returns value, index of the bytes read + 1
+Types.unpack.s = function(data, offset)
+  local fmt = is_lua53 and 'z' or 's'
+  local str = _unpack('>' .. fmt, data, offset)
+  return str, strsize(str) + (offset or 1)
+end
+
+
+--- Blob (arbitrary binary data)
+
+-- Pack byte string.
 -- @returns buffer
 Types.pack.b = function(value)
   local size = #value
@@ -50,28 +79,8 @@ Types.pack.b = function(value)
   return _pack('>I4' .. fmt, size, value)
 end
 
--- Unpack an integer
--- @returns Value and byte offset
-Types.unpack.i = function(data, offset)
-  return _unpack('>i4', data, offset)
-end
-
--- Unpack a float
--- @returns Value and byte offset
-Types.unpack.f = function(data, offset)
-  return _unpack('>f', data, offset)
-end
-
--- Unpack a string
--- @returns Value and byte offset
-Types.unpack.s = function(data, offset)
-  local fmt = is_lua53 and 'z' or 's'
-  local str = _unpack('>' .. fmt, data, offset)
-  return str, strsize(str) + (offset or 1)
-end
-
--- Unpack a blob
--- @returns value and byte offset
+-- Unpack blob data.
+-- @returns value, index of the bytes read + 1
 Types.unpack.b = function(data, offset)
   local size, blob
   size, offset = _unpack('>I4', data, offset)
@@ -81,21 +90,35 @@ end
 
 -- Extended types
 
+--- Boolean
+
+-- Unpack true.
+-- @note This type does not have a corresponding `pack` method.
+-- @returns true (boolean) and byte offset (not incremented)
 Types.unpack.T = function(_, offset)
-  return true, offset
+  return true, offset or 0
 end
 
+-- Unpack false.
+-- @note This type does not have a corresponding `pack` method.
+-- @returns false (boolean) and byte offset (not incremented)
 Types.unpack.F = function(_, offset)
-  return false, offset
+  return false, offset or 0
 end
 
+-- Unpack nil.
+-- @note This type does not have a corresponding `pack` method.
+-- @returns false (since nil cannot be represented in a lua table) and byte offset (not incremented)
 Types.unpack.N = function(_, offset)
   -- TODO: decide on what to return here..
-  return false, offset
+  return false, offset or 0
 end
 
+-- Unpack infinitum.
+-- @note This type does not have a corresponding `pack` method.
+-- @returns math.huge and byte offset (not incremented)
 Types.unpack.I = function(_, offset)
-  return math.huge, offset
+  return math.huge, offset or 0
 end
 
 return Types
