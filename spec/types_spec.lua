@@ -36,14 +36,9 @@ describe('Types', function()
     it('returns the correct value', function()
       for k, v in pairs(packed_data) do
         local value, offset, size
-        if k == 'b' then
-          size, value, offset = Types.unpack[k](v)
-          assert.are.equal(8, size)
-          assert.are.equal(data[k], value)
-          assert.are.equal(offset, 13) -- size (4) + blob (8) + 1
-        elseif k == 'f' then
+        if k == 'f' then
           value, offset = Types.unpack[k](v)
-          assert.is_true(math.abs(data[k] - value) < 0.0001)
+          assert.is_true(math.abs(data[k] - value) < 1e-6)
         else
           value, offset = Types.unpack[k](v)
           assert.are.equal(data[k], value)

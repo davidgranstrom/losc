@@ -25,18 +25,14 @@ describe('blob', function()
   end)
 
   describe('unpack', function()
-    local size, blob, offset
+    local blob, offset
 
     setup(function()
-      size, blob, offset = Types.unpack.b(data)
+      blob, offset = Types.unpack.b(data)
     end)
 
     it('returns the correct offset', function()
-      assert.are.equal(offset, 15)
-    end)
-
-    it('returns the blob size', function()
-      assert.are.equal(size, 10)
+      assert.are.equal(offset, 17)
     end)
 
     it('returns the correct value', function()

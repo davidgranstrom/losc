@@ -71,12 +71,12 @@ Types.unpack.s = function(data, offset)
 end
 
 -- Unpack a blob
--- @returns Size of blob, value and byte offset
+-- @returns value and byte offset
 Types.unpack.b = function(data, offset)
   local size, blob
   size, offset = _unpack('>I4', data, offset)
   blob, offset = _unpack('>c' .. size, data, offset)
-  return size, blob, offset
+  return blob, offset + blobsize(blob) - size
 end
 
 -- Extended types
