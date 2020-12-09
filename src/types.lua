@@ -94,6 +94,30 @@ end
 
 -- Extended types
 
+--- 64 bit big-endian two's complement integer
+
+-- Pack an integer value.
+Types.pack.h = function(value)
+  return _pack('>I8', value, offset)
+end
+
+-- Unpack 64-bit integer data.
+Types.unpack.h = function(value, offset)
+  return _unpack('>I8', value, offset)
+end
+
+--- Timetag (64-bit integer)
+
+-- Pack an integer value.
+Types.pack.t = function(value)
+  return _pack('>I8', value, offset)
+end
+
+-- Unpack 64-bit integer data.
+Types.unpack.t = function(value, offset)
+  return _unpack('>I8', value, offset)
+end
+
 --- Boolean
 
 -- Unpack true.
