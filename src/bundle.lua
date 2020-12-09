@@ -40,25 +40,52 @@ function Bundle.pack(tbl)
   return pack(tbl, packet)
 end
 
-function Bundle.unpack(data)
+local function unpack(data, ret_bundle, offset)
+  local bundle = {}
+  local value, index
+  ret_bundle[#ret_bundle + 1] = bundle
+  -- marker
+  value, index = Types.unpack.s(data, offset)
+  assert(value == '#bundle', 'missing marker')
+  -- timetag
+  value, index = Types.unpack.t(data, index)
+  assert(value, 'missing timetag')
+  bundle.timetag = value
+  -- contents
+  while index < #data do
+    -- check if value is a nested bundle
+    local nested = data:sub(index, index + 7) == '#bundle\0'
+    if nested then
+      return unpack(data, bundle, index)
+    end
+    value, index = Types.unpack.i(data, index)
+    value, index = Message.unpack(data, index)
+    bundle[#bundle + 1] = value
+  end
+  return ret_bundle
+end
 
+function Bundle.unpack(data)
+  local bundle = {}
+  return unpack(data, bundle, 1)
 end
 
 local bndl = {
   timetag = 1,
   {address = '/foo', types = 'iii', 1, 2, 3},
-  {address = '/bar', types = 'f', 1},
   {
     timetag = 2,
     {address = '/baz', types = 'i', 7},
-    {
-      timetag = 3,
-      {address = '/abc', types = 'i', 74},
-    }
+    -- {
+    --   timetag = 3,
+    --   {address = '/abc', types = 'i', 74},
+    -- }
   }
 }
--- local data = Bundle.pack(bndl)
--- local bundle = Bundle.unpack(data)
--- print(inspect(bundle))
+
+local data = Bundle.pack(bndl)
+print(inspect(data))
+local bundle = Bundle.unpack(data)
+print(inspect(bundle))
 
 return Bundle
