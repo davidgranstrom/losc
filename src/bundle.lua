@@ -14,13 +14,13 @@ local function safe_pack(type, value)
   return pcall(Types.pack[type], value)
 end
 
-local function pack(bndl, packet)
+local function _pack(bndl, packet)
   packet[#packet + 1] = Types.pack.s('#bundle')
   packet[#packet + 1] = Types.pack.t(bndl.timetag)
   for _, item in ipairs(bndl) do
     if is_bundle(item) then
       if item.timetag >= bndl.timetag then
-        return pack(item, packet)
+        return _pack(item, packet)
       end
       error('nested bundle requires timetag greater than enclosing bundle.')
     end
@@ -37,13 +37,11 @@ function Bundle.pack(tbl)
     error('bundle is missing time tag')
   end
   local packet = {}
-  return pack(tbl, packet)
+  return _pack(tbl, packet)
 end
 
-local function unpack(data, ret_bundle, offset)
-  local bundle = {}
+local function _unpack(data, bundle, offset, ret_bundle)
   local value, index
-  ret_bundle[#ret_bundle + 1] = bundle
   -- marker
   value, index = Types.unpack.s(data, offset)
   assert(value == '#bundle', 'missing marker')
@@ -56,36 +54,20 @@ local function unpack(data, ret_bundle, offset)
     -- check if value is a nested bundle
     local nested = data:sub(index, index + 7) == '#bundle\0'
     if nested then
-      return unpack(data, bundle, index)
+      local bndl = {}
+      bundle[#bundle + 1] = bndl
+      return _unpack(data, bndl, index, ret_bundle or bundle)
     end
     value, index = Types.unpack.i(data, index)
     value, index = Message.unpack(data, index)
     bundle[#bundle + 1] = value
   end
-  return ret_bundle
+  return ret_bundle or bundle
 end
 
 function Bundle.unpack(data)
   local bundle = {}
-  return unpack(data, bundle, 1)
+  return _unpack(data, bundle, 1)
 end
-
-local bndl = {
-  timetag = 1,
-  {address = '/foo', types = 'iii', 1, 2, 3},
-  {
-    timetag = 2,
-    {address = '/baz', types = 'i', 7},
-    -- {
-    --   timetag = 3,
-    --   {address = '/abc', types = 'i', 74},
-    -- }
-  }
-}
-
-local data = Bundle.pack(bndl)
-print(inspect(data))
-local bundle = Bundle.unpack(data)
-print(inspect(bundle))
 
 return Bundle

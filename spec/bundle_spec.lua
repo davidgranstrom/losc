@@ -76,37 +76,52 @@ describe('Bundle', function()
     end)
   end)
 
-  -- describe('unpack', function()
-  --   local message
-  --   local input = {
-  --     address = '/fo',
-  --     types = 'isTf',
-  --     123,
-  --     'hello',
-  --     1.234,
-  --   }
+  describe('unpack', function()
+    local bundle
+    local data = {
+      timetag = 1,
+      {address = '/xxx', types = 'iii', 1, 2, 3},
+      {
+        timetag = 2,
+        {address = '/baz', types = 'i', 7},
+        {address = '/yyy', types = 'i', 7},
+        {
+          timetag = 3,
+          {address = '/abc', types = 'i', 1},
+          {address = '/123', types = 'i', 456},
+          {address = '/zzz', types = 'i', 999},
+        },
+      }
+    }
 
-  --   setup(function()
-  --     local buffer = Message.pack(input)
-  --     message = Message.unpack(buffer)
-  --   end)
+    setup(function()
+      bundle = Bundle.unpack(Bundle.pack(data))
+    end)
 
-  --   it('returns a table', function()
-  --     assert.are.equal(type(message), 'table')
-  --   end)
+    it('returns a table', function()
+      assert.are.equal(type(bundle), 'table')
+    end)
 
-  --   it('handles types not represented in OSC data', function()
-  --     assert.is_true(message[3])
-  --   end)
+    local function compare_msg(msg1, msg2)
+      local equal = msg1.address == msg2.address
+      equal = equal and msg1.types == msg2.types
+      for i, v in ipairs(msg1) do
+        equal = equal and v == msg2[i]
+      end
+      return equal
+    end
 
-  --   it('unpacks correct values', function()
-  --     assert.are.equal(input.address, message.address)
-  --     assert.are.equal(input.types, message.types)
-  --     assert.are.equal(input[1], message[1])
-  --     assert.are.equal(input[2], message[2])
-  --     assert.are.equal(true, message[3])
-  --     assert.is_true(math.abs(input[3] - message[4]) < 1e-4)
-  --   end)
-  -- end)
+    it('unpacks the correct structure', function()
+      assert.are.equal(data.timetag, bundle.timetag)
+      assert.are.equal(data[1].timetag, bundle[1].timetag)
+      assert.are.equal(data[2].timetag, bundle[2].timetag)
+      assert.is_true((compare_msg(data[1], bundle[1])))
+      assert.is_true((compare_msg(data[2][1], bundle[2][1])))
+      assert.is_true((compare_msg(data[2][2], bundle[2][2])))
+      assert.is_true((compare_msg(data[2][3][1], bundle[2][3][1])))
+      assert.is_true((compare_msg(data[2][3][2], bundle[2][3][2])))
+      assert.is_true((compare_msg(data[2][3][3], bundle[2][3][3])))
+    end)
+  end)
 end)
 
