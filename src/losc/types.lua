@@ -97,7 +97,7 @@ end
 
 -- Pack an integer value.
 Types.pack.h = function(value)
-  return _pack('>I8', value, offset)
+  return _pack('>I8', value)
 end
 
 -- Unpack 64-bit integer data.
@@ -109,7 +109,7 @@ end
 
 -- Pack an integer value.
 Types.pack.t = function(value)
-  return _pack('>I8', value, offset)
+  return _pack('>I8', value)
 end
 
 -- Unpack 64-bit integer data.
@@ -147,5 +147,9 @@ end
 Types.unpack.I = function(_, offset)
   return math.huge, offset or 0
 end
+
+-- local function safe_pack(type, value)
+--   return pcall(Types.pack[type], value)
+-- end
 
 return Types

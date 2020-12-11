@@ -7,11 +7,6 @@ local function is_bundle(tbl)
   return tbl.timetag and true or false
 end
 
--- TODO: Move to Type
-local function safe_pack(type, value)
-  return pcall(Types.pack[type], value)
-end
-
 local function _pack(bndl, packet)
   packet[#packet + 1] = Types.pack.s('#bundle')
   packet[#packet + 1] = Types.pack.t(bndl.timetag)
@@ -56,7 +51,7 @@ local function _unpack(data, bundle, offset, ret_bundle)
       bundle[#bundle + 1] = bndl
       return _unpack(data, bndl, index, ret_bundle or bundle)
     end
-    value, index = Types.unpack.i(data, index)
+    index = select(2, Types.unpack.i(data, index))
     value, index = Message.unpack(data, index)
     bundle[#bundle + 1] = value
   end

@@ -2,8 +2,8 @@ local Types = require'losc.types'
 
 local Message = {}
 
-function Message.validate(tbl)
-end
+-- function Message.validate(tbl)
+-- end
 
 function Message.pack(tbl)
   assert(tbl.address, 'An OSC message must have an address.')
@@ -17,7 +17,7 @@ function Message.pack(tbl)
   end
   -- types
   packet[#packet + 1] = Types.pack.s(address)
-  packet[#packet + 1] = Types.pack.s(',' .. types) 
+  packet[#packet + 1] = Types.pack.s(',' .. types)
   local arg_index = 1
   -- remove types that doesn't require argument data
   local skip = string.format('[%s]', Types.pack.skip_types)
