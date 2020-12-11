@@ -102,6 +102,14 @@ describe('Bundle', function()
       assert.are.equal(type(bundle), 'table')
     end)
 
+    it('unpacks empty bundle', function()
+      local bndl = {timetag = 0}
+      local res = Bundle.unpack(Bundle.pack(bndl))
+      assert.not_nil(res)
+      assert.are.equal(0, res.timetag)
+      assert.are.equal(0, #res)
+    end)
+
     local function compare_msg(msg1, msg2)
       local equal = msg1.address == msg2.address
       equal = equal and msg1.types == msg2.types
@@ -111,7 +119,23 @@ describe('Bundle', function()
       return equal
     end
 
-    it('unpacks the correct structure', function()
+    it('unpacks bundle with messages', function()
+      local bndl = {
+        timetag = 0,
+        {address = '/foo/bar', types = 'iii', 1, 2, 3},
+        {address = '/foo/baz', types = 'iss', 1, 'hello', '#bundle'},
+        {address = '/foo/baz', types = 'i', 4},
+      }
+      local res = Bundle.unpack(Bundle.pack(bndl))
+      assert.not_nil(res)
+      assert.are.equal(bndl.timetag, res.timetag)
+      assert.are.equal(#bndl, #res)
+      for i, msg in ipairs(res) do
+        assert.is_true(compare_msg(bndl[i], msg))
+      end
+    end)
+
+    it('unpacks nested bundles', function()
       assert.are.equal(data.timetag, bundle.timetag)
       assert.are.equal(data[1].timetag, bundle[1].timetag)
       assert.are.equal(data[2].timetag, bundle[2].timetag)
@@ -124,4 +148,3 @@ describe('Bundle', function()
     end)
   end)
 end)
-
