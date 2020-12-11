@@ -1,5 +1,4 @@
-local inspect = require'inspect'
-local Types = require'../../src/types'
+local Types = require'losc.types'
 
 describe('string', function()
   local value = 'hello'

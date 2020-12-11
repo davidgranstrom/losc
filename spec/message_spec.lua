@@ -1,4 +1,4 @@
-local Message = require'../src/message'
+local Message = require'losc.message'
 
 describe('Message', function()
   describe('pack', function()

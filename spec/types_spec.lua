@@ -1,4 +1,4 @@
-local Types = require'../src/types'
+local Types = require'losc.types'
 
 describe('Types', function()
   local types = 'ifsb'

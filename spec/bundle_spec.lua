@@ -1,6 +1,5 @@
-local inspect = require'inspect'
-local Message = require'../src/message'
-local Bundle = require'../src/bundle'
+local Message = require'losc.message'
+local Bundle = require'losc.bundle'
 
 describe('Bundle', function()
   describe('pack', function()

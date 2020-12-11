@@ -1,4 +1,4 @@
-local Types = require'../../src/types'
+local Types = require'losc.types'
 
 describe('float', function()
   local value = 1.2345678

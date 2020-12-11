@@ -1,4 +1,4 @@
-local Types = require'../../src/types'
+local Types = require'losc.types'
 
 describe('int32', function()
   local value = 123456789

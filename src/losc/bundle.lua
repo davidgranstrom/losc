@@ -1,7 +1,5 @@
-local inspect = require'inspect'
-
-local Types = require'types'
-local Message = require'message'
+local Types = require'losc.types'
+local Message = require'losc.message'
 
 local Bundle = {}
 
