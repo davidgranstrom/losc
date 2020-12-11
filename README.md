@@ -1,5 +1,7 @@
 # losc
 
+![lint](https://github.com/davidgranstrom/losc/workflows/lint/badge.svg)
+
 [OSC][osc] serialization and deserialization for `lua` and `luajit`.
 
 Compatible with lua versions 5.1, 5.2, 5.3 and luajit 2.0
