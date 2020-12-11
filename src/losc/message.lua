@@ -1,3 +1,6 @@
+--- Message
+-- @module losc.message
+
 local Types = require'losc.types'
 
 local Message = {}

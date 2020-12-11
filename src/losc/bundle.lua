@@ -1,3 +1,6 @@
+--- Bundle
+-- @module losc.bundle
+
 local Types = require'losc.types'
 local Message = require'losc.message'
 
