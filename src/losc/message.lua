@@ -31,6 +31,18 @@ function Message.new(address, types, ...)
   return self
 end
 
+--- Create a new OSC message from binary data.
+--
+-- @param data Binary string of packed OSC data.
+-- @return An OSC message object.
+function Message.new_from_data(data)
+  local content = Message.unpack(data)
+  if not Message.__is_valid(content) then
+    error('Invalid OSC input data.')
+  end
+  return Message.new(content.address, content.types, content)
+end
+
 --- Validate the message.
 -- @return True if message is valid or false.
 function Message:is_valid()
