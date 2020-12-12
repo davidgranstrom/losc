@@ -1,22 +1,25 @@
---- Message
+--- OSC Message
 -- @module losc.message
 
+local inspect = require'inspect'
 local Types = require'losc.types'
 
 local Message = {}
 Message.__index = Message
+
+--- High level API
+-- @section high-level-api
 
 --- Create a new OSC message.
 --
 -- An OSC message consists of an OSC Address Pattern followed by an
 -- OSC Type Tag String followed by zero or more OSC Arguments.
 --
--- @param address String beginning with '/' (forward slash).
--- @param[opt] types String of OSC types
--- @param[opt] ... Arguments (data) to attach to the message.
+-- @param[opt] ... arguments.
+--
 -- @return An OSC message object.
 -- @see losc.types
-function Message.new(address, types, ...)
+function Message.new(...)
   assert(address, 'Message must have an address.')
   local self = setmetatable({}, Message)
   local args = {...}
@@ -26,9 +29,23 @@ function Message.new(address, types, ...)
   self.content.address = address
   self.content.types = types or ''
   for arg in ipairs(args) do
-    table.insert(self.content, arg)
+    self.content[#self.content + 1] = arg
   end
   return self
+end
+
+--- Append arguments to the message.
+--
+-- @param type OSC type string.
+-- @param[opt] item Item to append.
+-- @see losc.types
+-- @usage message:append('i', 123)
+-- @usage message:append('T')
+function Message:append(type, item)
+  self.types = self.types .. type
+  if item then
+    self.content[#self.content + 1] = item
+  end
 end
 
 --- Create a new OSC message from binary data.
@@ -44,22 +61,27 @@ function Message.new_from_data(data)
 end
 
 --- Validate the message.
+--
 -- @return True if message is valid or false.
 function Message:is_valid()
   return Message.__is_valid(self.content)
 end
 
+--- Low level API
+-- @section low-level-api
+
 --- Validate a message.
--- @param msg The message to validate.
+--
+-- @param tbl The message to validate.
 -- @return True if message is valid or false.
-function Message.__is_valid(msg)
-  if not msg.address or not msg.types then
-    return false
-  end
-  local types = msg.types:gsub(string.format('[%s]', Types.pack.skip_types), '')
-  return #types == #msg
+function Message.__is_valid(tbl)
+  return tbl.address and tbl.types
 end
 
+--- Pack an OSC message.
+--
+-- @param tbl The content to pack.
+-- @return OSC data packet.
 function Message.pack(tbl)
   assert(tbl.address, 'An OSC message must have an address.')
   assert(tbl.types, 'An OSC message must have at least one type.')
@@ -92,6 +114,11 @@ function Message.pack(tbl)
   return packet
 end
 
+--- Unpack an OSC message.
+--
+-- @param data The content to unpack.
+-- @param offset The initial offset into data.
+-- @return table with the content of the OSC message.
 function Message.unpack(data, offset)
   local message = {}
   local value, index
