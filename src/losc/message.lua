@@ -4,9 +4,49 @@
 local Types = require'losc.types'
 
 local Message = {}
+Message.__index = Message
 
--- function Message.validate(tbl)
--- end
+--- Create a new OSC message.
+--
+-- An OSC message consists of an OSC Address Pattern followed by an
+-- OSC Type Tag String followed by zero or more OSC Arguments.
+--
+-- @param address String beginning with '/' (forward slash).
+-- @param[opt] types String of OSC types
+-- @param[opt] ... Arguments (data) to attach to the message.
+-- @return An OSC message object.
+-- @see losc.types
+function Message.new(address, types, ...)
+  assert(address, 'Message must have an address.')
+  local self = setmetatable({}, Message)
+  local args = {...}
+  self.kind = 'm'
+  -- create message
+  self.content = {}
+  self.content.address = address
+  self.content.types = types or ''
+  for arg in ipairs(args) do
+    table.insert(self.content, arg)
+  end
+  return self
+end
+
+--- Validate the message.
+-- @return True if message is valid or false.
+function Message:is_valid()
+  return Message.__is_valid(self.content)
+end
+
+--- Validate a message.
+-- @param msg The message to validate.
+-- @return True if message is valid or false.
+function Message.__is_valid(msg)
+  if not msg.address or not msg.types then
+    return false
+  end
+  local types = msg.types:gsub(string.format('[%s]', Types.pack.skip_types), '')
+  return #types == #msg
+end
 
 function Message.pack(tbl)
   assert(tbl.address, 'An OSC message must have an address.')
