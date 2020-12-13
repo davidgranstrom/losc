@@ -43,6 +43,19 @@ describe('Message', function()
       local message = Message.new('/foo/bar', 'isf', 1, 'hello', 1.2345)
       assert.is_true(message:is_valid())
     end)
+
+    it('can append arguments', function()
+      local message = Message.new('/foo/bar')
+      assert.is_true(message:is_valid())
+      message:append('i', 123)
+      message:append('f', 1.234)
+      message:append('T')
+      message:append('s', 'foo')
+      assert.are.equal('ifTs', message:get_types())
+      for i, t, a in message:iter() do
+        print('index', i, 'type', t, 'arg', a)
+      end
+    end)
   end)
 
   describe('pack', function()
