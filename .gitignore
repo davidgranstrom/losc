@@ -1,3 +1,4 @@
-# lua environment
 .env/
 sketch
+doc
+luacov.*
