@@ -58,12 +58,12 @@ local function _unpack(data, bundle, offset, ret_bundle)
     value, index = Message.unpack(data, index)
     bundle[#bundle + 1] = value
   end
-  return ret_bundle or bundle
+  return ret_bundle or bundle, index
 end
 
-function Bundle.unpack(data)
+function Bundle.unpack(data, offset)
   local bundle = {}
-  return _unpack(data, bundle, 1)
+  return _unpack(data, bundle, offset or 1)
 end
 
 return Bundle
