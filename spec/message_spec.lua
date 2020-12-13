@@ -40,7 +40,7 @@ describe('Message', function()
     end)
 
     it('can check that the message is valid', function()
-      local message = Message.new('/foo/bar', 'i', 1)
+      local message = Message.new('/foo/bar', 'isf', 1, 'hello', 1.2345)
       assert.is_true(message:is_valid())
     end)
   end)

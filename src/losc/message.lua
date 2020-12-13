@@ -1,7 +1,9 @@
 --- OSC Message
+--
+-- An OSC message consists of an OSC Address Pattern followed by an
+-- OSC Type Tag String followed by zero or more OSC Arguments.
 -- @module losc.message
 
-local inspect = require'inspect'
 local Types = require'losc.types'
 
 local Message = {}
@@ -12,11 +14,7 @@ Message.__index = Message
 
 --- Create a new OSC message.
 --
--- An OSC message consists of an OSC Address Pattern followed by an
--- OSC Type Tag String followed by zero or more OSC Arguments.
---
 -- @param[opt] ... arguments.
---
 -- @return An OSC message object.
 -- @see losc.types
 function Message.new(...)
@@ -24,14 +22,14 @@ function Message.new(...)
   local args = {...}
   self.kind = 'm'
   self.content = {}
-  if #args > 1 then
+  if #args >= 1 then
     if type(args[1]) ~= 'string' then
       error('First argument must be an OSC address string.')
     end
     self.content.address = args[1]
     self.content.types = args[2] or ''
-    for arg in ipairs(args) do
-      self.content[#self.content + 1] = arg
+    for index = 3, #args do
+      self.content[#self.content + 1] = args[index]
     end
   end
   return self
@@ -118,11 +116,13 @@ end
 function Message.tbl_validate(tbl)
   assert(tbl.address, 'table is missing "address" field.')
   assert(tbl.types, 'table is missing "types" field.')
+  local types = tbl.types:gsub(string.format('[%s]', Types.pack.skip_types), '')
+  assert(#types == #tbl, 'types and arguments mismatch')
   return true
 end
 
 --- Validate a binary string to see if it is a valid OSC message.
--- @param data The byte string to validate.
+-- @param bytes The byte string to validate.
 -- @return true or error.
 function Message.bytes_validate(bytes)
   local ok, value = pcall(Types.unpack.s, bytes)
