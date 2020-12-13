@@ -1,6 +1,50 @@
+local inspect = require'inspect'
 local Message = require'losc.message'
 
 describe('Message', function()
+  describe('constructors', function()
+    it('can create an empty message object', function()
+      local message = Message.new()
+      assert.not_nil(message)
+      assert.is_true(type(message.content) == 'table')
+    end)
+
+    it('can create an message object with address, types and arguments', function()
+      local message = Message.new('/foo/bar', 'i', 1)
+      assert.not_nil(message)
+      assert.is_true(type(message.content) == 'table')
+      assert.are.equal(message:get_address(), '/foo/bar')
+    end)
+
+    it('can create message object from table', function()
+      local msg = {address = '/foo/bar', types = 's', 'hello'}
+      local message = Message.new_from_tbl(msg)
+      assert.not_nil(message)
+      assert.is_true(message:is_valid())
+    end)
+
+    it('can create message object from binary data', function()
+      local data = '/foo/bar\0\0\0\0,s\0\0hello\0\0\0'
+      local message = Message.new_from_bytes(data)
+      assert.not_nil(message)
+      assert.is_true(message:is_valid())
+    end)
+  end)
+
+  describe('methods', function()
+    it('can set and get OSC address', function()
+      local message = Message.new('/foo/bar', 'i', 1)
+      assert.are.equal(message:get_address(), '/foo/bar')
+      message:set_address('/baz')
+      assert.are.equal(message:get_address(), '/baz')
+    end)
+
+    it('can check that the message is valid', function()
+      local message = Message.new('/foo/bar', 'i', 1)
+      assert.is_true(message:is_valid())
+    end)
+  end)
+
   describe('pack', function()
     it('requires an address and a type tag', function()
       local m = {types = 'i', 1}

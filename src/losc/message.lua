@@ -20,17 +20,60 @@ Message.__index = Message
 -- @return An OSC message object.
 -- @see losc.types
 function Message.new(...)
-  assert(address, 'Message must have an address.')
   local self = setmetatable({}, Message)
   local args = {...}
   self.kind = 'm'
-  -- create message
   self.content = {}
-  self.content.address = address
-  self.content.types = types or ''
-  for arg in ipairs(args) do
-    self.content[#self.content + 1] = arg
+  if #args > 1 then
+    if type(args[1]) ~= 'string' then
+      error('First argument must be an OSC address string.')
+    end
+    self.content.address = args[1]
+    self.content.types = args[2] or ''
+    for arg in ipairs(args) do
+      self.content[#self.content + 1] = arg
+    end
   end
+  return self
+end
+
+--- Create a new OSC message from a table.
+--
+-- @param tbl The table to create the message from.
+-- @return An OSC message object.
+-- @usage local message = Message.new_from_tbl({address = 'foo', types = 'i', 123})
+function Message.new_from_tbl(tbl)
+  if not tbl then
+    error('Can not create message from empty table.')
+  end
+  local ok, err = pcall(Message.tbl_validate, tbl)
+  if not ok then
+    print(err)
+    return nil
+  end
+  local self = setmetatable({}, Message)
+  self.kind = 'm'
+  self.content = tbl
+  return self
+end
+
+--- Create a new OSC message from binary data.
+--
+-- @param data Binary string of OSC data.
+-- @return An OSC message object.
+-- @usage local message = Message.new_from_bytes(data)
+function Message.new_from_bytes(data)
+  if not data then
+    error('Can not create message from empty data.')
+  end
+  local ok, err = Message.bytes_validate(data)
+  if not ok then
+    print(err)
+    return nil
+  end
+  local self = setmetatable({}, Message)
+  self.kind = 'm'
+  self.content = Message.unpack(data)
   return self
 end
 
@@ -48,34 +91,50 @@ function Message:append(type, item)
   end
 end
 
---- Create a new OSC message from binary data.
---
--- @param data Binary string of packed OSC data.
--- @return An OSC message object.
-function Message.new_from_data(data)
-  local content = Message.unpack(data)
-  if not Message.__is_valid(content) then
-    error('Invalid OSC input data.')
-  end
-  return Message.new(content.address, content.types, content)
+--- Check that the message is valid.
+-- @return true or error if table is missing keys.
+function Message:is_valid()
+  return self.content and Message.tbl_validate(self.content)
 end
 
---- Validate the message.
---
--- @return True if message is valid or false.
-function Message:is_valid()
-  return Message.__is_valid(self.content)
+--- Get the OSC address.
+-- @return The OSC address or an empty string.
+function Message:get_address()
+  return self.content.address or ''
+end
+
+--- Set the OSC address.
+-- @param str The address to set.
+function Message:set_address(str)
+  self.content.address = str
 end
 
 --- Low level API
 -- @section low-level-api
 
---- Validate a message.
---
--- @param tbl The message to validate.
--- @return True if message is valid or false.
-function Message.__is_valid(tbl)
-  return tbl.address and tbl.types
+--- Validate a table to be used as a message constructor.
+-- @param tbl The table to create the message with.
+-- @return true or error if table is missing keys.
+function Message.tbl_validate(tbl)
+  assert(tbl.address, 'table is missing "address" field.')
+  assert(tbl.types, 'table is missing "types" field.')
+  return true
+end
+
+--- Validate a binary string to see if it is a valid OSC message.
+-- @param data The byte string to validate.
+-- @return true or error.
+function Message.bytes_validate(bytes)
+  local ok, value = pcall(Types.unpack.s, bytes)
+  if ok and value:sub(1, 1) == '/' then
+    if #bytes % 4 == 0 then
+      return true
+    else
+      error('OSC message data must be a multiple of 4.')
+    end
+  else
+    error('Malformed or missing OSC address in data.')
+  end
 end
 
 --- Pack an OSC message.

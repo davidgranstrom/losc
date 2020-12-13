@@ -6,7 +6,7 @@ local Bundle = require'losc.bundle'
 
 local losc = {}
 
---- Create a new Message.
+--- Create a new (empty) Message.
 --
 -- @param[opt] ... arguments.
 -- @return message object.
@@ -18,13 +18,22 @@ function losc.message_new(...)
   return Message.new(...)
 end
 
+--- Create a new OSC message from a table.
+--
+-- @param tbl The table to create the message from.
+-- @return An OSC message object.
+-- @see losc.message
+function losc.message_new_from_tbl(tbl)
+  return Message.new_from_tbl(tbl)
+end
+
 --- Create a new Message from binary OSC data.
 --
 -- @param data Binary OSC data string.
 -- @return message object.
 -- @see losc.message
-function losc.message_new_from_data(data)
-  return Message.new_from_data(data)
+function losc.message_new_from_bytes(data)
+  return Message.new_from_bytes(data)
 end
 
 function losc.bundle_new(timetag, ...)
