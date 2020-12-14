@@ -7,31 +7,36 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        lua-version: ['5.1', '5.2', '5.3', '5.4', 'luajit']
+        # lua-version: ['lua 5.1', 'lua 5.2', 'lua 5.3', 'lua 5.4', 'luajit 2.0']
+        lua-version: ['lua 5.1', 'lua 5.2', 'luajit 2.0']
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
-      - name: Setup Python and hererocks
+      - uses: actions/cache@v2
+        id: cache
+        with:
+          path: ./.env
+          key: ${{ runner.os }}-${{ matrix.lua-version }}
+      - name: Setup python
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
           architecture: 'x64'
-      - run: pip install git+https://github.com/luarocks/hererocks
-      - uses: actions/cache@v2
-        id: cache
-        with:
-          path: .env
-          key: ${{ runner.os }}-${{ hashFiles('.env/hererocks.manifest') }}
+      - name: Install hererocks
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: pip install git+https://github.com/luarocks/hererocks
       - name: Install lua
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          hererocks .env --lua ${{ matrix.lua-version }} --luarocks latest
+          hererocks .env --${{ matrix.lua-version }} --luarocks latest
           source .env/bin/activate
           luarocks install struct
           luarocks install inspect
           luarocks install busted
           luarocks install luacov 
-      - run: |
+          exit 0
+      - name: Run tests
+        run: |
           source .env/bin/activate
           busted --coverage --output plainTerminal
           luacov src
