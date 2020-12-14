@@ -52,19 +52,15 @@ describe('Message', function()
       message:append('T')
       message:append('s', 'foo')
       assert.are.equal('ifTs', message:get_types())
-      for i, t, a in message:iter() do
-        print('index', i, 'type', t, 'arg', a)
-      end
+      -- for i, t, a in message:iter() do
+      --   print('index', i, 'type', t, 'arg', a)
+      -- end
     end)
   end)
 
   describe('pack', function()
-    it('requires an address and a type tag', function()
+    it('requires an address', function()
       local m = {types = 'i', 1}
-      assert.has_errors(function()
-        Message.pack(m)
-      end)
-      m = {address = '/foo', 1}
       assert.has_errors(function()
         Message.pack(m)
       end)
@@ -87,6 +83,21 @@ describe('Message', function()
       assert.not_nil(buffer)
       assert.are.equal(#buffer % 4, 0)
     end)
+
+    it('skips types that should not be in argument data', function()
+      local m = {
+        address = '/fo',
+        types = 'TiiFs',
+        true,
+        1,
+        2,
+        false,
+        'hi'
+      }
+      local data = Message.pack(m)
+      assert.not_nil(data)
+      assert.are.equal('/fo\0,TiiFs\0\0\0\0\0\1\0\0\0\2', data)
+    end)
   end)
 
   describe('unpack', function()
@@ -96,6 +107,7 @@ describe('Message', function()
       types = 'isTf',
       123,
       'hello',
+      true,
       1.234,
     }
 
@@ -117,8 +129,8 @@ describe('Message', function()
       assert.are.equal(input.types, message.types)
       assert.are.equal(input[1], message[1])
       assert.are.equal(input[2], message[2])
-      assert.are.equal(true, message[3])
-      assert.is_true(math.abs(input[3] - message[4]) < 1e-4)
+      assert.are.equal(input[3], message[3])
+      assert.is_true(math.abs(input[4] - message[4]) < 1e-4)
     end)
   end)
 end)

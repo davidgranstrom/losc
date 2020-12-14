@@ -180,16 +180,18 @@ function Message.bytes_validate(bytes)
   end
 end
 
---- Pack an OSC message.
+--- Pack an OSC message to a byte string.
+--
+-- The returned object is suitable for sending via a transport layer such as
+-- UDP or TCP.
 --
 -- @param tbl The content to pack.
--- @return OSC data packet.
+-- @return OSC data packet (byte string).
 function Message.pack(tbl)
   assert(tbl.address, 'An OSC message must have an address.')
-  assert(tbl.types, 'An OSC message must have at least one type.')
   local packet = {}
   local address = tbl.address
-  local types = tbl.types
+  local types = tbl.types or ''
   -- address (prefix if missing)
   if address:sub(1,1) ~= '/' then
     address = '/' .. address
@@ -197,28 +199,24 @@ function Message.pack(tbl)
   -- types
   packet[#packet + 1] = Types.pack.s(address)
   packet[#packet + 1] = Types.pack.s(',' .. types)
-  local arg_index = 1
-  -- remove types that doesn't require argument data
-  local skip = string.format('[%s]', Types.pack.skip_types)
-  types = types:gsub(skip, '')
   -- arguments
+  local index = 1
   for type in types:gmatch('.') do
-    local item = tbl[arg_index]
+    local item = tbl[index]
     if item then
-      local ok, buffer = pcall(Types.pack[type], item)
+      local ok, data = Types.pack(type, item)
       if ok then
-        packet[#packet + 1] = buffer
-        arg_index = arg_index + 1
+        packet[#packet + 1] = data
       end
+      index = index + 1
     end
   end
-  packet = table.concat(packet, '')
-  return packet
+  return table.concat(packet, '')
 end
 
---- Unpack an OSC message.
+--- Unpack OSC message byte string.
 --
--- @param data The content to unpack.
+-- @param data The data to unpack.
 -- @param offset The initial offset into data.
 -- @return table with the content of the OSC message.
 function Message.unpack(data, offset)
@@ -236,7 +234,7 @@ function Message.unpack(data, offset)
   -- arguments
   local ok
   for type in types:gmatch('.') do
-    ok, value, index = pcall(Types.unpack[type], data, index)
+    ok, value, index = Types.unpack(type, data, index)
     if ok then
       message[#message + 1] = value
     end
