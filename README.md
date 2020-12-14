@@ -1,6 +1,7 @@
 # losc
 
 ![lint](https://github.com/davidgranstrom/losc/workflows/lint/badge.svg)
+![unit-tests](https://github.com/davidgranstrom/losc/workflows/unit-tests/badge.svg)
 
 [OSC][osc] serialization and deserialization for `lua` and `luajit`.
 
