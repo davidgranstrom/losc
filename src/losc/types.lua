@@ -7,13 +7,12 @@ local function require_pack()
   if string.pack then
     return string.pack
   end
-  local ok, struct = pcall(require, 'struct')
+  local ok, _ = pcall(require, 'struct')
   if ok then
     return require'struct'.pack
   else
     return require'lib.struct'.pack
   end
-  error('could not find suitable pack method.')
 end
 
 -- Require a function for unpacking.
@@ -22,13 +21,12 @@ local function require_unpack()
   if string.unpack then
     return string.unpack
   end
-  local ok, struct = pcall(require, 'struct')
+  local ok, _ = pcall(require, 'struct')
   if ok then
     return require'struct'.unpack
   else
     return require'lib.struct'.unpack
   end
-  error('could not find suitable unpack method.')
 end
 
 local _pack = require_pack()
