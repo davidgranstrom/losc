@@ -3,7 +3,7 @@
 
 local _pack = string.pack or require'struct'.pack
 local _unpack = string.unpack or require'struct'.unpack
-local is_lua53 = _VERSION:find('3') ~= nil
+local has_string_pack = string.pack and true or false
 
 local Types = {}
 
@@ -102,11 +102,10 @@ end
 -- @param[opt] offset Initial offset into data.
 -- @return value, index of the bytes read + 1.
 Types.unpack.s = function(data, offset)
-  local fmt = is_lua53 and 'z' or 's'
+  local fmt = has_string_pack and 'z' or 's'
   local str = _unpack('>' .. fmt, data, offset)
   return str, strsize(str) + (offset or 1)
 end
-
 
 --- Blob (arbitrary binary data)
 -- @param value The value to pack.
