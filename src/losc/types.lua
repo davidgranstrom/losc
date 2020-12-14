@@ -1,6 +1,7 @@
 --- Types
 -- @module losc.types
 
+local inspect = require'inspect'
 local _pack = string.pack or require'struct'.pack
 local _unpack = string.unpack or require'struct'.unpack
 local is_lua53 = _VERSION:find('3') ~= nil
@@ -8,14 +9,38 @@ local is_lua53 = _VERSION:find('3') ~= nil
 local Types = {}
 
 --- Type pack functions.
--- Custom pack functions can be added to this table.
--- Standard functions can be re-assigned if necessary.
+--
+-- Custom pack functions can be added to this table and standard functions can
+-- be re-assigned if necessary.
+--
+-- This table can be called to pack a value in protected mode (pcall).
+-- @usage local ok, data = Types.pack('s', 'hello')
+-- if ok then
+--   -- do something with data.
+-- end
 Types.pack = {}
+setmetatable(Types.pack, {
+  __call = function(self, type, value)
+    return pcall(self[type], value)
+  end
+})
 
 --- Type unpack functions.
--- Custom unpack functions can be added to this table.
--- Standard functions can be re-assigned if necessary.
+--
+-- Custom unpack functions can be added to this table and standard functions
+-- can be re-assigned if necessary.
+--
+-- This table can be called to unpack a value in protected mode (pcall).
+-- @usage local ok, value, index = Types.unpack('s', data, 1)
+-- if ok then
+--   -- do something with value/index.
+-- end
 Types.unpack = {}
+setmetatable(Types.unpack, {
+  __call = function(self, type, data, offset)
+    return pcall(self[type], data, offset)
+  end
+})
 
 --- Types that only exists as type tag data (should not be packed).
 -- Custom types can be appended to this string.
@@ -175,9 +200,5 @@ end
 Types.unpack.I = function(_, offset)
   return math.huge, offset or 0
 end
-
--- local function safe_pack(type, value)
---   return pcall(Types.pack[type], value)
--- end
 
 return Types

@@ -24,6 +24,14 @@ describe('Types', function()
         packed_data[k] = buffer
       end
     end)
+
+    it('can be called as function', function()
+      local ok, data = Types.pack('s', 'hello')
+      assert.is_true(ok)
+      assert.are.equal('hello\0\0\0', data)
+      ok, data = Types.pack('s', 123)
+      assert.is_false(ok)
+    end)
   end)
 
   describe('unpack', function()
@@ -44,6 +52,15 @@ describe('Types', function()
           assert.are.equal(data[k], value)
         end
       end
+    end)
+
+    it('can be called as function', function()
+      local data = 'hello\0\0\0'
+      local ok, value = Types.unpack('s', data, 1)
+      assert.is_true(ok)
+      assert.are.equal('hello', value)
+      ok, data = Types.unpack('s', data, 9)
+      assert.is_false(ok)
     end)
   end)
 end)
