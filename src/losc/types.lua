@@ -1,7 +1,6 @@
 --- Types
 -- @module losc.types
 
-local inspect = require'inspect'
 local _pack = string.pack or require'struct'.pack
 local _unpack = string.unpack or require'struct'.unpack
 local is_lua53 = _VERSION:find('3') ~= nil

@@ -2,7 +2,7 @@
 -- @module losc
 
 local Message = require'losc.message'
-local Bundle = require'losc.bundle'
+-- local Bundle = require'losc.bundle'
 
 local losc = {}
 
@@ -38,7 +38,7 @@ function losc.message_new_from_bytes(data)
   return Message.new_from_bytes(data)
 end
 
-function losc.bundle_new(timetag, ...)
-end
+-- function losc.bundle_new(...)
+-- end
 
 return losc
