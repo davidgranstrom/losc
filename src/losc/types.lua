@@ -1,8 +1,38 @@
 --- Types
 -- @module losc.types
 
-local _pack = string.pack or require'struct'.pack
-local _unpack = string.unpack or require'struct'.unpack
+-- Require a function for packing.
+-- Try different fallbacks if string.pack is unavailable.
+local function require_pack()
+  if string.pack then
+    return string.pack
+  end
+  local ok, struct = pcall(require, 'struct')
+  if ok then
+    return require'struct'.pack
+  else
+    return require'lib.struct'.pack
+  end
+  error('could not find suitable pack method.')
+end
+
+-- Require a function for unpacking.
+-- Try different fallbacks if string.unpack is unavailable.
+local function require_unpack()
+  if string.unpack then
+    return string.unpack
+  end
+  local ok, struct = pcall(require, 'struct')
+  if ok then
+    return require'struct'.unpack
+  else
+    return require'lib.struct'.unpack
+  end
+  error('could not find suitable unpack method.')
+end
+
+local _pack = require_pack()
+local _unpack = require_unpack()
 local has_string_pack = string.pack and true or false
 
 local Types = {}
@@ -136,7 +166,8 @@ end
 -- @param value The value to pack.
 -- @return Binary string buffer.
 Types.pack.h = function(value)
-  return _pack('>I8', value)
+  local fmt = has_string_pack and '>i8' or '>l'
+  return _pack(fmt, value)
 end
 
 --- 64 bit big-endian two's complement integer
@@ -144,14 +175,16 @@ end
 -- @param[opt] offset Initial offset into data.
 -- @return value, index of the bytes read + 1.
 Types.unpack.h = function(data, offset)
-  return _unpack('>I8', data, offset)
+  local fmt = has_string_pack and '>i8' or '>l'
+  return _unpack(fmt, data, offset)
 end
 
 --- Timetag (64-bit integer)
 -- @param value The value to pack.
 -- @return Binary string buffer.
 Types.pack.t = function(value)
-  return _pack('>I8', value)
+  local fmt = has_string_pack and '>I8' or '>L'
+  return _pack(fmt, value)
 end
 
 --- Timetag (64-bit integer)
@@ -159,7 +192,8 @@ end
 -- @param[opt] offset Initial offset into data.
 -- @return value, index of the bytes read + 1.
 Types.unpack.t = function(data, offset)
-  return _unpack('>I8', data, offset)
+  local fmt = has_string_pack and '>I8' or '>L'
+  return _unpack(fmt, data, offset)
 end
 
 --- Boolean true.
