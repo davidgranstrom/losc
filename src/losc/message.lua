@@ -81,12 +81,10 @@ end
 -- @param[opt] item Item to append.
 -- @see losc.types
 -- @usage message:append('i', 123)
--- @usage message:append('T')
+-- @usage message:append('T', true) -- value is required but will not packed in OSC message.
 function Message:append(type, item)
   self.content.types = self.content.types .. type
-  if item then
-    self.content[#self.content + 1] = item
-  end
+  self.content[#self.content + 1] = item
 end
 
 --- Check that the message is valid.
@@ -101,12 +99,11 @@ function Message:get_types()
   return self.content.types
 end
 
---- Argument iterator.
+--- Message iterator.
 --
 -- Iterate over message types and arguments.
 --
--- NOTE: Argument might be nil if the type doesn't require it to be present.
--- @return iterator with index, type, argument.
+-- @return iterator using index, type, argument.
 -- @usage for i, type, arg in message:iter() do
 --   print(i, type, arg)
 -- end
@@ -114,28 +111,17 @@ function Message:iter()
   if not self.content then
     return function() end, nil, nil
   end
-  local types = {}
-  self.content.types:gsub('.', function(t)
-    types[#types + 1] = t
-  end)
-  local t = {types, self.content}
-  local max = math.max(#types, #self.content)
-  local j = 1
+  local tbl = {self.content.types, self.content}
   local function msg_it(t, i)
     i = i + 1
-    if i > #types then
-      return nil
+    local type = t[1]:sub(i, i)
+    local arg = t[2][i]
+    if type ~= nil and arg ~= nil then
+      return i, type, arg
     end
-    local type = t[1][i]
-    local arg = t[2][j]
-    if Types.pack.skip_types:find(type) then
-      arg = nil
-    else
-      j = j + 1
-    end
-    return i, type, arg
+    return nil
   end
-  return msg_it, t, 0
+  return msg_it, tbl, 0
 end
 
 --- Get the OSC address.
@@ -159,8 +145,7 @@ end
 function Message.tbl_validate(tbl)
   assert(tbl.address, 'table is missing "address" field.')
   assert(tbl.types, 'table is missing "types" field.')
-  local types = tbl.types:gsub(string.format('[%s]', Types.pack.skip_types), '')
-  assert(#types == #tbl, 'types and arguments mismatch')
+  assert(#tbl.types == #tbl, 'types and arguments mismatch')
   return true
 end
 

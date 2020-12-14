@@ -49,12 +49,19 @@ describe('Message', function()
       assert.is_true(message:is_valid())
       message:append('i', 123)
       message:append('f', 1.234)
-      message:append('T')
+      message:append('T', true)
       message:append('s', 'foo')
       assert.are.equal('ifTs', message:get_types())
-      -- for i, t, a in message:iter() do
-      --   print('index', i, 'type', t, 'arg', a)
-      -- end
+    end)
+
+    it('can iterate over types and arguments', function()
+      local msg = {address = '/foo/bar', types = 'isFf', 1, 'hello', true, 1.234}
+      local message = Message.new_from_tbl(msg)
+      assert.is_true(message:is_valid())
+      for i, type, arg in message:iter() do
+        assert.are.equal(msg.types:sub(i, i), type)
+        assert.are.equal(msg[i], arg)
+      end
     end)
   end)
 
