@@ -7,8 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # lua-version: ['lua 5.1', 'lua 5.2', 'lua 5.3', 'lua 5.4', 'luajit 2.0']
-        lua-version: ['lua 5.1', 'lua 5.2', 'luajit 2.0']
+        lua-version: ['lua 5.1', 'lua 5.2', 'lua 5.3', 'lua 5.4', 'luajit 2.0']
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -30,7 +29,6 @@ jobs:
         run: |
           hererocks .env --${{ matrix.lua-version }} --luarocks latest
           source .env/bin/activate
-          luarocks install struct
           luarocks install inspect
           luarocks install busted
           luarocks install luacov 
