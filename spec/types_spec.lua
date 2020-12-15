@@ -32,6 +32,10 @@ describe('Types', function()
       ok, data = Types.pack('s', 123)
       assert.is_false(ok)
     end)
+
+    it('has default types which will be skipped in packing', function()
+      assert.are.equal('TFNI', Types.pack.skip_types)
+    end)
   end)
 
   describe('unpack', function()
