@@ -5,6 +5,7 @@ local Types = require'losc.types'
 local Message = require'losc.message'
 
 local Bundle = {}
+Bundle.__index = Bundle
 
 local function _pack(bndl, packet)
   packet[#packet + 1] = Types.pack.s('#bundle')
@@ -49,6 +50,31 @@ local function _unpack(data, bundle, offset, ret_bundle)
   return ret_bundle or bundle, index
 end
 
+--- Create a new OSC bundle.
+--
+-- Arguments can be:
+--
+-- 1. nil (return empty bundle object)
+-- 2. timetag offset (seconds)
+-- 3. timetag offset, message/bundle objects.
+--
+-- @param[opt] ... arguments.
+-- @return Bundle object.
+function Bundle.new(...)
+  local self = setmetatable({}, Bundle)
+  local args = {...}
+  local content = {}
+  if #args >= 1 then
+    if type(args[1]) == 'number' then
+      content.timetag = args[1]
+    end
+    for index = 2, #args do
+      content[#content + 1] = args[index].content
+    end
+  end
+  return self
+end
+
 --- Validate a table can be used as an OSC bundle.
 -- @param tbl The table to validate.
 -- @return true or error.
@@ -61,9 +87,9 @@ end
 -- @param data The byte string to validate.
 -- @return true or error.
 function Bundle.bytes_validate(data)
-  local ok, value, index = Types.unpack('s', data, 1)
+  local _, s, index = Types.unpack('s', data, 1)
   assert(s == '#bundle', 'missing bundle marker')
-  ok, value, _ = Types.unpack('t', data, index)
+  local ok = Types.unpack('t', data, index)
   assert(ok, 'missing bundle timetag')
   return true
 end
