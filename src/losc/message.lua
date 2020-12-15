@@ -15,6 +15,14 @@ Message.__index = Message
 --- Create a new OSC message.
 --
 -- @param[opt] ... arguments.
+--
+-- Arguments can be:
+--
+-- 1. nil (return empty message)
+-- 2. OSC address string
+-- 3. table with address, types and values:
+-- local t = {address = '/foo', types = 'i', 1}
+--
 -- @return An OSC message object.
 -- @see losc.types
 function Message.new(...)
@@ -22,36 +30,16 @@ function Message.new(...)
   local args = {...}
   self.kind = 'm'
   self.content = {}
-  if #args >= 1 then
-    if type(args[1]) ~= 'string' then
-      error('First argument must be an OSC address string.')
+  self.content.address = ''
+  self.content.types = ''
+  if #args == 1 then
+    local arg = args[1]
+    if type(arg) == 'string' then
+      self.content.address = arg
+    elseif type(arg) == 'table' then
+      self.content = arg
     end
-    self.content.address = args[1]
-    self.content.types = args[2] or ''
-    for index = 3, #args do
-      self.content[#self.content + 1] = args[index]
-    end
   end
-  return self
-end
-
---- Create a new OSC message from a table.
---
--- @param tbl The table to create the message from.
--- @return An OSC message object.
--- @usage local message = Message.new_from_tbl({address = 'foo', types = 'i', 123})
-function Message.new_from_tbl(tbl)
-  if not tbl then
-    error('Can not create message from empty table.')
-  end
-  local ok, err = pcall(Message.tbl_validate, tbl)
-  if not ok then
-    print(err)
-    return nil
-  end
-  local self = setmetatable({}, Message)
-  self.kind = 'm'
-  self.content = tbl
   return self
 end
 
@@ -65,10 +53,7 @@ function Message.new_from_bytes(data)
     error('Can not create message from empty data.')
   end
   local ok, err = Message.bytes_validate(data)
-  if not ok then
-    print(err)
-    return nil
-  end
+  assert(ok, err)
   local self = setmetatable({}, Message)
   self.kind = 'm'
   self.content = Message.unpack(data)
@@ -125,9 +110,9 @@ function Message:iter()
 end
 
 --- Get the OSC address.
--- @return The OSC address or an empty string.
+-- @return The OSC address.
 function Message:get_address()
-  return self.content.address or ''
+  return self.content.address
 end
 
 --- Set the OSC address.

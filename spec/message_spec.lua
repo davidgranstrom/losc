@@ -9,16 +9,9 @@ describe('Message', function()
       assert.is_true(type(message.content) == 'table')
     end)
 
-    it('can create an message object with address, types and arguments', function()
-      local message = Message.new('/foo/bar', 'i', 1)
-      assert.not_nil(message)
-      assert.is_true(type(message.content) == 'table')
-      assert.are.equal(message:get_address(), '/foo/bar')
-    end)
-
     it('can create message object from table', function()
       local msg = {address = '/foo/bar', types = 's', 'hello'}
-      local message = Message.new_from_tbl(msg)
+      local message = Message.new(msg)
       assert.not_nil(message)
       assert.is_true(message:is_valid())
     end)
@@ -33,7 +26,7 @@ describe('Message', function()
 
   describe('methods', function()
     it('can set and get OSC address', function()
-      local message = Message.new('/foo/bar', 'i', 1)
+      local message = Message.new('/foo/bar')
       assert.are.equal(message:get_address(), '/foo/bar')
       message:set_address('/baz')
       assert.are.equal(message:get_address(), '/baz')
@@ -56,7 +49,7 @@ describe('Message', function()
 
     it('can iterate over types and arguments', function()
       local msg = {address = '/foo/bar', types = 'isFf', 1, 'hello', true, 1.234}
-      local message = Message.new_from_tbl(msg)
+      local message = Message.new(msg)
       assert.is_true(message:is_valid())
       for i, type, arg in message:iter() do
         assert.are.equal(msg.types:sub(i, i), type)
