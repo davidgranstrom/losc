@@ -2,7 +2,7 @@
 -- @module losc
 
 local Message = require'losc.message'
--- local Bundle = require'losc.bundle'
+local Bundle = require'losc.bundle'
 
 local losc = {}
 
@@ -13,7 +13,8 @@ local losc = {}
 -- @see losc.message
 -- @usage local message = losc.message_new()
 -- @usage local message = losc.message_new('/address')
--- @usage local message = losc.message_new('/address', 'i', 123)
+-- @usage local message = losc.message_new('/address', 123, 'hello', 1.234)
+-- @usage local message = losc.message_new({ address = '/foo', types = 'iif', 1, 2, 3})
 function losc.message_new(...)
   return Message.new(...)
 end
@@ -38,7 +39,17 @@ function losc.message_new_from_bytes(data)
   return Message.new_from_bytes(data)
 end
 
--- function losc.bundle_new(...)
--- end
+--- Create a new OSC bundle.
+--
+-- @param[opt] ... arguments.
+-- @return Bundle object.
+-- @see losc.bundle
+-- @usage local bundle = losc.bundle_new()
+-- @usage local bundle = losc.bundle_new(tt)
+-- @usage local bundle = losc.bundle_new(tt, osc_msg, osc_msg2)
+-- @usage local bundle = losc.bundle_new(tt, osc_msg, other_bundle)
+function losc.bundle_new(...)
+  return Bundle.new(...)
+end
 
 return losc
