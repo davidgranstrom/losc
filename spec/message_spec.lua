@@ -1,4 +1,3 @@
-local inspect = require'inspect'
 local Message = require'losc.message'
 
 describe('Message', function()

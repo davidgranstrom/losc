@@ -52,6 +52,14 @@ setmetatable(Types.pack, {
   end
 })
 
+--- Getter to the packing function.
+Types.pack_fn = _pack
+
+--- Types that only exists as type tag data (should not be packed).
+-- Custom types can be appended to this string.
+-- Default value: `TFNI`
+Types.pack_skip_types = 'TFNI'
+
 --- Type unpack functions.
 --
 -- Custom unpack functions can be added to this table and standard functions
@@ -69,10 +77,8 @@ setmetatable(Types.unpack, {
   end
 })
 
---- Types that only exists as type tag data (should not be packed).
--- Custom types can be appended to this string.
--- Default value: `TFNI`
-Types.pack.skip_types = 'TFNI'
+--- Getter to the unpacking function.
+Types.unpack_fn = _unpack
 
 local function strsize(s)
   return 4 * (math.floor(#s / 4) + 1)

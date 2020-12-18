@@ -34,7 +34,7 @@ describe('Types', function()
     end)
 
     it('has default types which will be skipped in packing', function()
-      assert.are.equal('TFNI', Types.pack.skip_types)
+      assert.are.equal('TFNI', Types.pack_skip_types)
     end)
   end)
 
