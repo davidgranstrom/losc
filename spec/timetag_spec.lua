@@ -26,5 +26,19 @@ describe('Timetag', function()
   end)
 
   describe('methods', function()
+    it('returns a timestamp with microsecond precision', function()
+      local now = os.time()
+      local tt = Timetag.new_from_usec(now)
+      assert.are.equal(now, tt:timestamp() / 1e6)
+    end)
+
+    it('has overloaded add operator', function()
+      local now = os.time()
+      local tt = Timetag.new_from_usec(now)
+      tt = tt + 1
+      assert.are.equal(now + 1, tt:timestamp() / 1e6)
+      tt = 1 + tt
+      assert.are.equal(now + 2, tt:timestamp() / 1e6)
+    end)
   end)
 end)

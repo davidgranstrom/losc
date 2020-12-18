@@ -1,8 +1,8 @@
 local Types = require'losc.types'
 local Timetag = {}
 
--- (year) 1970 - 1900 in seconds
-local SEC_NTP_OFFSET = 2208988800
+-- 70 years in seconds (1970 - 1900)
+local NTP_SEC_OFFSET = 2208988800
 -- 2^32
 local TWO_POW_32 = 4294967296
 -- 2^32 / 1000000
@@ -35,6 +35,7 @@ end
 --
 -- @param seconds Seconds since January 1st 1900 in the UTC timezone.
 -- @param fractions Fractions expressed as 1/2^32 of a second.
+-- If both arguments is nil, a timestamp with special value of "immediate" will be returned.
 function Timetag.new(seconds, fractions)
   local self = setmetatable({}, Timetag)
   self.content = {}
@@ -60,7 +61,7 @@ function Timetag.new_from_usec(seconds, microseconds)
     return Timetag.new()
   end
   local secs, frac
-  secs = (seconds or 0) + SEC_NTP_OFFSET
+  secs = (seconds or 0) + NTP_SEC_OFFSET
   frac = math.floor((microseconds or 0) * USEC_TWO_POW_32 + 0.5)
   return Timetag.new(secs, frac)
 end
@@ -97,20 +98,16 @@ end
 --- Get the timetag value with microsecond precision.
 -- @return Timetag value in microsecond.
 function Timetag:timestamp()
-  local seconds = math.max(0, self.content.seconds - SEC_NTP_OFFSET)
+  local seconds = 1000000 * math.max(0, self.content.seconds - NTP_SEC_OFFSET)
   local fractions = math.floor((self.content.fractions / USEC_TWO_POW_32) + 0.5)
-  return 1e6 * (seconds + fractions)
+  return seconds + fractions
 end
 
 --- Get seconds and fractions.
 -- @return Table with seconds and fractions.
 function Timetag:get()
-  return self.content and {
-    seconds = self.content.seconds,
-    fractions = self.content.fractions
-  }
+  return self.content
 end
-
 
 --- Pack a time tag.
 --
