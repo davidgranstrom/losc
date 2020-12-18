@@ -1,8 +1,13 @@
---- OSC Message
+---------------
+-- OSC Message.
 --
 -- An OSC message consists of an OSC Address Pattern followed by an
 -- OSC Type Tag String followed by zero or more OSC Arguments.
+--
 -- @module losc.message
+-- @author David Granström
+-- @license MIT
+-- @copyright David Granström 2020
 
 local Types = require'losc.types'
 

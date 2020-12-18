@@ -1,10 +1,15 @@
 --------------
 -- OSC Timetag.
+--
 -- Time tags are represented by a 64 bit fixed point number. The first 32 bits
 -- specify the number of seconds since midnight on January 1, 1900, and the
 -- last 32 bits specify fractional parts of a second to a precision of about
 -- 200 picoseconds. This is the representation used by Internet NTP timestamps.
+--
 -- @module losc.timetag
+-- @author David Granström
+-- @license MIT
+-- @copyright David Granström 2020
 
 local Types = require'losc.types'
 local Timetag = {}

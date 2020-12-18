@@ -1,5 +1,12 @@
---- Types
+-------------
+-- OSC Types.
+-- 
+-- The size of every atomic data type in OSC is a multiple of 32 bits.
+--
 -- @module losc.types
+-- @author David Granström
+-- @license MIT
+-- @copyright David Granström 2020
 
 -- Require a function for packing.
 -- Try different fallbacks if string.pack is unavailable.

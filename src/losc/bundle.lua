@@ -1,5 +1,13 @@
---- Bundle
+--------------
+-- OSC Bundle.
+--
+-- An OSC Bundle consists of the OSC-string "#bundle" followed by an OSC Time
+-- Tag, followed by zero or more OSC Bundle Elements.
+--
 -- @module losc.bundle
+-- @author David Granström
+-- @license MIT
+-- @copyright David Granström 2020
 
 local Types = require'losc.types'
 local Message = require'losc.message'

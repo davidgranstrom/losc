@@ -1,5 +1,12 @@
---- High level API.
+------------------
+-- API.
+--
+-- In most cases this will be the only module required to use losc.
+--
 -- @module losc
+-- @author David Granström
+-- @license MIT
+-- @copyright David Granström 2020
 
 local Message = require'losc.message'
 local Bundle = require'losc.bundle'
