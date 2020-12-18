@@ -127,7 +127,7 @@ end
 --
 -- @param tbl The timetag to pack.
 -- @return OSC data packet (byte string).
--- @usage 
+-- @usage
 -- local tt = {seconds = os.time(), fractions = 0}
 -- local data = Timetag.pack(tt)
 function Timetag.pack(tbl)

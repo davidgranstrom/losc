@@ -1,6 +1,6 @@
 -------------
 -- OSC Types.
--- 
+--
 -- The size of every atomic data type in OSC is a multiple of 32 bits.
 --
 -- @module losc.types

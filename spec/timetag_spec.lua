@@ -1,4 +1,3 @@
-local inspect = require'inspect'
 local Timetag = require'losc.timetag'
 
 describe('Timetag', function()
