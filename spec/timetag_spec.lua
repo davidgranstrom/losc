@@ -2,6 +2,29 @@ local inspect = require'inspect'
 local Timetag = require'losc.timetag'
 
 describe('Timetag', function()
+  describe('constructors', function()
+    it('can create a raw timetag', function()
+      local tt = Timetag.new()
+      assert.not_nil(tt)
+      assert.are.equal(0, tt:timestamp())
+    end)
+
+    it('can create a timetag from seconds and microseconds', function()
+      local now = os.time()
+      local tt = Timetag.new_from_usec(now, 1 * 1e6)
+      assert.not_nil(tt)
+      assert.are.equal(now + 1, tt:timestamp() / 1e6)
+    end)
+
+    it('can create a timetag from OSC data', function()
+      local data = '\0\0\1\0\0\0\1\0'
+      local tt = Timetag.new_from_bytes(data)
+      assert.not_nil(tt)
+      assert.are.equal(256, tt.content.seconds)
+      assert.are.equal(256, tt.content.fractions)
+    end)
+  end)
+
   describe('pack', function()
     it('packs correct byte representation', function()
       -- create a timetag with special value "now"
