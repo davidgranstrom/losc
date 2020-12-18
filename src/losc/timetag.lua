@@ -1,3 +1,11 @@
+--------------
+-- OSC Timetag.
+-- Time tags are represented by a 64 bit fixed point number. The first 32 bits
+-- specify the number of seconds since midnight on January 1, 1900, and the
+-- last 32 bits specify fractional parts of a second to a precision of about
+-- 200 picoseconds. This is the representation used by Internet NTP timestamps.
+-- @module losc.timetag
+
 local Types = require'losc.types'
 local Timetag = {}
 
@@ -26,16 +34,15 @@ Timetag.__add = function(a, b)
   end
 end
 
+--- Low level API
+-- @section low-level-api
+
 --- Create a new Timetag.
---
--- Time tags are represented by a 64 bit fixed point number. The first 32 bits
--- specify the number of seconds since midnight on January 1, 1900, and the
--- last 32 bits specify fractional parts of a second to a precision of about
--- 200 picoseconds. This is the representation used by Internet NTP timestamps.
 --
 -- @param seconds Seconds since January 1st 1900 in the UTC timezone.
 -- @param fractions Fractions expressed as 1/2^32 of a second.
--- If both arguments is nil, a timestamp with special value of "immediate" will be returned.
+--
+-- If both arguments is nil a timetag with special value of "immediate" will be returned.
 function Timetag.new(seconds, fractions)
   local self = setmetatable({}, Timetag)
   self.content = {}
@@ -45,14 +52,16 @@ function Timetag.new(seconds, fractions)
   return self
 end
 
---- Create a new Timetag using a seconds and microseconds.
+--- High level API
+-- @section high-level-api
+
+--- New using a seconds and microseconds.
 --
--- {seconds microseconds} is the form returned by uv.gettimeofday().
--- No arguments will return a timetag with timestamp "now".
+-- Given nil arguments will return a timetag with special value "immediate".
 --
 -- @param[opt] seconds Timestamp seconds.
 -- @param[opt] microseconds Timestamp fractions.
--- @usage local tt = Timetag.new_from_usec()
+-- @usage local tt = Timetag.new_from_usec() -- immediate
 -- @usage local tt = Timetag.new_from_usec(time.now())
 -- @usage local tt = Timetag.new_from_usec(tv.sec, tv.usec)
 -- @see Timetag.new
@@ -79,6 +88,17 @@ function Timetag.new_from_bytes(data)
   return Timetag.new(tt.seconds or 0, tt.fractions or 1)
 end
 
+--- Get the timetag value with microsecond precision.
+-- @return Timetag value in microsecond.
+function Timetag:timestamp()
+  local seconds = 1000000 * math.max(0, self.content.seconds - NTP_SEC_OFFSET)
+  local fractions = math.floor((self.content.fractions / USEC_TWO_POW_32) + 0.5)
+  return seconds + fractions
+end
+
+--- Low level API
+-- @section low-level-api
+
 --- Validate a Timetag table.
 --
 -- @param tbl The table with the Timetag contents
@@ -95,27 +115,16 @@ function Timetag.tbl_validate(tbl)
   return true
 end
 
---- Get the timetag value with microsecond precision.
--- @return Timetag value in microsecond.
-function Timetag:timestamp()
-  local seconds = 1000000 * math.max(0, self.content.seconds - NTP_SEC_OFFSET)
-  local fractions = math.floor((self.content.fractions / USEC_TWO_POW_32) + 0.5)
-  return seconds + fractions
-end
-
---- Get seconds and fractions.
--- @return Table with seconds and fractions.
-function Timetag:get()
-  return self.content
-end
-
---- Pack a time tag.
+--- Pack an OSC Timetag.
 --
 -- The returned object is suitable for sending via a transport layer such as
 -- UDP or TCP.
 --
 -- @param tbl The timetag to pack.
 -- @return OSC data packet (byte string).
+-- @usage 
+-- local tt = {seconds = os.time(), fractions = 0}
+-- local data = Timetag.pack(tt)
 function Timetag.pack(tbl)
   if not Timetag.tbl_validate(tbl) then
     error('Invalid table input')
@@ -130,7 +139,7 @@ end
 --
 -- @param data The data to unpack.
 -- @param offset The initial offset into data.
--- @return table with Timetag seconds and Timetag fractions.
+-- @return First is a table with seconds and fractions, second is index of the bytes read + 1.
 function Timetag.unpack(data, offset)
   local seconds, fractions
   seconds, offset = Types.unpack_fn('>I4', data, offset)
