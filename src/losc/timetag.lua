@@ -11,8 +11,11 @@
 -- @license MIT
 -- @copyright David Granström 2020
 
-local Types = require'losc.types'
+local Serializer = require'losc.serializer'
 local Timetag = {}
+
+local _pack = Serializer.pack()
+local _unpack = Serializer.unpack()
 
 -- 70 years in seconds (1970 - 1900)
 local NTP_SEC_OFFSET = 2208988800
@@ -26,7 +29,7 @@ local function tt_add(timetag, seconds)
   local frac = math.floor(TWO_POW_32 * (seconds - sec) + 0.5)
   timetag.content.seconds = timetag.content.seconds + sec
   timetag.content.fractions = timetag.content.fractions + frac
-  return timetag
+  return timetag -- TODO: return new timetag
 end
 
 Timetag.__index = Timetag
@@ -104,20 +107,29 @@ end
 --- Low level API
 -- @section low-level-api
 
+--- Get the timetag value with microsecond precision.
+-- @param tbl Table with seconds and fractions.
+-- @return Timetag value in microseconds.
+function Timetag.get_timestamp(tbl)
+  local seconds = 1000000 * math.max(0, tbl.seconds - NTP_SEC_OFFSET)
+  local fractions = math.floor((tbl.fractions / USEC_TWO_POW_32) + 0.5)
+  return seconds + fractions
+end
+
 --- Validate a Timetag table.
 --
 -- @param tbl The table with the Timetag contents
+-- @return True if table is valid, false and error message if invalid.
 -- @usage Timetag.tbl_validate({seconds = 0, fractions = 0})
 function Timetag.tbl_validate(tbl)
-  if not tbl.seconds then
-    print('missing field "seconds"')
-    return false
+  if tbl and not tbl.seconds then
+    return false, 'missing field "seconds"'
   end
-  if not tbl.fractions then
+  if tbl and not tbl.fractions then
     print('missing field "fractions"')
-    return false
+    return false, 'missing field "seconds"'
   end
-  return true
+  return tbl and true or false, 'missing table input'
 end
 
 --- Pack an OSC Timetag.
@@ -131,12 +143,13 @@ end
 -- local tt = {seconds = os.time(), fractions = 0}
 -- local data = Timetag.pack(tt)
 function Timetag.pack(tbl)
-  if not Timetag.tbl_validate(tbl) then
-    error('Invalid table input')
+  local ok, err = Timetag.tbl_validate(tbl)
+  if not ok then
+    error(err)
   end
   local data = {}
-  data[#data + 1] = Types.pack_fn('>I4', tbl.seconds)
-  data[#data + 1] = Types.pack_fn('>I4', tbl.fractions)
+  data[#data + 1] = _pack('>I4', tbl.seconds)
+  data[#data + 1] = _pack('>I4', tbl.fractions)
   return table.concat(data, '')
 end
 
@@ -147,8 +160,8 @@ end
 -- @return First is a table with seconds and fractions, second is index of the bytes read + 1.
 function Timetag.unpack(data, offset)
   local seconds, fractions
-  seconds, offset = Types.unpack_fn('>I4', data, offset)
-  fractions, offset = Types.unpack_fn('>I4', data, offset)
+  seconds, offset = _unpack('>I4', data, offset)
+  fractions, offset = _unpack('>I4', data, offset)
   return {seconds = seconds, fractions = fractions}, offset
 end
 

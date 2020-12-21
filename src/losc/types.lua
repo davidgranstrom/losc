@@ -8,36 +8,11 @@
 -- @license MIT
 -- @copyright David Granström 2020
 
--- Require a function for packing.
--- Try different fallbacks if string.pack is unavailable.
-local function require_pack()
-  if string.pack then
-    return string.pack
-  end
-  local ok, _ = pcall(require, 'struct')
-  if ok then
-    return require'struct'.pack
-  else
-    return require'lib.struct'.pack
-  end
-end
+local Serializer = require'losc.serializer'
+local Timetag = require'losc.timetag'
 
--- Require a function for unpacking.
--- Try different fallbacks if string.unpack is unavailable.
-local function require_unpack()
-  if string.unpack then
-    return string.unpack
-  end
-  local ok, _ = pcall(require, 'struct')
-  if ok then
-    return require'struct'.unpack
-  else
-    return require'lib.struct'.unpack
-  end
-end
-
-local _pack = require_pack()
-local _unpack = require_unpack()
+local _pack = Serializer.pack()
+local _unpack = Serializer.unpack()
 local has_string_pack = string.pack and true or false
 
 local Types = {}
@@ -58,9 +33,6 @@ setmetatable(Types.pack, {
     return pcall(self[type], value)
   end
 })
-
---- Getter to the packing function.
-Types.pack_fn = _pack
 
 --- Types that only exists as type tag data (should not be packed).
 -- Custom types can be appended to this string.
@@ -83,9 +55,6 @@ setmetatable(Types.unpack, {
     return pcall(self[type], data, offset)
   end
 })
-
---- Getter to the unpacking function.
-Types.unpack_fn = _unpack
 
 local function strsize(s)
   return 4 * (math.floor(#s / 4) + 1)
@@ -190,21 +159,21 @@ Types.unpack.h = function(data, offset)
   return _unpack(fmt, data, offset)
 end
 
---- Timetag (64-bit integer)
--- @param value The value to pack.
+--- Timetag (64-bit integer divided into upper and lower part)
+-- @param value Table with seconds and fractions.
 -- @return Binary string buffer.
+-- @see losc.timetag
 Types.pack.t = function(value)
-  local fmt = has_string_pack and '>I8' or '>L'
-  return _pack(fmt, value)
+  return Timetag.pack(value)
 end
 
---- Timetag (64-bit integer)
+--- Timetag (64-bit integer divided into upper and lower part)
 -- @param data The data to unpack.
 -- @param[opt] offset Initial offset into data.
 -- @return value, index of the bytes read + 1.
+-- @see losc.timetag
 Types.unpack.t = function(data, offset)
-  local fmt = has_string_pack and '>I8' or '>L'
-  return _unpack(fmt, data, offset)
+  return Timetag.unpack(data, offset)
 end
 
 --- Boolean true.

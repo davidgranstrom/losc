@@ -11,6 +11,7 @@
 
 local Types = require'losc.types'
 local Message = require'losc.message'
+local Timetag = require'losc.timetag'
 
 local Bundle = {}
 Bundle.__index = Bundle
@@ -20,7 +21,7 @@ local function _pack(bndl, packet)
   packet[#packet + 1] = Types.pack.t(bndl.timetag)
   for _, item in ipairs(bndl) do
     if item.timetag then
-      if item.timetag >= bndl.timetag then
+      if Timetag.get_timestamp(item.timetag) >= Timetag.get_timestamp(bndl.timetag) then
         return _pack(item, packet)
       end
       error('nested bundle requires timetag greater than enclosing bundle.')
@@ -60,11 +61,11 @@ end
 
 --- Create a new OSC bundle.
 --
--- Arguments can be:
+-- Arguments can be one form of:
 --
--- 1. nil (return empty bundle object)
--- 2. timetag offset (seconds)
--- 3. timetag offset, message/bundle objects.
+-- 1. nil (return empty bundle object).
+-- 2. Timetag.
+-- 3. Timetag, message/bundle objects.
 --
 -- @param[opt] ... arguments.
 -- @return Bundle object.
@@ -83,12 +84,11 @@ function Bundle.new(...)
   return self
 end
 
---- Validate a table can be used as an OSC bundle.
+--- Validate a table that can be used as an OSC bundle.
 -- @param tbl The table to validate.
--- @return true or error.
+-- @return True if table is valid or false.
 function Bundle.tbl_validate(tbl)
-  assert(tbl.timetag, 'missing timetag')
-  return true
+  return tbl.timetag and true or false
 end
 
 --- Validate a table can be used as an OSC bundle.
@@ -110,7 +110,9 @@ end
 -- @param tbl The content to pack.
 -- @return OSC data packet (byte string).
 function Bundle.pack(tbl)
-  Bundle.tbl_validate(tbl)
+  if not Bundle.tbl_validate(tbl) then
+    error('Invalid table input.')
+  end
   local packet = {}
   return _pack(tbl, packet)
 end

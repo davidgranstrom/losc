@@ -1,5 +1,6 @@
 local Message = require'losc.message'
 local Bundle = require'losc.bundle'
+local Timetag = require'losc.timetag'
 
 describe('Bundle', function()
   describe('pack', function()
@@ -14,7 +15,7 @@ describe('Bundle', function()
 
     it('can pack a messages correctly', function()
       local bndl = {
-        timetag = 0,
+        timetag = {seconds = 0, fractions = 1},
         {address = 'hello', types = 'T'},
         {address = 'world', types = 'i', 1},
       }
@@ -25,7 +26,7 @@ describe('Bundle', function()
     end)
 
     it('handles bundle with no contents', function()
-      local bndl = { timetag = 0 }
+      local bndl = { timetag = {seconds = 0, fractions = 1} }
       local data = Bundle.pack(bndl);
       assert.not_nil(data)
       assert.are.equal(#data % 4, 0)
@@ -33,7 +34,7 @@ describe('Bundle', function()
 
     it('has a size that is an multiple of 4', function()
       local bndl = {
-        timetag = 0,
+        timetag = {seconds = 0, fractions = 1},
         {address = 'hello', types = 'T'},
         {address = 'world', types = 'is', 1, 'foo'},
       }
@@ -44,14 +45,14 @@ describe('Bundle', function()
 
     it('can pack nested bundles', function()
       local bndl = {
-        timetag = 1,
+        timetag = {seconds = 0, fractions = 0},
         {address = '/foo', types = 'iii', 1, 2, 3},
         {address = '/bar', types = 'f', 1},
         {
-          timetag = 2,
+          timetag = {seconds = 1, fractions = 0},
           {address = '/baz', types = 'i', 7},
           {
-            timetag = 3,
+            timetag = {seconds = 3, fractions = 0},
             {address = '/abc', types = 'i', 74},
           }
         }
@@ -62,11 +63,14 @@ describe('Bundle', function()
     end)
 
     it('nested bundle timetag must be >= parent timetag', function()
+      local now = os.time()
+      local tt = Timetag.new_from_usec(now)
+      local tt2 = Timetag.new_from_usec(now + 1)
       local bndl = {
-        timetag = 123456,
+        timetag = tt2.content,
         {address = '/foo', types = 'iii', 1, 2, 3},
         {
-          timetag = 0,
+          timetag = tt.content,
         }
       }
       assert.has_errors(function()
@@ -76,16 +80,20 @@ describe('Bundle', function()
   end)
 
   describe('unpack', function()
+    local now = os.time()
+    local tt = Timetag.new_from_usec(now)
+    local tt1 = Timetag.new_from_usec(now + 1)
+    local tt2 = Timetag.new_from_usec(now + 2)
     local bundle
     local data = {
-      timetag = 1,
+      timetag = tt.content,
       {address = '/xxx', types = 'iii', 1, 2, 3},
       {
-        timetag = 2,
+        timetag = tt1.content,
         {address = '/baz', types = 'i', 7},
         {address = '/yyy', types = 'i', 7},
         {
-          timetag = 3,
+          timetag = tt2.content,
           {address = '/abc', types = 'i', 1},
           {address = '/123', types = 'i', 456},
           {address = '/zzz', types = 'i', 999},
@@ -102,10 +110,11 @@ describe('Bundle', function()
     end)
 
     it('unpacks empty bundle', function()
-      local bndl = {timetag = 0}
+      local bndl = {timetag = {seconds = 0, fractions = 1}}
       local res = Bundle.unpack(Bundle.pack(bndl))
       assert.not_nil(res)
-      assert.are.equal(0, res.timetag)
+      assert.are.equal(0, res.timetag.seconds)
+      assert.are.equal(1, res.timetag.fractions)
       assert.are.equal(0, #res)
     end)
 
@@ -120,14 +129,15 @@ describe('Bundle', function()
 
     it('unpacks bundle with messages', function()
       local bndl = {
-        timetag = 0,
+        timetag = {seconds = 0, fractions = 1},
         {address = '/foo/bar', types = 'iii', 1, 2, 3},
         {address = '/foo/baz', types = 'iss', 1, 'hello', '#bundle'},
         {address = '/foo/baz', types = 'i', 4},
       }
       local res = Bundle.unpack(Bundle.pack(bndl))
       assert.not_nil(res)
-      assert.are.equal(bndl.timetag, res.timetag)
+      assert.are.equal(bndl.timetag.seconds, res.timetag.seconds)
+      assert.are.equal(bndl.timetag.fractions, res.timetag.fractions)
       assert.are.equal(#bndl, #res)
       for i, msg in ipairs(res) do
         assert.is_true(compare_msg(bndl[i], msg))
@@ -135,9 +145,12 @@ describe('Bundle', function()
     end)
 
     it('unpacks nested bundles', function()
-      assert.are.equal(data.timetag, bundle.timetag)
-      assert.are.equal(data[1].timetag, bundle[1].timetag)
-      assert.are.equal(data[2].timetag, bundle[2].timetag)
+      assert.are.equal(data.timetag.seconds, bundle.timetag.seconds)
+      assert.are.equal(data.timetag.fractions, bundle.timetag.fractions)
+      assert.are.equal(data[2].timetag.seconds, bundle[2].timetag.seconds)
+      assert.are.equal(data[2].timetag.fractions, bundle[2].timetag.fractions)
+      assert.are.equal(data[2][3].timetag.seconds, bundle[2][3].timetag.seconds)
+      assert.are.equal(data[2][3].timetag.fractions, bundle[2][3].timetag.fractions)
       assert.is_true((compare_msg(data[1], bundle[1])))
       assert.is_true((compare_msg(data[2][1], bundle[2][1])))
       assert.is_true((compare_msg(data[2][2], bundle[2][2])))
