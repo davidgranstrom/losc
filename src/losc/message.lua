@@ -19,30 +19,29 @@ Message.__index = Message
 
 --- Create a new OSC message.
 --
--- @param[opt] ... arguments.
---
--- Arguments can be:
---
--- 1. nil (return empty message)
--- 2. OSC address string
--- 3. table with address, types and values:
--- local t = {address = '/foo', types = 'i', 1}
+-- @tparam[opt] string|table m OSC address or table constructor.
 --
 -- @return An OSC message object.
 -- @see losc.types
-function Message.new(...)
+-- @usage
+-- local msg = Message.new()
+-- @usage
+-- local msg = Message.new('/some/addr')
+-- @usage
+-- local tbl = {address = '/some/addr', types = 'ifs', 1, 2.0, 'hi'}
+-- local msg = Message.new(tbl)
+function Message.new(m)
   local self = setmetatable({}, Message)
-  local args = {...}
-  self.kind = 'm'
   self.content = {}
   self.content.address = ''
   self.content.types = ''
-  if #args == 1 then
-    local arg = args[1]
-    if type(arg) == 'string' then
-      self.content.address = arg
-    elseif type(arg) == 'table' then
-      self.content = arg
+  if m then
+    if type(m) == 'string' then
+      self.content.address = m
+    elseif type(m) == 'table' then
+      local ok, err = Message.tbl_validate(m)
+      assert(ok, err)
+      self.content = m
     end
   end
   return self
@@ -57,12 +56,12 @@ function Message.new_from_bytes(data)
   if not data then
     error('Can not create message from empty data.')
   end
-  local ok, err = Message.bytes_validate(data)
+  local ok, err, content
+  ok, err = Message.bytes_validate(data)
   assert(ok, err)
-  local self = setmetatable({}, Message)
-  self.kind = 'm'
-  self.content = Message.unpack(data)
-  return self
+  ok, err, content = Message.unpack(data)
+  assert(ok, err)
+  return Message.new(content)
 end
 
 --- Append arguments to the message.
@@ -155,7 +154,7 @@ function Message.bytes_validate(bytes)
   end
 end
 
---- Pack an OSC message to a byte string.
+--- Pack a table to a byte string.
 --
 -- The returned object is suitable for sending via a transport layer such as
 -- UDP or TCP.
