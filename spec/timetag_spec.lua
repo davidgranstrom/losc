@@ -61,6 +61,8 @@ describe('Timetag', function()
       assert.are.equal(now + 1, tt:timestamp() / 1e6)
       tt = 1 + tt
       assert.are.equal(now + 2, tt:timestamp() / 1e6)
+      local tt2 = tt + 10
+      assert.are.not_equal(tt, tt2)
     end)
   end)
 end)

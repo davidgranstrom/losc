@@ -65,7 +65,7 @@ describe('Bundle', function()
     it('nested bundle timetag must be >= parent timetag', function()
       local now = os.time()
       local tt = Timetag.new_from_usec(now)
-      local tt2 = Timetag.new_from_usec(now + 1)
+      local tt2 = tt + 1
       local bndl = {
         timetag = tt2.content,
         {address = '/foo', types = 'iii', 1, 2, 3},
@@ -82,8 +82,8 @@ describe('Bundle', function()
   describe('unpack', function()
     local now = os.time()
     local tt = Timetag.new_from_usec(now)
-    local tt1 = Timetag.new_from_usec(now + 1)
-    local tt2 = Timetag.new_from_usec(now + 2)
+    local tt1 = tt + 1
+    local tt2 = tt + 2
     local bundle
     local data = {
       timetag = tt.content,

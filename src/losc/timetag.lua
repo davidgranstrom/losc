@@ -27,9 +27,9 @@ local USEC_TWO_POW_32 = 4294.967296
 local function tt_add(timetag, seconds)
   local sec = math.floor(seconds)
   local frac = math.floor(TWO_POW_32 * (seconds - sec) + 0.5)
-  timetag.content.seconds = timetag.content.seconds + sec
-  timetag.content.fractions = timetag.content.fractions + frac
-  return timetag -- TODO: return new timetag
+  sec = sec + timetag.content.seconds
+  frac = frac + timetag.content.fractions
+  return Timetag.new(sec, frac)
 end
 
 Timetag.__index = Timetag
