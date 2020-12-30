@@ -63,10 +63,20 @@ end
 -- @param[opt] item Item to append.
 -- @see losc.types
 -- @usage message:append('i', 123)
--- @usage message:append('T', true) -- value is required but will not packed in OSC message.
+-- @usage message:append('T')
 function Message:append(type, item)
   self.content.types = self.content.types .. type
-  self.content[#self.content + 1] = item
+  if item then
+    self.content[#self.content + 1] = item
+  else
+    if type == 'T' or type == 'F' then
+      self.content[#self.content + 1] = type == 'T'
+    elseif type == 'N' then
+      self.content[#self.content + 1] = false
+    elseif type == 'I' then
+      self.content[#self.content + 1] = math.huge
+    end
+  end
 end
 
 --- Check that the message is valid.
