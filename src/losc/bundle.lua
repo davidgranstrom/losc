@@ -90,8 +90,8 @@ end
 
 --- Validate a byte string that can be unpacked to an OSC bundle.
 -- @param data The byte string to validate.
-function Bundle.bytes_validate(data)
-  local _, s, index = Types.unpack('s', data, 1)
+function Bundle.bytes_validate(data, offset)
+  local _, s, index = Types.unpack('s', data, offset or 1)
   assert(s == '#bundle', 'Missing bundle marker')
   local ok = Types.unpack('t', data, index)
   assert(ok, 'Missing bundle timetag')
