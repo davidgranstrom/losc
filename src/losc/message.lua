@@ -39,7 +39,7 @@ function Message.new(m)
     if type(m) == 'string' then
       self.content.address = m
     elseif type(m) == 'table' then
-      local ok, err = Message.tbl_validate(m)
+      local ok, err = pcall(Message.tbl_validate, m)
       assert(ok, err)
       self.content = m
     end
@@ -53,15 +53,8 @@ end
 -- @return An OSC message object.
 -- @usage local message = Message.new_from_bytes(data)
 function Message.new_from_bytes(data)
-  if not data then
-    error('Can not create message from empty data.')
-  end
-  local ok, err, content
-  ok, err = Message.bytes_validate(data)
-  assert(ok, err)
-  ok, err, content = Message.unpack(data)
-  assert(ok, err)
-  return Message.new(content)
+  Message.bytes_validate(data)
+  return Message.new(Message.unpack(data))
 end
 
 --- Append arguments to the message.
@@ -79,7 +72,7 @@ end
 --- Check that the message is valid.
 -- @return true or error if table is missing keys.
 function Message:is_valid()
-  return self.content and Message.tbl_validate(self.content)
+  return pcall(Message.tbl_validate, self.content)
 end
 
 --- Get the OSC type string.
@@ -132,26 +125,19 @@ end
 -- @param tbl The table to create the message with.
 -- @return true or error if table is missing keys.
 function Message.tbl_validate(tbl)
-  assert(tbl.address, 'table is missing "address" field.')
-  assert(tbl.types, 'table is missing "types" field.')
-  assert(#tbl.types == #tbl, 'types and arguments mismatch')
-  return true
+  assert(tbl.address, 'Missing "address" field.')
+  assert(tbl.types, 'Missing "types" field.')
+  assert(#tbl.types == #tbl, 'Types and arguments mismatch')
 end
 
 --- Validate a binary string to see if it is a valid OSC message.
 -- @param bytes The byte string to validate.
 -- @return true or error.
-function Message.bytes_validate(bytes)
-  local ok, value = pcall(Types.unpack.s, bytes)
-  if ok and value:sub(1, 1) == '/' then
-    if #bytes % 4 == 0 then
-      return true
-    else
-      error('OSC message data must be a multiple of 4.')
-    end
-  else
-    error('Malformed or missing OSC address in data.')
-  end
+function Message.bytes_validate(bytes, offset)
+  local ok, value = Types.unpack('s', bytes, offset)
+  assert(ok, value)
+  assert(value:sub(1, 1) == '/', 'Invalid OSC address.')
+  assert(#bytes % 4 == 0, 'OSC message data must be a multiple of 4.')
 end
 
 --- Pack a table to a byte string.

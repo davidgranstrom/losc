@@ -12,10 +12,10 @@
 -- @copyright David Granström 2020
 
 local Serializer = require'losc.serializer'
-local Timetag = {}
-
 local _pack = Serializer.pack()
 local _unpack = Serializer.unpack()
+
+local Timetag = {}
 
 -- 70 years in seconds (1970 - 1900)
 local NTP_SEC_OFFSET = 2208988800
@@ -99,9 +99,7 @@ end
 --- Get the timetag value with microsecond precision.
 -- @return Timetag value in microsecond.
 function Timetag:timestamp()
-  local seconds = 1000000 * math.max(0, self.content.seconds - NTP_SEC_OFFSET)
-  local fractions = math.floor((self.content.fractions / USEC_TWO_POW_32) + 0.5)
-  return seconds + fractions
+  return Timetag.get_timestamp(self.content)
 end
 
 --- Low level API
@@ -116,20 +114,11 @@ function Timetag.get_timestamp(tbl)
   return seconds + fractions
 end
 
---- Validate a Timetag table.
---
--- @param tbl The table with the Timetag contents
--- @return True if table is valid, false and error message if invalid.
--- @usage Timetag.tbl_validate({seconds = 0, fractions = 0})
+--- Validate a table to be used as a Timetag.
+-- @param tbl The table with the Timetag content.
 function Timetag.tbl_validate(tbl)
-  if tbl and not tbl.seconds then
-    return false, 'missing field "seconds"'
-  end
-  if tbl and not tbl.fractions then
-    print('missing field "fractions"')
-    return false, 'missing field "seconds"'
-  end
-  return tbl and true or false, 'missing table input'
+  assert(tbl.seconds, 'Missing field "seconds"') 
+  assert(tbl.fractions, 'Missing field "fractions"')
 end
 
 --- Pack an OSC Timetag.
@@ -143,10 +132,7 @@ end
 -- local tt = {seconds = os.time(), fractions = 0}
 -- local data = Timetag.pack(tt)
 function Timetag.pack(tbl)
-  local ok, err = Timetag.tbl_validate(tbl)
-  if not ok then
-    error(err)
-  end
+  Timetag.tbl_validate(tbl)
   local data = {}
   data[#data + 1] = _pack('>I4', tbl.seconds)
   data[#data + 1] = _pack('>I4', tbl.fractions)
