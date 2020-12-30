@@ -74,9 +74,7 @@ function Bundle.new(...)
   local args = {...}
   local content = {}
   if #args >= 1 then
-    if type(args[1]) == 'number' then
-      content.timetag = args[1]
-    end
+    content.timetag = args[1].content
     for index = 2, #args do
       content[#content + 1] = args[index].content
     end
@@ -86,20 +84,17 @@ end
 
 --- Validate a table that can be used as an OSC bundle.
 -- @param tbl The table to validate.
--- @return True if table is valid or false.
 function Bundle.tbl_validate(tbl)
-  return tbl.timetag and true or false
+  assert(type(tbl.timetag) == 'table', 'Missing OSC Timetag.')
 end
 
---- Validate a table can be used as an OSC bundle.
+--- Validate a byte string that can be unpacked to an OSC bundle.
 -- @param data The byte string to validate.
--- @return true or error.
 function Bundle.bytes_validate(data)
   local _, s, index = Types.unpack('s', data, 1)
-  assert(s == '#bundle', 'missing bundle marker')
+  assert(s == '#bundle', 'Missing bundle marker')
   local ok = Types.unpack('t', data, index)
-  assert(ok, 'missing bundle timetag')
-  return true
+  assert(ok, 'Missing bundle timetag')
 end
 
 --- Pack an OSC bundle.
@@ -110,9 +105,7 @@ end
 -- @param tbl The content to pack.
 -- @return OSC data packet (byte string).
 function Bundle.pack(tbl)
-  if not Bundle.tbl_validate(tbl) then
-    error('Invalid table input.')
-  end
+  Bundle.tbl_validate(tbl)
   local packet = {}
   return _pack(tbl, packet)
 end
