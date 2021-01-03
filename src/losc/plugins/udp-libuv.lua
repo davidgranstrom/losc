@@ -1,3 +1,11 @@
+--------------------------------------------
+-- UDP client/server implemented with libuv.
+--
+-- @module losc.plugins.udp-libuv
+-- @author David Granström
+-- @license MIT
+-- @copyright David Granström 2021
+
 local uv = require'luv'
 local Timetag = require'losc.timetag'
 

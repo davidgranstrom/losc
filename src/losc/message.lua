@@ -142,6 +142,7 @@ end
 
 --- Validate a binary string to see if it is a valid OSC message.
 -- @param bytes The byte string to validate.
+-- @param[opt] offset Byte offset.
 -- @return true or error.
 function Message.bytes_validate(bytes, offset)
   local ok, value = Types.unpack('s', bytes, offset)
