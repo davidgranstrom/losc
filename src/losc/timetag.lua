@@ -47,16 +47,26 @@ end
 
 --- Create a new Timetag.
 --
--- @param seconds Seconds since January 1st 1900 in the UTC timezone.
--- @param fractions Fractions expressed as 1/2^32 of a second.
+-- @param[opt] tbl Table with timetag content.
+-- @param[opt] seconds Seconds since January 1st 1900 in the UTC timezone.
+-- @param[opt] fractions Fractions expressed as 1/2^32 of a second.
 --
--- If both arguments is nil a timetag with special value of "immediate" will be returned.
-function Timetag.new(seconds, fractions)
+-- If there are no arguments a timetag with special value of "immediate" will be returned.
+function Timetag.new(...)
   local self = setmetatable({}, Timetag)
-  self.content = {}
+  local args = {...}
   -- 0x0000000000000001 equals "now", so this is the default.
-  self.content.seconds = seconds or 0
-  self.content.fractions = fractions or 1
+  self.content = {seconds = 0, fractions = 1}
+  if #args >= 1 then
+    if type(args[1]) == 'table' then
+      self.content = args[1]
+    elseif type(args[1]) == 'number' and not args[2] then
+      self.content.seconds = args[1]
+    elseif type(args[1]) == 'number' and type(args[2]) == 'number' then
+      self.content.seconds = args[1]
+      self.content.fractions = args[2]
+    end
+  end
   return self
 end
 
@@ -93,7 +103,7 @@ function Timetag.new_from_bytes(data)
     error('Can not create Timetag from empty data.')
   end
   local tt = Timetag.unpack(data)
-  return Timetag.new(tt.seconds or 0, tt.fractions or 1)
+  return Timetag.new(tt)
 end
 
 --- Get the timetag value with microsecond precision.
