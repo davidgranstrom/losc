@@ -10,7 +10,6 @@ local uv = require'luv'
 local Timetag = require'losc.timetag'
 local Pattern = require'losc.pattern'
 
-local unpack = unpack or table.unpack
 local errors = {
   not_running = 'UDP server not running.'
 }
@@ -18,12 +17,12 @@ local errors = {
 local M = {}
 M.__index = M
 
-function M:now()
+function M.now()
   local s, m = uv.gettimeofday()
   return Timetag.new_from_usec(s, m)
 end
 
-function M:schedule(timestamp, handler)
+function M.schedule(timestamp, handler)
   local timer = uv.new_timer()
   timestamp = math.max(0, timestamp)
   timer:start(timestamp / 1e3, 0, function()

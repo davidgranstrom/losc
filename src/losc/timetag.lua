@@ -127,7 +127,7 @@ end
 --- Validate a table to be used as a Timetag.
 -- @param tbl The table with the Timetag content.
 function Timetag.tbl_validate(tbl)
-  assert(tbl.seconds, 'Missing field "seconds"') 
+  assert(tbl.seconds, 'Missing field "seconds"')
   assert(tbl.fractions, 'Missing field "fractions"')
 end
 

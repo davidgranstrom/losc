@@ -7,14 +7,13 @@
 -- @copyright David Granström 2021
 
 local Packet = require'losc.packet'
-local Message = require'losc.message'
 local Timetag = require'losc.timetag'
 
 local unpack = unpack or table.unpack
 
 local Pattern = {}
 
-local function timestamp(bundle)
+local function get_timestamp(bundle)
   return Timetag.get_timestamp(bundle)
 end
 
@@ -43,14 +42,14 @@ end
 
 local function dispatch(packet, plugin)
   if Packet.is_bundle(packet) then
-    for _, item in ipairs(packet) do
+    for _, item in ipairs(packet) do -- luacheck: ignore
       if Packet.is_bundle(item) then
-        if timestamp(item.timetag) < timestamp(packet.timetag) then
+        if get_timestamp(item.timetag) < get_timestamp(packet.timetag) then
           error('Bundle timestamp is older than timestamp of enclosing bundle')
         end
         return dispatch(item, plugin)
       else
-        return invoke(item, timestamp(packet.timetag), plugin)
+        return invoke(item, get_timestamp(packet.timetag), plugin)
       end
     end
   else
