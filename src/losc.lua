@@ -14,6 +14,7 @@ local Timetag = require'losc.timetag'
 
 local losc = {}
 losc.__index = losc
+losc.handlers = {}
 
 --- Create a new Message.
 --
@@ -33,9 +34,15 @@ end
 -- @return Bundle object.
 -- @see losc.bundle
 -- @usage local bundle = losc.bundle_new()
--- @usage local bundle = losc.bundle_new(Timetag.new())
--- @usage local bundle = losc.bundle_new(Timetag.new_from_usec(os.time(), 0), osc_msg, osc_msg2)
--- @usage local bundle = losc.bundle_new(Timetag.new_from_usec(os.time(), 0), osc_msg, other_bundle)
+-- @usage
+-- local tt = Timetag.new()
+-- local bundle = losc.bundle_new(tt)
+-- @usage
+-- local tt = Timetag.new_from_usec(os.time(), 0)
+-- local bundle = losc.bundle_new(tt, osc_msg, osc_msg2)
+-- @usage
+-- local tt = Timetag.new_from_usec(os.time(), 0)
+-- local bundle = losc.bundle_new(tt, osc_msg, other_bundle)
 function losc.bundle_new(...)
   return Bundle.new(...)
 end
@@ -44,6 +51,7 @@ end
 -- @param plugin The plugin to use.
 function losc:use(plugin)
   self.plugin = plugin
+  self.plugin.handlers = self.handlers
 end
 
 --- Get a OSC timetag with the current timestamp.
@@ -60,7 +68,7 @@ function losc:open(...)
   if not self.plugin then
     error('"open" must be implemented by a plugin.')
   end
-  self.plugin:start(...)
+  self.plugin:open(...)
 end
 
 --- Closes an OSC server.
@@ -68,7 +76,7 @@ function losc:close(...)
   if not self.plugin then
     error('"close" must be implemented by a plugin.')
   end
-  self.plugin:stop(...)
+  self.plugin:close(...)
 end
 
 --- Send an OSC packet.
@@ -80,19 +88,13 @@ function losc:send(...)
 end
 
 --- Add an OSC method.
-function losc:add_method(pattern, cb)
-  if not self.plugin then
-    error('"add_method" must be implemented by a plugin.')
-  end
-  self.plugin.methods[pattern] = cb
+function losc:add_handler(pattern, cb)
+  self.handlers[pattern] = cb
 end
 
 --- Remove an OSC method.
-function losc:remove_method(pattern)
-  if not self.plugin then
-    error('"remove_method" must be implemented by a plugin.')
-  end
-  self.plugin.methods[pattern] = nil
+function losc:remove_handler(pattern)
+  self.handlers[pattern] = nil
 end
 
 return losc

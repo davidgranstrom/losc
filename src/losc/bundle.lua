@@ -24,7 +24,7 @@ local function _pack(bndl, packet)
       if Timetag.get_timestamp(item.timetag) >= Timetag.get_timestamp(bndl.timetag) then
         return _pack(item, packet)
       end
-      error('nested bundle requires timetag greater than enclosing bundle.')
+      error('Nested bundle requires timetag greater than enclosing bundle.')
     end
     local message = Message.pack(item)
     packet[#packet + 1] = Types.pack.i(#message)
