@@ -19,7 +19,7 @@ M.__index = M
 
 function M.now()
   local s, m = uv.gettimeofday()
-  return Timetag.new_from_usec(s, m)
+  return Timetag.new(s, m)
 end
 
 function M.schedule(timestamp, handler)

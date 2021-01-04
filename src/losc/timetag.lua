@@ -21,15 +21,13 @@ local Timetag = {}
 local NTP_SEC_OFFSET = 2208988800
 -- 2^32
 local TWO_POW_32 = 4294967296
--- 2^32 / 1000000
-local USEC_TWO_POW_32 = 4294.967296
 
 local function tt_add(timetag, seconds)
   local sec = math.floor(seconds)
   local frac = math.floor(TWO_POW_32 * (seconds - sec) + 0.5)
   sec = sec + timetag.content.seconds
   frac = frac + timetag.content.fractions
-  return Timetag.new(sec, frac)
+  return Timetag.new_raw(sec, frac)
 end
 
 Timetag.__index = Timetag
@@ -52,7 +50,7 @@ end
 -- @param[opt] fractions Fractions expressed as 1/2^32 of a second.
 --
 -- If there are no arguments a timetag with special value of "immediate" will be returned.
-function Timetag.new(...)
+function Timetag.new_raw(...)
   local self = setmetatable({}, Timetag)
   local args = {...}
   -- 0x0000000000000001 equals "now", so this is the default.
@@ -78,19 +76,21 @@ end
 -- Given nil arguments will return a timetag with special value "immediate".
 --
 -- @param[opt] seconds Timestamp seconds.
--- @param[opt] microseconds Timestamp fractions.
--- @usage local tt = Timetag.new_from_usec() -- immediate
--- @usage local tt = Timetag.new_from_usec(time.now())
--- @usage local tt = Timetag.new_from_usec(tv.sec, tv.usec)
--- @see Timetag.new
-function Timetag.new_from_usec(seconds, microseconds)
-  if not seconds and not microseconds then
-    return Timetag.new()
+-- @param[opt] fractions Timestamp fractions.
+-- @param[opt] precision The fraction precision. default 1000
+-- @usage local tt = Timetag.new() -- immediate
+-- @usage local tt = Timetag.new(time.now())
+-- @usage local tt = Timetag.new(tv.sec, tv.usec)
+-- @see Timetag.new_raw
+function Timetag.new(seconds, fractions, precision)
+  precision = precision or 1000
+  if not seconds and not fractions then
+    return Timetag.new_raw()
   end
   local secs, frac
   secs = (seconds or 0) + NTP_SEC_OFFSET
-  frac = math.floor((microseconds or 0) * USEC_TWO_POW_32 + 0.5)
-  return Timetag.new(secs, frac)
+  frac = math.floor((fractions or 0) * (TWO_POW_32 / precision) + 0.5)
+  return Timetag.new_raw(secs, frac)
 end
 
 --- Create a new OSC Timetag from binary data.
@@ -103,13 +103,13 @@ function Timetag.new_from_bytes(data)
     error('Can not create Timetag from empty data.')
   end
   local tt = Timetag.unpack(data)
-  return Timetag.new(tt)
+  return Timetag.new_raw(tt)
 end
 
 --- Get the timetag value with microsecond precision.
 -- @return Timetag value in microsecond.
-function Timetag:timestamp()
-  return Timetag.get_timestamp(self.content)
+function Timetag:timestamp(precision)
+  return Timetag.get_timestamp(self.content, precision)
 end
 
 --- Low level API
@@ -117,10 +117,12 @@ end
 
 --- Get the timetag value with microsecond precision.
 -- @param tbl Table with seconds and fractions.
+-- @param[opt] precision The fraction precision. default 1000
 -- @return Timetag value in microseconds.
-function Timetag.get_timestamp(tbl)
-  local seconds = 1000000 * math.max(0, tbl.seconds - NTP_SEC_OFFSET)
-  local fractions = math.floor((tbl.fractions / USEC_TWO_POW_32) + 0.5)
+function Timetag.get_timestamp(tbl, precision)
+  precision = precision or 1000
+  local seconds = precision * math.max(0, tbl.seconds - NTP_SEC_OFFSET)
+  local fractions = math.floor((tbl.fractions / (TWO_POW_32 / precision)) + 0.5)
   return seconds + fractions
 end
 

@@ -35,13 +35,13 @@ end
 -- @see losc.bundle
 -- @usage local bundle = losc.bundle_new()
 -- @usage
--- local tt = Timetag.new()
+-- local tt = Timetag.new_raw()
 -- local bundle = losc.bundle_new(tt)
 -- @usage
--- local tt = Timetag.new_from_usec(os.time(), 0)
+-- local tt = Timetag.new(os.time(), 0)
 -- local bundle = losc.bundle_new(tt, osc_msg, osc_msg2)
 -- @usage
--- local tt = Timetag.new_from_usec(os.time(), 0)
+-- local tt = Timetag.new(os.time(), 0)
 -- local bundle = losc.bundle_new(tt, osc_msg, other_bundle)
 function losc.bundle_new(...)
   return Bundle.new(...)
@@ -60,7 +60,7 @@ function losc:now()
   if self.plugin.now then
     return self.plugin:now()
   end
-  return Timetag.new_from_usec(os.time(), 0)
+  return Timetag.new(os.time(), 0)
 end
 
 --- Opens an OSC server.
