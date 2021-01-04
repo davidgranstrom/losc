@@ -42,18 +42,18 @@ end
 
 local function dispatch(packet, plugin)
   if Packet.is_bundle(packet) then
-    for _, item in ipairs(packet) do -- luacheck: ignore
+    for _, item in ipairs(packet) do
       if Packet.is_bundle(item) then
         if get_timestamp(item.timetag) < get_timestamp(packet.timetag) then
           error('Bundle timestamp is older than timestamp of enclosing bundle')
         end
         return dispatch(item, plugin)
       else
-        return invoke(item, get_timestamp(packet.timetag), plugin)
+        invoke(item, get_timestamp(packet.timetag), plugin)
       end
     end
   else
-    return invoke(packet, 0, plugin)
+    invoke(packet, 0, plugin)
   end
 end
 
@@ -62,7 +62,7 @@ end
 -- @param plugin A plugin.
 function Pattern.dispatch(data, plugin)
   local packet = Packet.unpack(data)
-  return dispatch(packet, plugin)
+  dispatch(packet, plugin)
 end
 
 return Pattern
