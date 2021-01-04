@@ -16,16 +16,18 @@ local errors = {
 
 local M = {}
 M.__index = M
+--- Precision for bundle scheduling.
+M.precision = 1000
 
 function M.now()
   local s, m = uv.gettimeofday()
-  return Timetag.new(s, m)
+  return Timetag.new(s, m / M.precision)
 end
 
 function M.schedule(timestamp, handler)
   local timer = uv.new_timer()
   timestamp = math.max(0, timestamp)
-  timer:start(timestamp / 1e3, 0, function()
+  timer:start(timestamp, 0, function()
     handler()
   end)
 end

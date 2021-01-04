@@ -27,12 +27,12 @@ end
 local function invoke(message, timestamp, plugin)
   local address = message.address
   local pattern = pattern_to_regex(address)
-  local now = plugin:now():timestamp()
+  local now = plugin:now():timestamp(plugin.precision)
   if plugin.handlers then
     for key, handler in pairs(plugin.handlers) do
       local match = key:match(pattern)
       if match then
-        plugin:schedule(timestamp - now, function()
+        plugin.schedule(timestamp - now, function()
           handler(unpack(message))
         end)
       end
@@ -49,7 +49,7 @@ local function dispatch(packet, plugin)
         end
         return dispatch(item, plugin)
       else
-        invoke(item, get_timestamp(packet.timetag), plugin)
+        invoke(item, get_timestamp(packet.timetag, plugin.precision), plugin)
       end
     end
   else
