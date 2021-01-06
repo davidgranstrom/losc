@@ -26,11 +26,12 @@ end
 
 function M.schedule(timestamp, handler)
   timestamp = math.max(0, timestamp)
-  local co = coroutine.create(function()
-    socket.sleep(timestamp)
-    handler()
-  end)
-  co.resume()
+  handler()
+  -- local co = coroutine.create(function()
+  --   socket.sleep(timestamp)
+  --   coroutine.yield(handler())
+  -- end)
+  -- co.resume()
 end
 
 function M:open(host, port)
@@ -44,11 +45,14 @@ function M:open(host, port)
     port = self.options.recvPort
   end
   self.handle = assert(socket.udp(), 'Could not create UDP handle')
-  self.handle:setpeername(host, port)
+  self.handle:setsockname(host, port)
   while true do
-    local data = self.handle:receive(-1) -- blocking
+    local data = self.handle:receive()
     if data then
-      Pattern.dispatch(data, self)
+      local ok, err = pcall(Pattern.dispatch, data, self)
+      if not ok then
+        print(err)
+      end
     end
   end
 end
