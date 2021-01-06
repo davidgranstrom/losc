@@ -19,32 +19,32 @@ losc.handlers = {}
 --- Create a new Message.
 --
 -- @param[opt] ... arguments.
--- @return Message object.
+-- @return status, message object or error.
 -- @see losc.message
--- @usage local message = losc.message_new()
--- @usage local message = losc.message_new('/address')
--- @usage local message = losc.message_new({ address = '/foo', types = 'iif', 1, 2, 3})
+-- @usage local ok, message = losc.message_new()
+-- @usage local ok, message = losc.message_new('/address')
+-- @usage local ok, message = losc.message_new({ address = '/foo', types = 'iif', 1, 2, 3})
 function losc.message_new(...)
-  return Message.new(...)
+  return pcall(Message.new, ...)
 end
 
 --- Create a new OSC bundle.
 --
 -- @param[opt] ... arguments.
--- @return Bundle object.
+-- @return status, bundle object or error.
 -- @see losc.bundle
 -- @usage local bundle = losc.bundle_new()
 -- @usage
 -- local tt = Timetag.new_raw()
--- local bundle = losc.bundle_new(tt)
+-- local ok, bundle = losc.bundle_new(tt)
 -- @usage
 -- local tt = Timetag.new(os.time(), 0)
--- local bundle = losc.bundle_new(tt, osc_msg, osc_msg2)
+-- local ok, bundle = losc.bundle_new(tt, osc_msg, osc_msg2)
 -- @usage
 -- local tt = Timetag.new(os.time(), 0)
--- local bundle = losc.bundle_new(tt, osc_msg, other_bundle)
+-- local ok, bundle = losc.bundle_new(tt, osc_msg, other_bundle)
 function losc.bundle_new(...)
-  return Bundle.new(...)
+  return pcall(Bundle.new, ...)
 end
 
 --- Specify a plugin.
@@ -64,30 +64,27 @@ function losc:now()
 end
 
 --- Opens an OSC server.
+-- @param[opt] ... Plugin specific arguments.
+-- @return status, plugin handle or error
 function losc:open(...)
-  if not self.plugin then
-    error('"open" must be implemented by a plugin.')
-  end
-  self.plugin:open(...)
+  return pcall(self.plugin.open, self.plugin, ...)
 end
 
 --- Closes an OSC server.
+-- @return status, nil or error
 function losc:close(...)
-  if not self.plugin then
-    error('"close" must be implemented by a plugin.')
-  end
-  self.plugin:close(...)
+  return pcall(self.plugin.close, self.plugin, ...)
 end
 
 --- Send an OSC packet.
+-- @param[opt] ... Plugin specific arguments.
+-- @return status, nil or error
 function losc:send(...)
-  if not self.plugin then
-    error('"send" must be implemented by a plugin.')
-  end
-  self.plugin:send(...)
+  return pcall(self.plugin.send, self.plugin, ...)
 end
 
 --- Add an OSC method.
+-- TODO: validate pattern
 function losc:add_handler(pattern, cb)
   self.handlers[pattern] = cb
 end

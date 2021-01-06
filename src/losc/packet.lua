@@ -21,9 +21,9 @@ end
 
 function Packet.pack(tbl)
   if Packet.is_bundle(tbl) then
-    return Bundle.pack(tbl)
+    return Bundle.pack(tbl.content)
   else
-    return Message.pack(tbl)
+    return Message.pack(tbl.content)
   end
 end
 
