@@ -25,7 +25,7 @@ function M.now()
 end
 
 function M.schedule(timestamp, handler)
-  timestamp = math.max(0, timestamp)
+  timestamp = math.max(0, timestamp) -- luacheck: ignore
   handler()
   -- local co = coroutine.create(function()
   --   socket.sleep(timestamp)

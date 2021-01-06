@@ -14,7 +14,7 @@ if not ok then
   return
 end
 
-function usage()
+local function usage()
   local str = ''
   str = str .. 'loscsend - Send an OSC message via UDP.\n'
   str = str .. '\nusage: loscsend ip port address [types [args]]'
@@ -47,9 +47,7 @@ for i, opt in ipairs(arg) do
   end
 end
 
-local ok, err
-local message
-ok, message = losc.message_new(address)
+local _, message = losc.message_new(address)
 if types then
   local index = 5
   for type in types:gmatch('.') do

@@ -9,8 +9,6 @@
 local Packet = require'losc.packet'
 local Timetag = require'losc.timetag'
 
-local unpack = unpack or table.unpack
-
 local Pattern = {}
 
 local function get_timestamp(bundle)
