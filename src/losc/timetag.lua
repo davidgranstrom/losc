@@ -112,6 +112,18 @@ function Timetag:timestamp(precision)
   return Timetag.get_timestamp(self.content, precision)
 end
 
+--- Get seconds.
+-- @return Timetag seconds.
+function Timetag:seconds()
+  return self.content.seconds
+end
+
+--- Get fractions.
+-- @return Timetag fractions.
+function Timetag:fractions()
+  return self.content.fractions
+end
+
 --- Low level API
 -- @section low-level-api
 
