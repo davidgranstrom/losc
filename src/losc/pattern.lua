@@ -17,23 +17,29 @@ local function get_timestamp(bundle)
   return Timetag.get_timestamp(bundle)
 end
 
-local function pattern_to_regex(address)
+local function address_to_regex(address)
   local pattern = address
   pattern = pattern:gsub('%[!', '%[^')
   pattern = pattern:gsub('%*', '.*')
+  pattern = pattern:gsub('%.', '%%.')
+  pattern = pattern:gsub('%?', '.')
   return pattern
 end
 
 local function invoke(message, timestamp, plugin)
   local address = message.address
-  local pattern = pattern_to_regex(address)
-  local now = plugin:now():timestamp(plugin.precision)
+  local pattern = address_to_regex(address)
+  local now = plugin:now()
   if plugin.handlers then
     for key, handler in pairs(plugin.handlers) do
-      local match = key:match(pattern)
-      if match then
-        plugin.schedule(timestamp - now, function()
-          handler(unpack(message))
+      local match = key:match(pattern) == key
+      if match or key == '/*' then
+        plugin.schedule(timestamp - now:timestamp(plugin.precision), function()
+          handler({
+            timestamp = now,
+            plugin = plugin,
+            message = message,
+          })
         end)
       end
     end
