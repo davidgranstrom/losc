@@ -6,32 +6,39 @@
 -- @license MIT
 -- @copyright David Granström 2021
 
+local inspect = require'inspect'
 local Packet = require'losc.packet'
 local Timetag = require'losc.timetag'
 
 local Pattern = {}
 
-local function get_timestamp(bundle)
-  return Timetag.get_timestamp(bundle)
-end
+local ts = Timetag.get_timestamp
 
-local function address_to_regex(address)
-  local pattern = address
-  pattern = pattern:gsub('%[!', '%[^')
-  pattern = pattern:gsub('%*', '.*')
-  pattern = pattern:gsub('%.', '%%.')
-  pattern = pattern:gsub('%?', '.')
-  return pattern
+-- TODO: refactor, should be done when attaching handler
+local function addr_to_pattern(str)
+  -- escape lua magic chars (order matters)
+  str = str:gsub('%%', '%%%%')
+  str = str:gsub('%.', '%%.')
+  str = str:gsub('%(', '%%(')
+  str = str:gsub('%)', '%%)')
+  str = str:gsub('%+', '%%+')
+  str = str:gsub('%$', '%%$')
+  -- convert osc wildcards to lua patterns
+  str = str:gsub('%*', '.*')
+  str = str:gsub('%?', '.')
+  str = str:gsub('%[!', '[^')
+  str = str:gsub('%]', ']+')
+  return str
 end
 
 local function invoke(message, timestamp, plugin)
   local address = message.address
-  local pattern = address_to_regex(address)
   local now = plugin:now()
   if plugin.handlers then
     for key, handler in pairs(plugin.handlers) do
-      local match = key:match(pattern) == key
-      if match or key == '/*' then
+      local pattern = addr_to_pattern(key)
+      local match = address:match(pattern) == address
+      if match then
         plugin.schedule(timestamp - now:timestamp(plugin.precision), function()
           handler({
             timestamp = now,
@@ -48,12 +55,12 @@ local function dispatch(packet, plugin)
   if Packet.is_bundle(packet) then
     for _, item in ipairs(packet) do
       if Packet.is_bundle(item) then
-        if get_timestamp(item.timetag) < get_timestamp(packet.timetag) then
+        if ts(item.timetag, plugin.precision) < ts(packet.timetag, plugin.precision) then
           error('Bundle timestamp is older than timestamp of enclosing bundle')
         end
         return dispatch(item, plugin)
       else
-        invoke(item, get_timestamp(packet.timetag, plugin.precision), plugin)
+        invoke(item, ts(packet.timetag, plugin.precision), plugin)
       end
     end
   else
