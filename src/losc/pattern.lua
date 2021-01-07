@@ -14,33 +14,31 @@ local Pattern = {}
 
 local ts = Timetag.get_timestamp
 
--- TODO: refactor, should be done when attaching handler
-local function addr_to_pattern(str)
+function Pattern.escape(pattern)
   -- escape lua magic chars (order matters)
-  str = str:gsub('%%', '%%%%')
-  str = str:gsub('%.', '%%.')
-  str = str:gsub('%(', '%%(')
-  str = str:gsub('%)', '%%)')
-  str = str:gsub('%+', '%%+')
-  str = str:gsub('%$', '%%$')
+  pattern = pattern:gsub('%%', '%%%%')
+  pattern = pattern:gsub('%.', '%%.')
+  pattern = pattern:gsub('%(', '%%(')
+  pattern = pattern:gsub('%)', '%%)')
+  pattern = pattern:gsub('%+', '%%+')
+  pattern = pattern:gsub('%$', '%%$')
   -- convert osc wildcards to lua patterns
-  str = str:gsub('%*', '.*')
-  str = str:gsub('%?', '.')
-  str = str:gsub('%[!', '[^')
-  str = str:gsub('%]', ']+')
-  return str
+  pattern = pattern:gsub('%*', '.*')
+  pattern = pattern:gsub('%?', '.')
+  pattern = pattern:gsub('%[!', '[^')
+  pattern = pattern:gsub('%]', ']+')
+  return pattern
 end
 
 local function invoke(message, timestamp, plugin)
   local address = message.address
   local now = plugin:now()
   if plugin.handlers then
-    for key, handler in pairs(plugin.handlers) do
-      local pattern = addr_to_pattern(key)
-      local match = address:match(pattern) == address
+    for _, handler in pairs(plugin.handlers) do
+      local match = address:match(handler.pattern) == address
       if match then
         plugin.schedule(timestamp - now:timestamp(plugin.precision), function()
-          handler({
+          handler.callback({
             timestamp = now,
             plugin = plugin,
             message = message,

@@ -11,6 +11,7 @@
 local Message = require'losc.message'
 local Bundle = require'losc.bundle'
 local Timetag = require'losc.timetag'
+local Pattern = require'losc.pattern'
 
 local losc = {}
 losc.__index = losc
@@ -83,15 +84,35 @@ function losc:send(...)
   return pcall(self.plugin.send, self.plugin, ...)
 end
 
---- Add an OSC method.
--- TODO: validate pattern
-function losc:add_handler(pattern, cb)
-  self.handlers[pattern] = cb
+--- Add an OSC handler.
+-- @param pattern The pattern to match on.
+-- @param func The callback to run if a message is received.
+-- The callback will get a single argument `data` from where the messsage can be retrived.
+function losc:add_handler(pattern, func)
+  self.handlers[pattern] = {
+    pattern = Pattern.escape(pattern),
+    callback = func,
+  }
+  if self.plugin then
+    self.plugin.handlers = self.handlers
+  end
 end
 
---- Remove an OSC method.
+--- Remove an OSC handler.
+-- @param pattern The pattern for the handler to remove.
 function losc:remove_handler(pattern)
   self.handlers[pattern] = nil
+  if self.plugin then
+    self.plugin.handlers[pattern] = nil
+  end
+end
+
+--- Remove all registered OSC handlers.
+function losc:remove_all()
+  self.handlers = {}
+  if self.plugin then
+    self.plugin.handlers = {}
+  end
 end
 
 return losc
