@@ -6,7 +6,6 @@
 -- @license MIT
 -- @copyright David Granström 2021
 
-local inspect = require'inspect'
 local Packet = require'losc.packet'
 local Timetag = require'losc.timetag'
 
