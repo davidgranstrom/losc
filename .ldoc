@@ -1,0 +1,6 @@
+project = 'losc'
+title = 'losc reference'
+file = 'src'
+dir = 'docs'
+examples = 'examples'
+format = 'markdown'
