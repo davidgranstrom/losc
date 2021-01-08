@@ -1,0 +1,465 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>losc reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>losc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#High_level_API">High level API </a></li>
+<li><a href="#Low_level_API">Low level API </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/losc.html">losc</a></li>
+  <li><a href="../modules/losc.bundle.html">losc.bundle</a></li>
+  <li><strong>losc.message</strong></li>
+  <li><a href="../modules/losc.packet.html">losc.packet</a></li>
+  <li><a href="../modules/losc.pattern.html">losc.pattern</a></li>
+  <li><a href="../modules/losc.plugins.udp-libuv.html">losc.plugins.udp-libuv</a></li>
+  <li><a href="../modules/losc.plugins.udp-socket.html">losc.plugins.udp-socket</a></li>
+  <li><a href="../modules/losc.serializer.html">losc.serializer</a></li>
+  <li><a href="../modules/losc.timetag.html">losc.timetag</a></li>
+  <li><a href="../modules/losc.types.html">losc.types</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/client.lua.html">client.lua</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>losc.message</code></h1>
+<p>OSC Message.</p>
+<p> An OSC message consists of an OSC Address Pattern followed by an
+ OSC Type Tag String followed by zero or more OSC Arguments.</p>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>Copyright</strong>: David Granström 2020</li>
+        <li><strong>License</strong>: MIT</li>
+        <li><strong>Author</strong>: David Granström</li>
+    </ul>
+
+
+<h2><a href="#High_level_API">High level API </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Message.new">Message.new ([m])</a></td>
+	<td class="summary">Create a new OSC message.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Message.new_from_bytes">Message.new_from_bytes (data)</a></td>
+	<td class="summary">Create a new OSC message from binary data.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Message:append">Message:append (type[, item])</a></td>
+	<td class="summary">Append arguments to the message.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Message:is_valid">Message:is_valid ()</a></td>
+	<td class="summary">Check that the message is valid.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Message:get_types">Message:get_types ()</a></td>
+	<td class="summary">Get the OSC type string.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Message:iter">Message:iter ()</a></td>
+	<td class="summary">Message iterator.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Message:get_address">Message:get_address ()</a></td>
+	<td class="summary">Get the OSC address.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Message:set_address">Message:set_address (str)</a></td>
+	<td class="summary">Set the OSC address.</td>
+	</tr>
+</table>
+<h2><a href="#Low_level_API">Low level API </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Message.tbl_validate">Message.tbl_validate (tbl)</a></td>
+	<td class="summary">Validate a table to be used as a message constructor.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Message.bytes_validate">Message.bytes_validate (bytes[, offset])</a></td>
+	<td class="summary">Validate a binary string to see if it is a valid OSC message.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Message.pack">Message.pack (tbl)</a></td>
+	<td class="summary">Pack a table to a byte string.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Message.unpack">Message.unpack (data, offset)</a></td>
+	<td class="summary">Unpack OSC message byte string.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="High_level_API"></a>High level API </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "Message.new"></a>
+    <strong>Message.new ([m])</strong>
+    </dt>
+    <dd>
+    Create a new OSC message.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">m</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         OSC address or table constructor.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        An OSC message object.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/losc.types.html#">losc.types</a>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example"><span class="keyword">local</span> msg = Message.new()</pre></li>
+        <li><pre class="example"><span class="keyword">local</span> msg = Message.new(<span class="string">'/some/addr'</span>)</pre></li>
+        <li><pre class="example"><span class="keyword">local</span> tbl = {address = <span class="string">'/some/addr'</span>, types = <span class="string">'ifs'</span>, <span class="number">1</span>, <span class="number">2.0</span>, <span class="string">'hi'</span>}
+<span class="keyword">local</span> msg = Message.new(tbl)</pre></li>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "Message.new_from_bytes"></a>
+    <strong>Message.new_from_bytes (data)</strong>
+    </dt>
+    <dd>
+    Create a new OSC message from binary data.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span>
+         Binary string of OSC data.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        An OSC message object.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> message = Message.new_from_bytes(data)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "Message:append"></a>
+    <strong>Message:append (type[, item])</strong>
+    </dt>
+    <dd>
+    Append arguments to the message.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">type</span>
+         OSC type string.
+        </li>
+        <li><span class="parameter">item</span>
+         Item to append.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/losc.types.html#">losc.types</a>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example">message:append(<span class="string">'i'</span>, <span class="number">123</span>)</pre></li>
+        <li><pre class="example">message:append(<span class="string">'T'</span>)</pre></li>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "Message:is_valid"></a>
+    <strong>Message:is_valid ()</strong>
+    </dt>
+    <dd>
+    Check that the message is valid.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        true or error if table is missing keys.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Message:get_types"></a>
+    <strong>Message:get_types ()</strong>
+    </dt>
+    <dd>
+    Get the OSC type string.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        OSC type string or empty string.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Message:iter"></a>
+    <strong>Message:iter ()</strong>
+    </dt>
+    <dd>
+    Message iterator. </p>
+
+<p> Iterate over message types and arguments.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        iterator using index, type, argument.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">for</span> i, <span class="global">type</span>, arg <span class="keyword">in</span> message:iter() <span class="keyword">do</span>
+  <span class="global">print</span>(i, <span class="global">type</span>, arg)
+<span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "Message:get_address"></a>
+    <strong>Message:get_address ()</strong>
+    </dt>
+    <dd>
+    Get the OSC address.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        The OSC address.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Message:set_address"></a>
+    <strong>Message:set_address (str)</strong>
+    </dt>
+    <dd>
+    Set the OSC address.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+         The address to set.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Low_level_API"></a>Low level API </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "Message.tbl_validate"></a>
+    <strong>Message.tbl_validate (tbl)</strong>
+    </dt>
+    <dd>
+    Validate a table to be used as a message constructor.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tbl</span>
+         The table to create the message with.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        true or error if table is missing keys.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Message.bytes_validate"></a>
+    <strong>Message.bytes_validate (bytes[, offset])</strong>
+    </dt>
+    <dd>
+    Validate a binary string to see if it is a valid OSC message.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">bytes</span>
+         The byte string to validate.
+        </li>
+        <li><span class="parameter">offset</span>
+         Byte offset.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        true or error.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Message.pack"></a>
+    <strong>Message.pack (tbl)</strong>
+    </dt>
+    <dd>
+    Pack a table to a byte string. </p>
+
+<p> The returned object is suitable for sending via a transport layer such as
+ UDP or TCP.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tbl</span>
+         The content to pack.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        OSC data packet (byte string).
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Message.unpack"></a>
+    <strong>Message.unpack (data, offset)</strong>
+    </dt>
+    <dd>
+    Unpack OSC message byte string.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span>
+         The data to unpack.
+        </li>
+        <li><span class="parameter">offset</span>
+         The initial offset into data.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        table with the content of the OSC message.
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-01-08 13:25:06 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

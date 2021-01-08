@@ -1,0 +1,421 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>losc reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>losc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#High_level_API">High level API </a></li>
+<li><a href="#Low_level_API">Low level API </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/losc.html">losc</a></li>
+  <li><a href="../modules/losc.bundle.html">losc.bundle</a></li>
+  <li><a href="../modules/losc.message.html">losc.message</a></li>
+  <li><a href="../modules/losc.packet.html">losc.packet</a></li>
+  <li><a href="../modules/losc.pattern.html">losc.pattern</a></li>
+  <li><a href="../modules/losc.plugins.udp-libuv.html">losc.plugins.udp-libuv</a></li>
+  <li><a href="../modules/losc.plugins.udp-socket.html">losc.plugins.udp-socket</a></li>
+  <li><a href="../modules/losc.serializer.html">losc.serializer</a></li>
+  <li><strong>losc.timetag</strong></li>
+  <li><a href="../modules/losc.types.html">losc.types</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/client.lua.html">client.lua</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>losc.timetag</code></h1>
+<p>OSC Timetag.</p>
+<p> Time tags are represented by a 64 bit fixed point number. The first 32 bits
+ specify the number of seconds since midnight on January 1, 1900, and the
+ last 32 bits specify fractional parts of a second to a precision of about
+ 200 picoseconds. This is the representation used by Internet NTP timestamps.</p>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>Copyright</strong>: David Granström 2020</li>
+        <li><strong>License</strong>: MIT</li>
+        <li><strong>Author</strong>: David Granström</li>
+    </ul>
+
+
+<h2><a href="#High_level_API">High level API </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Timetag.new">Timetag.new ([seconds[, fractions[, precision]]])</a></td>
+	<td class="summary">New using a seconds and microseconds.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Timetag.new_from_bytes">Timetag.new_from_bytes (data)</a></td>
+	<td class="summary">Create a new OSC Timetag from binary data.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Timetag:timestamp">Timetag:timestamp (precision)</a></td>
+	<td class="summary">Get the timetag value with microsecond precision.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Timetag:seconds">Timetag:seconds ()</a></td>
+	<td class="summary">Get seconds.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Timetag:fractions">Timetag:fractions ()</a></td>
+	<td class="summary">Get fractions.</td>
+	</tr>
+</table>
+<h2><a href="#Low_level_API">Low level API </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Timetag.new_raw">Timetag.new_raw ([tbl[, seconds[, fractions]]])</a></td>
+	<td class="summary">Create a new Timetag.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Timetag.get_timestamp">Timetag.get_timestamp (tbl[, precision])</a></td>
+	<td class="summary">Get the timetag value with microsecond precision.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Timetag.tbl_validate">Timetag.tbl_validate (tbl)</a></td>
+	<td class="summary">Validate a table to be used as a Timetag.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Timetag.pack">Timetag.pack (tbl)</a></td>
+	<td class="summary">Pack an OSC Timetag.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Timetag.unpack">Timetag.unpack (data, offset)</a></td>
+	<td class="summary">Unpack an OSC Timetag.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="High_level_API"></a>High level API </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "Timetag.new"></a>
+    <strong>Timetag.new ([seconds[, fractions[, precision]]])</strong>
+    </dt>
+    <dd>
+    New using a seconds and microseconds. </p>
+
+<p> Given nil arguments will return a timetag with special value "immediate".
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">seconds</span>
+         Timestamp seconds.
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">fractions</span>
+         Timestamp fractions.
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">precision</span>
+         The fraction precision. default 1000
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/losc.timetag.html#Timetag.new_raw">Timetag.new_raw</a>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example"><span class="keyword">local</span> tt = Timetag.new() <span class="comment">-- immediate</span></pre></li>
+        <li><pre class="example"><span class="keyword">local</span> tt = Timetag.new(time.now())</pre></li>
+        <li><pre class="example"><span class="keyword">local</span> tt = Timetag.new(tv.sec, tv.usec)</pre></li>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "Timetag.new_from_bytes"></a>
+    <strong>Timetag.new_from_bytes (data)</strong>
+    </dt>
+    <dd>
+    Create a new OSC Timetag from binary data.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span>
+         Binary string of OSC data.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        A Timetag object.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> tt = Timetag.new_from_bytes(data)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "Timetag:timestamp"></a>
+    <strong>Timetag:timestamp (precision)</strong>
+    </dt>
+    <dd>
+    Get the timetag value with microsecond precision.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">precision</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Timetag value in microsecond.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Timetag:seconds"></a>
+    <strong>Timetag:seconds ()</strong>
+    </dt>
+    <dd>
+    Get seconds.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Timetag seconds.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Timetag:fractions"></a>
+    <strong>Timetag:fractions ()</strong>
+    </dt>
+    <dd>
+    Get fractions.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Timetag fractions.
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Low_level_API"></a>Low level API </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "Timetag.new_raw"></a>
+    <strong>Timetag.new_raw ([tbl[, seconds[, fractions]]])</strong>
+    </dt>
+    <dd>
+    Create a new Timetag.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tbl</span>
+         Table with timetag content.
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">seconds</span>
+         Seconds since January 1st 1900 in the UTC timezone.
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">fractions</span>
+         Fractions expressed as 1/2^32 of a second.</p>
+
+<p> If there are no arguments a timetag with special value of "immediate" will be returned.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Timetag.get_timestamp"></a>
+    <strong>Timetag.get_timestamp (tbl[, precision])</strong>
+    </dt>
+    <dd>
+    Get the timetag value with microsecond precision.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tbl</span>
+         Table with seconds and fractions.
+        </li>
+        <li><span class="parameter">precision</span>
+         The fraction precision. default 1000
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Timetag value in microseconds.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Timetag.tbl_validate"></a>
+    <strong>Timetag.tbl_validate (tbl)</strong>
+    </dt>
+    <dd>
+    Validate a table to be used as a Timetag.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tbl</span>
+         The table with the Timetag content.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Timetag.pack"></a>
+    <strong>Timetag.pack (tbl)</strong>
+    </dt>
+    <dd>
+    Pack an OSC Timetag. </p>
+
+<p> The returned object is suitable for sending via a transport layer such as
+ UDP or TCP.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tbl</span>
+         The timetag to pack.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        OSC data packet (byte string).
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> tt = {seconds = <span class="global">os</span>.time(), fractions = <span class="number">0</span>}
+<span class="keyword">local</span> data = Timetag.pack(tt)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "Timetag.unpack"></a>
+    <strong>Timetag.unpack (data, offset)</strong>
+    </dt>
+    <dd>
+    Unpack an OSC Timetag.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span>
+         The data to unpack.
+        </li>
+        <li><span class="parameter">offset</span>
+         The initial offset into data.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        First is a table with seconds and fractions, second is index of the bytes read + 1.
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-01-08 13:25:06 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

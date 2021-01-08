@@ -1,0 +1,714 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>losc reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>losc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Tables">Tables</a></li>
+<li><a href="#Fields">Fields</a></li>
+<li><a href="#Atomic_types">Atomic types </a></li>
+<li><a href="#Extended_types">Extended types </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/losc.html">losc</a></li>
+  <li><a href="../modules/losc.bundle.html">losc.bundle</a></li>
+  <li><a href="../modules/losc.message.html">losc.message</a></li>
+  <li><a href="../modules/losc.packet.html">losc.packet</a></li>
+  <li><a href="../modules/losc.pattern.html">losc.pattern</a></li>
+  <li><a href="../modules/losc.plugins.udp-libuv.html">losc.plugins.udp-libuv</a></li>
+  <li><a href="../modules/losc.plugins.udp-socket.html">losc.plugins.udp-socket</a></li>
+  <li><a href="../modules/losc.serializer.html">losc.serializer</a></li>
+  <li><a href="../modules/losc.timetag.html">losc.timetag</a></li>
+  <li><strong>losc.types</strong></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/client.lua.html">client.lua</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>losc.types</code></h1>
+<p>OSC Types.</p>
+<p> The size of every atomic data type in OSC is a multiple of 32 bits.</p>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>Copyright</strong>: David Granström 2020</li>
+        <li><strong>License</strong>: MIT</li>
+        <li><strong>Author</strong>: David Granström</li>
+    </ul>
+
+
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Types.pack">Types.pack</a></td>
+	<td class="summary">Type pack functions.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Types.unpack">Types.unpack</a></td>
+	<td class="summary">Type unpack functions.</td>
+	</tr>
+</table>
+<h2><a href="#Fields">Fields</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Types.pack_skip_types">Types.pack_skip_types</a></td>
+	<td class="summary">Types that only exists as type tag data (should not be packed).</td>
+	</tr>
+</table>
+<h2><a href="#Atomic_types">Atomic types </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Types.pack.i">Types.pack.i (value)</a></td>
+	<td class="summary">32-bit big-endian two's complement integer.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Types.unpack.i">Types.unpack.i (data[, offset])</a></td>
+	<td class="summary">32-bit big-endian two's complement integer.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Types.pack.f">Types.pack.f (value)</a></td>
+	<td class="summary">32-bit big-endian IEEE 754 floating point number.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Types.unpack.f">Types.unpack.f (data[, offset])</a></td>
+	<td class="summary">32-bit big-endian IEEE 754 floating point number.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Types.pack.s">Types.pack.s (value)</a></td>
+	<td class="summary">String (null terminated)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Types.unpack.s">Types.unpack.s (data[, offset])</a></td>
+	<td class="summary">String (null terminated)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Types.pack.b">Types.pack.b (value)</a></td>
+	<td class="summary">Blob (arbitrary binary data)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Types.unpack.b">Types.unpack.b (data[, offset])</a></td>
+	<td class="summary">Blob (arbitrary binary data)</td>
+	</tr>
+</table>
+<h2><a href="#Extended_types">Extended types </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Types.pack.h">Types.pack.h (value)</a></td>
+	<td class="summary">64 bit big-endian two's complement integer</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Types.unpack.h">Types.unpack.h (data[, offset])</a></td>
+	<td class="summary">64 bit big-endian two's complement integer</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Types.pack.t">Types.pack.t (value)</a></td>
+	<td class="summary">Timetag (64-bit integer divided into upper and lower part)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Types.unpack.t">Types.unpack.t (data[, offset])</a></td>
+	<td class="summary">Timetag (64-bit integer divided into upper and lower part)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Types.unpack.T">Types.unpack.T (_[, offset])</a></td>
+	<td class="summary">Boolean true.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Types.unpack.F">Types.unpack.F (_[, offset])</a></td>
+	<td class="summary">Boolean false.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Types.unpack.N">Types.unpack.N (_[, offset])</a></td>
+	<td class="summary">Nil.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Types.unpack.I">Types.unpack.I (_[, offset])</a></td>
+	<td class="summary">Infinitum.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Tables"></a>Tables</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "Types.pack"></a>
+    <strong>Types.pack</strong>
+    </dt>
+    <dd>
+    Type pack functions. </p>
+
+<p> Custom pack functions can be added to this table and standard functions can
+ be re-assigned if necessary.</p>
+
+<p> This table can be called to pack a value in protected mode (pcall).
+
+
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> ok, data = Types.pack(<span class="string">'s'</span>, <span class="string">'hello'</span>)
+<span class="keyword">if</span> ok <span class="keyword">then</span>
+  <span class="comment">-- do something with data.
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "Types.unpack"></a>
+    <strong>Types.unpack</strong>
+    </dt>
+    <dd>
+    Type unpack functions. </p>
+
+<p> Custom unpack functions can be added to this table and standard functions
+ can be re-assigned if necessary.</p>
+
+<p> This table can be called to unpack a value in protected mode (pcall).
+
+
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> ok, value, index = Types.<span class="global">unpack</span>(<span class="string">'s'</span>, data, <span class="number">1</span>)
+<span class="keyword">if</span> ok <span class="keyword">then</span>
+  <span class="comment">-- do something with value/index.
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Fields"></a>Fields</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "Types.pack_skip_types"></a>
+    <strong>Types.pack_skip_types</strong>
+    </dt>
+    <dd>
+    Types that only exists as type tag data (should not be packed).
+ Custom types can be appended to this string.
+ Default value: <code>TFNI</code>
+
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Atomic_types"></a>Atomic types </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "Types.pack.i"></a>
+    <strong>Types.pack.i (value)</strong>
+    </dt>
+    <dd>
+    32-bit big-endian two's complement integer.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+         The value to pack.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Binary string buffer.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Types.unpack.i"></a>
+    <strong>Types.unpack.i (data[, offset])</strong>
+    </dt>
+    <dd>
+    32-bit big-endian two's complement integer.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span>
+         The data to unpack.
+        </li>
+        <li><span class="parameter">offset</span>
+         Initial offset into data.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        value, index of the bytes read + 1.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Types.pack.f"></a>
+    <strong>Types.pack.f (value)</strong>
+    </dt>
+    <dd>
+    32-bit big-endian IEEE 754 floating point number.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+         The value to pack.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Binary string buffer.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Types.unpack.f"></a>
+    <strong>Types.unpack.f (data[, offset])</strong>
+    </dt>
+    <dd>
+    32-bit big-endian IEEE 754 floating point number.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span>
+         The data to unpack.
+        </li>
+        <li><span class="parameter">offset</span>
+         Initial offset into data.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        value, index of the bytes read + 1.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Types.pack.s"></a>
+    <strong>Types.pack.s (value)</strong>
+    </dt>
+    <dd>
+    String (null terminated)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+         The value to pack.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Binary string buffer.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Types.unpack.s"></a>
+    <strong>Types.unpack.s (data[, offset])</strong>
+    </dt>
+    <dd>
+    String (null terminated)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span>
+         The data to unpack.
+        </li>
+        <li><span class="parameter">offset</span>
+         Initial offset into data.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        value, index of the bytes read + 1.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Types.pack.b"></a>
+    <strong>Types.pack.b (value)</strong>
+    </dt>
+    <dd>
+    Blob (arbitrary binary data)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+         The value to pack.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Binary string buffer.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Types.unpack.b"></a>
+    <strong>Types.unpack.b (data[, offset])</strong>
+    </dt>
+    <dd>
+    Blob (arbitrary binary data)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span>
+         The data to unpack.
+        </li>
+        <li><span class="parameter">offset</span>
+         Initial offset into data.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        value, index of the bytes read + 1.
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Extended_types"></a>Extended types </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "Types.pack.h"></a>
+    <strong>Types.pack.h (value)</strong>
+    </dt>
+    <dd>
+    64 bit big-endian two's complement integer
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+         The value to pack.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Binary string buffer.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Types.unpack.h"></a>
+    <strong>Types.unpack.h (data[, offset])</strong>
+    </dt>
+    <dd>
+    64 bit big-endian two's complement integer
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span>
+         The data to unpack.
+        </li>
+        <li><span class="parameter">offset</span>
+         Initial offset into data.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        value, index of the bytes read + 1.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Types.pack.t"></a>
+    <strong>Types.pack.t (value)</strong>
+    </dt>
+    <dd>
+    Timetag (64-bit integer divided into upper and lower part)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+         Table with seconds and fractions.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Binary string buffer.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/losc.timetag.html#">losc.timetag</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "Types.unpack.t"></a>
+    <strong>Types.unpack.t (data[, offset])</strong>
+    </dt>
+    <dd>
+    Timetag (64-bit integer divided into upper and lower part)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span>
+         The data to unpack.
+        </li>
+        <li><span class="parameter">offset</span>
+         Initial offset into data.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        value, index of the bytes read + 1.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/losc.timetag.html#">losc.timetag</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "Types.unpack.T"></a>
+    <strong>Types.unpack.T (_[, offset])</strong>
+    </dt>
+    <dd>
+    Boolean true.
+ This type does not have a corresponding <a href="../modules/losc.types.html#Types.pack">pack</a> method.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">_</span>
+         Not used.
+        </li>
+        <li><span class="parameter">offset</span>
+         Initial offset into data.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        true (boolean) and byte offset (not incremented).
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Types.unpack.F"></a>
+    <strong>Types.unpack.F (_[, offset])</strong>
+    </dt>
+    <dd>
+    Boolean false.
+ This type does not have a corresponding <a href="../modules/losc.types.html#Types.pack">pack</a> method.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">_</span>
+         Not used.
+        </li>
+        <li><span class="parameter">offset</span>
+         Initial offset into data.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        false (boolean) and byte offset (not incremented).
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Types.unpack.N"></a>
+    <strong>Types.unpack.N (_[, offset])</strong>
+    </dt>
+    <dd>
+    Nil.
+ This type does not have a corresponding <a href="../modules/losc.types.html#Types.pack">pack</a> method.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">_</span>
+         Not used.
+        </li>
+        <li><span class="parameter">offset</span>
+         Initial offset into data.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        false (since nil cannot be represented in a lua table) and byte offset (not incremented).
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Types.unpack.I"></a>
+    <strong>Types.unpack.I (_[, offset])</strong>
+    </dt>
+    <dd>
+    Infinitum.
+ This type does not have a corresponding <a href="../modules/losc.types.html#Types.pack">pack</a> method.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">_</span>
+         Not used.
+        </li>
+        <li><span class="parameter">offset</span>
+         Initial offset into data.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        math.huge and byte offset (not incremented).
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-01-08 13:25:06 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

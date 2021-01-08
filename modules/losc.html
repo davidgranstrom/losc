@@ -1,0 +1,382 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>losc reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>losc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><strong>losc</strong></li>
+  <li><a href="../modules/losc.bundle.html">losc.bundle</a></li>
+  <li><a href="../modules/losc.message.html">losc.message</a></li>
+  <li><a href="../modules/losc.packet.html">losc.packet</a></li>
+  <li><a href="../modules/losc.pattern.html">losc.pattern</a></li>
+  <li><a href="../modules/losc.plugins.udp-libuv.html">losc.plugins.udp-libuv</a></li>
+  <li><a href="../modules/losc.plugins.udp-socket.html">losc.plugins.udp-socket</a></li>
+  <li><a href="../modules/losc.serializer.html">losc.serializer</a></li>
+  <li><a href="../modules/losc.timetag.html">losc.timetag</a></li>
+  <li><a href="../modules/losc.types.html">losc.types</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/client.lua.html">client.lua</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>losc</code></h1>
+<p>API.</p>
+<p> In most cases this will be the only module required to use losc.</p>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>Copyright</strong>: David Granström 2020</li>
+        <li><strong>License</strong>: MIT</li>
+        <li><strong>Author</strong>: David Granström</li>
+    </ul>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#message_new">message_new ([...])</a></td>
+	<td class="summary">Create a new Message.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#bundle_new">bundle_new ([...])</a></td>
+	<td class="summary">Create a new OSC bundle.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#use">use (plugin)</a></td>
+	<td class="summary">Specify a plugin.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#now">now ()</a></td>
+	<td class="summary">Get a OSC timetag with the current timestamp.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#open">open ([...])</a></td>
+	<td class="summary">Opens an OSC server.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#close">close (...)</a></td>
+	<td class="summary">Closes an OSC server.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#send">send ([...])</a></td>
+	<td class="summary">Send an OSC packet.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#add_handler">add_handler (pattern, func)</a></td>
+	<td class="summary">Add an OSC handler.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#remove_handler">remove_handler (pattern)</a></td>
+	<td class="summary">Remove an OSC handler.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#remove_all">remove_all ()</a></td>
+	<td class="summary">Remove all registered OSC handlers.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "message_new"></a>
+    <strong>message_new ([...])</strong>
+    </dt>
+    <dd>
+    Create a new Message.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+         arguments.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        status, message object or error.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/losc.message.html#">losc.message</a>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example"><span class="keyword">local</span> ok, message = losc.message_new()</pre></li>
+        <li><pre class="example"><span class="keyword">local</span> ok, message = losc.message_new(<span class="string">'/address'</span>)</pre></li>
+        <li><pre class="example"><span class="keyword">local</span> ok, message = losc.message_new({ address = <span class="string">'/foo'</span>, types = <span class="string">'iif'</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>})</pre></li>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "bundle_new"></a>
+    <strong>bundle_new ([...])</strong>
+    </dt>
+    <dd>
+    Create a new OSC bundle.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+         arguments.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        status, bundle object or error.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/losc.bundle.html#">losc.bundle</a>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example"><span class="keyword">local</span> bundle = losc.bundle_new()</pre></li>
+        <li><pre class="example"><span class="keyword">local</span> tt = Timetag.new_raw()
+<span class="keyword">local</span> ok, bundle = losc.bundle_new(tt)</pre></li>
+        <li><pre class="example"><span class="keyword">local</span> tt = Timetag.new(<span class="global">os</span>.time(), <span class="number">0</span>)
+<span class="keyword">local</span> ok, bundle = losc.bundle_new(tt, osc_msg, osc_msg2)</pre></li>
+        <li><pre class="example"><span class="keyword">local</span> tt = Timetag.new(<span class="global">os</span>.time(), <span class="number">0</span>)
+<span class="keyword">local</span> ok, bundle = losc.bundle_new(tt, osc_msg, other_bundle)</pre></li>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "use"></a>
+    <strong>use (plugin)</strong>
+    </dt>
+    <dd>
+    Specify a plugin.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">plugin</span>
+         The plugin to use.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "now"></a>
+    <strong>now ()</strong>
+    </dt>
+    <dd>
+    Get a OSC timetag with the current timestamp.
+ Will fall back to os.time() if now() is not implemented by a plugin.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "open"></a>
+    <strong>open ([...])</strong>
+    </dt>
+    <dd>
+    Opens an OSC server.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+         Plugin specific arguments.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        status, plugin handle or error
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "close"></a>
+    <strong>close (...)</strong>
+    </dt>
+    <dd>
+    Closes an OSC server.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        status, nil or error
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "send"></a>
+    <strong>send ([...])</strong>
+    </dt>
+    <dd>
+    Send an OSC packet.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+         Plugin specific arguments.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        status, nil or error
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "add_handler"></a>
+    <strong>add_handler (pattern, func)</strong>
+    </dt>
+    <dd>
+    Add an OSC handler.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pattern</span>
+         The pattern to match on.
+        </li>
+        <li><span class="parameter">func</span>
+         The callback to run if a message is received.
+ The callback will get a single argument <code>data</code> from where the messsage can be retrived.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "remove_handler"></a>
+    <strong>remove_handler (pattern)</strong>
+    </dt>
+    <dd>
+    Remove an OSC handler.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pattern</span>
+         The pattern for the handler to remove.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "remove_all"></a>
+    <strong>remove_all ()</strong>
+    </dt>
+    <dd>
+    Remove all registered OSC handlers.
+
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-01-08 13:25:06 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

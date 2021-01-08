@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>losc reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>losc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/losc.html">losc</a></li>
+  <li><strong>losc.bundle</strong></li>
+  <li><a href="../modules/losc.message.html">losc.message</a></li>
+  <li><a href="../modules/losc.packet.html">losc.packet</a></li>
+  <li><a href="../modules/losc.pattern.html">losc.pattern</a></li>
+  <li><a href="../modules/losc.plugins.udp-libuv.html">losc.plugins.udp-libuv</a></li>
+  <li><a href="../modules/losc.plugins.udp-socket.html">losc.plugins.udp-socket</a></li>
+  <li><a href="../modules/losc.serializer.html">losc.serializer</a></li>
+  <li><a href="../modules/losc.timetag.html">losc.timetag</a></li>
+  <li><a href="../modules/losc.types.html">losc.types</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/client.lua.html">client.lua</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>losc.bundle</code></h1>
+<p>OSC Bundle.</p>
+<p> An OSC Bundle consists of the OSC-string "#bundle" followed by an OSC Time
+ Tag, followed by zero or more OSC Bundle Elements.</p>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>Copyright</strong>: David Granström 2020</li>
+        <li><strong>License</strong>: MIT</li>
+        <li><strong>Author</strong>: David Granström</li>
+    </ul>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Bundle.new">Bundle.new ([...])</a></td>
+	<td class="summary">Create a new OSC bundle.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Bundle.tbl_validate">Bundle.tbl_validate (tbl)</a></td>
+	<td class="summary">Validate a table that can be used as an OSC bundle.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Bundle.bytes_validate">Bundle.bytes_validate (data[, offset])</a></td>
+	<td class="summary">Validate a byte string that can be unpacked to an OSC bundle.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Bundle.pack">Bundle.pack (tbl)</a></td>
+	<td class="summary">Pack an OSC bundle.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Bundle.unpack">Bundle.unpack (data, offset)</a></td>
+	<td class="summary">Unpack an OSC bundle byte string.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "Bundle.new"></a>
+    <strong>Bundle.new ([...])</strong>
+    </dt>
+    <dd>
+
+<p>Create a new OSC bundle. </p>
+
+<p> Arguments can be one form of:</p>
+
+<ol>
+    <li>nil (return empty bundle object).</li>
+    <li>Timetag.</li>
+    <li>Timetag, message/bundle objects.</li>
+</ol>
+
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+         arguments.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Bundle object.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Bundle.tbl_validate"></a>
+    <strong>Bundle.tbl_validate (tbl)</strong>
+    </dt>
+    <dd>
+    Validate a table that can be used as an OSC bundle.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tbl</span>
+         The table to validate.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Bundle.bytes_validate"></a>
+    <strong>Bundle.bytes_validate (data[, offset])</strong>
+    </dt>
+    <dd>
+    Validate a byte string that can be unpacked to an OSC bundle.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span>
+         The byte string to validate.
+        </li>
+        <li><span class="parameter">offset</span>
+         Byte offset.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Bundle.pack"></a>
+    <strong>Bundle.pack (tbl)</strong>
+    </dt>
+    <dd>
+    Pack an OSC bundle. </p>
+
+<p> The returned object is suitable for sending via a transport layer such as
+ UDP or TCP.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tbl</span>
+         The content to pack.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        OSC data packet (byte string).
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Bundle.unpack"></a>
+    <strong>Bundle.unpack (data, offset)</strong>
+    </dt>
+    <dd>
+    Unpack an OSC bundle byte string.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span>
+         The data to unpack.
+        </li>
+        <li><span class="parameter">offset</span>
+         The initial offset into data.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        table with the content of the OSC bundle.
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-01-08 13:25:06 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
