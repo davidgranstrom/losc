@@ -22,10 +22,10 @@ losc.handlers = {}
 -- @param[opt] ... arguments.
 -- @return status, message object or error.
 -- @see losc.message
--- @usage local ok, message = losc.message_new()
--- @usage local ok, message = losc.message_new('/address')
--- @usage local ok, message = losc.message_new({ address = '/foo', types = 'iif', 1, 2, 3})
-function losc.message_new(...)
+-- @usage local ok, message = losc.new_message()
+-- @usage local ok, message = losc.new_message('/address')
+-- @usage local ok, message = losc.new_message({ address = '/foo', types = 'iif', 1, 2, 3})
+function losc.new_message(...)
   return pcall(Message.new, ...)
 end
 
@@ -34,17 +34,17 @@ end
 -- @param[opt] ... arguments.
 -- @return status, bundle object or error.
 -- @see losc.bundle
--- @usage local bundle = losc.bundle_new()
+-- @usage local bundle = losc.new_bundle()
 -- @usage
 -- local tt = Timetag.new_raw()
--- local ok, bundle = losc.bundle_new(tt)
+-- local ok, bundle = losc.new_bundle(tt)
 -- @usage
 -- local tt = Timetag.new(os.time(), 0)
--- local ok, bundle = losc.bundle_new(tt, osc_msg, osc_msg2)
+-- local ok, bundle = losc.new_bundle(tt, osc_msg, osc_msg2)
 -- @usage
 -- local tt = Timetag.new(os.time(), 0)
--- local ok, bundle = losc.bundle_new(tt, osc_msg, other_bundle)
-function losc.bundle_new(...)
+-- local ok, bundle = losc.new_bundle(tt, osc_msg, other_bundle)
+function losc.new_bundle(...)
   return pcall(Bundle.new, ...)
 end
 

@@ -47,7 +47,7 @@ for i, opt in ipairs(arg) do
   end
 end
 
-local _, message = losc.message_new(address)
+local _, message = losc.new_message(address)
 if types then
   local index = 5
   for type in types:gmatch('.') do

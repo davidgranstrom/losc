@@ -10,7 +10,7 @@ upd.options = {
 -- Use this plugin for all networking operations
 losc:use(udp)
 
-local message = losc.message_new({
+local message = losc.new_message({
   address = '/foo/bar',
   types = 'ifsb',
   123, 1.234, 'hi', 'blobdata'
