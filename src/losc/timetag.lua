@@ -99,10 +99,7 @@ end
 -- @return A Timetag object.
 -- @usage local tt = Timetag.new_from_bytes(data)
 function Timetag.new_from_bytes(data)
-  if not data then
-    error('Can not create Timetag from empty data.')
-  end
-  local tt = Timetag.unpack(data)
+  local tt = assert(Timetag.unpack(data), 'Could not unpack timetag data')
   return Timetag.new_raw(tt)
 end
 
