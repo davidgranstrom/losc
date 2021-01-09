@@ -106,6 +106,19 @@ function Timetag.new_from_bytes(data)
   return Timetag.new_raw(tt)
 end
 
+--- Create a new OSC Timetag from a timestamp.
+--
+-- @param time The timestamp to use.
+-- @param[opt] precision The fraction precision. default 1000
+-- @return A Timetag object.
+-- @usage local tt = Timetag.new_from_timestamp(time)
+function Timetag.new_from_timestamp(time, precision)
+  precision = precision or 1000
+  local seconds = math.floor(time / precision)
+  local fracs = math.floor(precision * (time / precision - seconds) + 0.5)
+  return Timetag.new(seconds, fracs)
+end
+
 --- Get the timetag value with microsecond precision.
 -- @return Timetag value in microsecond.
 function Timetag:timestamp(precision)
@@ -127,14 +140,14 @@ end
 --- Low level API
 -- @section low-level-api
 
---- Get the timetag value with microsecond precision.
+--- Get a timestamp with arbitrary precision.
 -- @param tbl Table with seconds and fractions.
 -- @param[opt] precision The fraction precision. default 1000
--- @return Timetag value in microseconds.
+-- @return Timetag value.
 function Timetag.get_timestamp(tbl, precision)
   precision = precision or 1000
   local seconds = precision * math.max(0, tbl.seconds - NTP_SEC_OFFSET)
-  local fractions = math.floor((tbl.fractions / (TWO_POW_32 / precision)) + 0.5)
+  local fractions = math.floor(precision * (tbl.fractions / TWO_POW_32) + 0.5)
   return seconds + fractions
 end
 

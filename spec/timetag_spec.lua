@@ -22,6 +22,13 @@ describe('Timetag', function()
       assert.are.equal(256, tt.content.seconds)
       assert.are.equal(256, tt.content.fractions)
     end)
+
+    it('can create a timetag from a timestamp', function()
+      local now = os.time()
+      local tt = Timetag.new(now, 1234)
+      local tt2 = Timetag.new_from_timestamp(tt:timestamp())
+      assert.are.equal(tt:timestamp(), tt2:timestamp())
+    end)
   end)
 
   describe('pack', function()
