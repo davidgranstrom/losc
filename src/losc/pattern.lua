@@ -31,16 +31,16 @@ end
 
 local function invoke(message, timestamp, plugin)
   local address = message.address
-  local now = plugin:now()
+  local now = plugin.now():timestamp(plugin.precision)
   if plugin.handlers then
     for _, handler in pairs(plugin.handlers) do
       local match = address:match(handler.pattern) == address
       if match then
-        plugin.schedule(timestamp - now:timestamp(plugin.precision), function()
+        plugin.schedule(timestamp - now, function()
           handler.callback({
             timestamp = now,
-            plugin = plugin,
             message = message,
+            plugin = plugin,
           })
         end)
       end
