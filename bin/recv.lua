@@ -2,40 +2,39 @@
 package.path = package.path .. ';./src/?.lua'
 package.path = package.path .. ';./src/?/?.lua'
 
-return function(arg)
-  local losc = require'losc'
-  local ok, udp = pcall(require, 'losc.plugins.udp-socket')
+local losc = require'losc'
+local Timetag = require'losc.timetag'
+local ok, udp = pcall(require, 'losc.plugins.udp-socket')
+if not ok then
+  local msg = 'loscsend requires `luasocket`. Try: `luarocks install luasocket`'
+  io.stderr:write(msg)
+  return
+end
 
-  if not ok then
-    local msg = 'loscsend requires `luasocket`. Try: `luarocks install luasocket`'
-    io.stderr:write(msg)
-    return
+local function usage()
+  local str = ''
+  str = str .. 'loscrecv - Dump incoming OSC message.\n'
+  str = str .. '\nusage: loscsend port'
+  str = str .. '\nexample: loscrecv 9000\n'
+  io.write(str)
+end
+
+return function(args)
+  if args and args[1] == '-h' or args[1] == '--help' then
+    usage()
+    os.exit(0)
   end
 
-  local function usage()
-    local str = ''
-    str = str .. 'loscrecv - Dump incoming OSC message.\n'
-    str = str .. '\nusage: loscsend port'
-    str = str .. '\n\nexample: loscrecv 9000\n'
-    io.write(str)
-  end
-
-  if #arg > 0 then
-    if arg[1] == '-h' or arg[1] == '--help' then
-      usage()
-      return
-    end
-  end
-
-  local port = arg[1]
+  local port = args[1]
   if not port then
-    error('loscrecv requires port argument')
+    usage()
+    os.exit(0)
   end
 
   losc:use(udp)
   losc:add_handler('*', function(data)
-    local tt = data.timestamp
-    local time = string.format('%x.%x', tt:seconds(), tt:fractions())
+    local tt = Timetag.new_from_timestamp(data.timestamp)
+    local time = string.format('%04x.%04x', tt:seconds(), tt:fractions())
     io.write(time .. ' ')
     io.write(data.message.address .. ' ')
     io.write(data.message.types .. ' ')
