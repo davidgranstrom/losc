@@ -1,5 +1,5 @@
--------------------------
--- OSC method dispatcher.
+--------------------------------------
+-- OSC pattern matcher and dispatcher.
 --
 -- @module losc.pattern
 -- @author David Granström
