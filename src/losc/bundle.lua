@@ -91,6 +91,17 @@ function Bundle:add(item)
   self.content[#self.content + 1] = item.content
 end
 
+--- Get or set the bundle Timetag.
+-- @param[opt] tt A Timetag object.
+-- If no parameter is given it returns the current Timetag.
+function Bundle:timetag(tt)
+  if tt then
+    self.timetag = tt.content
+  else
+    return self.timetag
+  end
+end
+
 --- Low level API
 -- @section low-level-api
 
