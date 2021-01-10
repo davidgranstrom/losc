@@ -5,7 +5,7 @@ local udp = require'losc.plugins.udp-socket'
 udp.options = {
   sendAddr = 'localhost',
   sendPort = 57120,
-  recvAddr = 'locahost',
+  recvAddr = 'localhost',
   recvPort = 9000,
 }
 
