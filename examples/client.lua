@@ -1,13 +1,7 @@
 local losc = require'losc'
 local udp = require'losc.plugins.udp-socket'
 
--- Configure the plugin
-upd.options = {
-  sendAddr = 'localhost',
-  sendPort = 57120,
-}
-
--- Use this plugin for all networking operations
+-- Register to use lua-socket UDP plugin
 losc:use(udp)
 
 local message = losc.new_message({
@@ -16,4 +10,4 @@ local message = losc.new_message({
   123, 1.234, 'hi', 'blobdata'
 })
 
-losc:send(message)
+losc:send(message, 'localhost', 57120)
