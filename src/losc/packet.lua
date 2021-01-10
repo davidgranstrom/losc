@@ -1,6 +1,6 @@
 -------------------------
 -- OSC packet.
--- 
+--
 -- The unit of transmission of OSC is an OSC Packet.
 -- An OSC packet is either a messages or a bundle.
 --
