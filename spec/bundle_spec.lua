@@ -3,6 +3,24 @@ local Bundle = require'losc.bundle'
 local Timetag = require'losc.timetag'
 
 describe('Bundle', function()
+  describe('constructors', function()
+    it('can create a new bundle', function()
+      local tt = Timetag.new(os.time())
+      local bndl = Bundle.new(tt)
+      assert.not_nil(bndl)
+      assert.is_true(pcall(Bundle.tbl_validate, bndl.content))
+    end)
+
+    it('can add to an existing bundle', function()
+      local tt = Timetag.new(os.time())
+      local bndl = Bundle.new(tt)
+      local msg = Message.new('/fo')
+      msg:add('i', 1)
+      bndl:add(msg)
+      assert.are.equal(1, #bndl.content)
+    end)
+  end)
+
   describe('pack', function()
     it('requires a timetag', function()
       local bndl = {

@@ -59,6 +59,9 @@ local function _unpack(data, bundle, offset, ret_bundle)
   return ret_bundle or bundle, index
 end
 
+--- High level API
+-- @section high-level-api
+
 --- Create a new OSC bundle.
 --
 -- Arguments can be one form of:
@@ -72,15 +75,24 @@ end
 function Bundle.new(...)
   local self = setmetatable({}, Bundle)
   local args = {...}
-  local content = {}
+  self.content = {}
   if #args >= 1 then
-    content.timetag = args[1].content
+    self.content.timetag = args[1].content
     for index = 2, #args do
-      content[#content + 1] = args[index].content
+      self.content[#self.content + 1] = args[index].content
     end
   end
   return self
 end
+
+--- Adds an item to the bundle.
+-- @param item Can be a Message or another bundle.
+function Bundle:add(item)
+  self.content[#self.content + 1] = item.content
+end
+
+--- Low level API
+-- @section low-level-api
 
 --- Validate a table that can be used as an OSC bundle.
 -- @param tbl The table to validate.
