@@ -13,6 +13,10 @@ local Pattern = {}
 
 local ts = Timetag.get_timestamp
 
+--- Escape magic lua characters from a pattern.
+-- @tparam string pattern The pattern to escape.
+-- @return A string with all magic lua characters escaped and OSC wildcards
+-- converted to lua pattern matching wildcards.
 function Pattern.escape(pattern)
   -- escape lua magic chars (order matters)
   pattern = pattern:gsub('%%', '%%%%')
@@ -83,8 +87,8 @@ local function dispatch(packet, plugin)
 end
 
 --- Dispatch OSC packets.
--- @param data The packet to dispatch.
--- @param plugin A plugin.
+-- @tparam string data Packed OSC data byte string.
+-- @tparam table plugin The plugin to dispatch the message through.
 function Pattern.dispatch(data, plugin)
   local packet = Packet.unpack(data)
   dispatch(packet, plugin)

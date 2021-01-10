@@ -1,8 +1,9 @@
 ------------------------
 -- Serializer functions.
 --
--- Lua >= 5.3 will use string.pack/string.unpack
--- Lua < 5.3 and luajit will use 'struct' if available, otherwise lua-struct (which is bundled).
+-- Lua >= 5.3 will use `string.pack`/`string.unpack`
+--
+-- Lua < 5.3 and luajit will use `struct` if available, otherwise `lua-struct` (which is bundled as fallback).
 --
 -- @module losc.serializer
 -- @author David Granström
@@ -11,8 +12,8 @@
 
 local Serializer = {}
 
--- Require a function for packing.
--- Try different fallbacks if string.pack is unavailable.
+--- Require a function for packing.
+-- @return A suitable packing function as explained in the header of this file.
 function Serializer.pack()
   if string.pack then
     return string.pack
@@ -25,8 +26,8 @@ function Serializer.pack()
   end
 end
 
--- Require a function for unpacking.
--- Try different fallbacks if string.unpack is unavailable.
+--- Require a function for unpacking.
+-- @return A suitable unpacking function as explained in the header of this file.
 function Serializer.unpack()
   if string.unpack then
     return string.unpack

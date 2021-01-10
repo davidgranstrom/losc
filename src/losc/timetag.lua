@@ -31,6 +31,10 @@ local function tt_add(timetag, seconds)
 end
 
 Timetag.__index = Timetag
+
+--- Add a time offset to a Timetag.
+-- This overloads the `+` operator for Timetags and should not be called directly.
+-- @usage local tt = Timetag.new(os.time()) + 0.25
 Timetag.__add = function(a, b)
   if type(a) == 'number' then
     return tt_add(b, a)
@@ -71,16 +75,16 @@ end
 --- High level API
 -- @section high-level-api
 
---- New using a seconds and microseconds.
+--- New using a seconds and fractions.
 --
 -- Given nil arguments will return a timetag with special value "immediate".
 --
--- @param[opt] seconds Timestamp seconds.
--- @param[opt] fractions Timestamp fractions.
--- @param[opt] precision The fraction precision. default 1000
+-- @tparam[opt] integer seconds Timestamp seconds.
+-- @tparam[opt] integer fractions Timestamp fractions.
+-- @tparam[opt] integer precision The fraction precision. default 1000 (`milliseconds`)
 -- @usage local tt = Timetag.new() -- immediate
--- @usage local tt = Timetag.new(time.now())
--- @usage local tt = Timetag.new(tv.sec, tv.usec)
+-- @usage local tt = Timetag.new(os.time())
+-- @usage local tt = Timetag.new(tv.sec, tv.usec, 1e6)
 -- @see Timetag.new_raw
 function Timetag.new(seconds, fractions, precision)
   precision = precision or 1000
@@ -116,8 +120,12 @@ function Timetag.new_from_timestamp(time, precision)
   return Timetag.new(seconds, fracs)
 end
 
---- Get the timetag value with microsecond precision.
--- @return Timetag value in microsecond.
+--- Get a timestamp value with arbitrary precision.
+-- @param precision The precision to use. default 1000 (`milliseconds`)
+-- @return Timestamp value.
+-- @usage
+-- local tt = Timetag.new(os.time(), 500)
+-- local timestamp = tt:timestamp()
 function Timetag:timestamp(precision)
   return Timetag.get_timestamp(self.content, precision)
 end

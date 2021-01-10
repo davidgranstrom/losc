@@ -14,16 +14,25 @@ local Packet = require'losc.packet'
 
 local M = {}
 M.__index = M
---- Precision for bundle scheduling.
+--- Fractional precision for bundle scheduling.
+-- 1000 is milliseconds. 1000000 is microsends etc. Any precision is valid
+-- that makes sense for the plugin's scheduling function.
 M.precision = 1000
 M.client_handle = assert(socket.udp())
 
-function M.now()
+--- Create a Timetag with the current time.
+-- Precision is in milliseconds.
+-- @return Timetag object with current time.
+function M:now() -- luacheck: ignore
   local now = os.time()
   local millis = math.floor(((socket.gettime() - now) * 1000) + 0.5)
   return Timetag.new(now, millis)
 end
 
+--- Schedule a method for dispatch.
+-- This function is used to dispatch  messages contained inside OSC bundles.
+-- @tparam number timestamp When to schedule the bundle.
+-- @tparam function handler The OSC handler to call.
 function M.schedule(timestamp, handler)
   timestamp = math.max(0, timestamp) -- luacheck: ignore
   handler()
@@ -34,6 +43,10 @@ function M.schedule(timestamp, handler)
   -- co.resume()
 end
 
+--- Start UDP server.
+-- This function is blocking.
+-- @tparam string host IP address (e.g. 'localhost').
+-- @tparam number port The port to listen on. 
 function M:open(host, port)
   if self.options and not host then
     host = self.options.recvAddr
@@ -57,6 +70,7 @@ function M:open(host, port)
   end
 end
 
+--- Close UDP server.
 function M:close()
   if self.handle then
     self.handle:close()
@@ -64,19 +78,23 @@ function M:close()
   self.client_handle:close()
 end
 
-function M:send(packet, addr, port)
+--- Send a OSC packet.
+-- @tparam table packet The packet to send.
+-- @tparam string address The IP address to send to.
+-- @tparam number port The port to send to.
+function M:send(packet, address, port)
   assert(packet, 'OSC packet is nil.')
-  if self.options and not addr then
-    addr = self.options.sendAddr
+  if self.options and not address then
+    address = self.options.sendAddr
   end
   if self.options and not port then
     port = self.options.sendPort
   end
-  if addr == 'localhost' then
-    addr = socket.dns.toip(addr)
+  if address == 'localhost' then
+    address = socket.dns.toip(address)
   end
   packet = assert(Packet.pack(packet))
-  self.client_handle:sendto(packet, addr, port)
+  self.client_handle:sendto(packet, address, port)
 end
 
 return M
