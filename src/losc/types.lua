@@ -34,11 +34,6 @@ setmetatable(Types.pack, {
   end
 })
 
---- Types that only exists as type tag data (should not be packed).
--- Custom types can be appended to this string.
--- Default value: `TFNI`
-Types.pack_skip_types = 'TFNI'
-
 --- Type unpack functions.
 --
 -- Custom unpack functions can be added to this table and standard functions

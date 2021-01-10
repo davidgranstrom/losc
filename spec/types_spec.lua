@@ -33,8 +33,11 @@ describe('Types', function()
       assert.is_false(ok)
     end)
 
-    it('has default types which will be skipped in packing', function()
-      assert.are.equal('TFNI', Types.pack_skip_types)
+    it('has types which will be skipped in packing', function()
+      assert.is_nil(Types.pack['T'])
+      assert.is_nil(Types.pack['F'])
+      assert.is_nil(Types.pack['N'])
+      assert.is_nil(Types.pack['I'])
     end)
   end)
 
