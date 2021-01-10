@@ -59,7 +59,7 @@ end
 -- Will fall back to `os.time()` if `now()` is not implemented by the plugin
 -- in use.
 function losc:now()
-  if self.plugin.now then
+  if self.plugin and self.plugin.now then
     return self.plugin:now()
   end
   return Timetag.new(os.time(), 0)
@@ -69,6 +69,9 @@ end
 -- @param[opt] ... Plugin specific arguments.
 -- @return status, plugin handle or error
 function losc:open(...)
+  if not self.plugin then
+    error('"open" must be implemented using a plugin.')
+  end
   return pcall(self.plugin.open, self.plugin, ...)
 end
 
@@ -76,6 +79,9 @@ end
 -- @param[opt] ... Plugin specific arguments.
 -- @return status, nil or error
 function losc:close(...)
+  if not self.plugin then
+    error('"close" must be implemented using a plugin.')
+  end
   return pcall(self.plugin.close, self.plugin, ...)
 end
 
@@ -83,6 +89,9 @@ end
 -- @param[opt] ... Plugin specific arguments.
 -- @return status, nil or error
 function losc:send(...)
+  if not self.plugin then
+    error('"send" must be implemented using a plugin.')
+  end
   return pcall(self.plugin.send, self.plugin, ...)
 end
 
