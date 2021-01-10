@@ -19,12 +19,12 @@ M.__index = M
 --- Precision for bundle scheduling.
 M.precision = 1000
 
-function M.now()
+function M:now() -- luacheck: ignore
   local s, m = uv.gettimeofday()
   return Timetag.new(s, m / M.precision)
 end
 
-function M.schedule(timestamp, handler)
+function M:schedule(timestamp, handler) -- luacheck: ignore
   local timer = uv.new_timer()
   timestamp = math.max(0, timestamp)
   timer:start(timestamp, 0, function()

@@ -11,7 +11,7 @@ plugin.precision = 1000
 plugin.now = function()
   return Timetag.new(os.time())
 end
-plugin.schedule = function(timestamp, handler)
+plugin.schedule = function(self, timestamp, handler)
   handler()
 end
 

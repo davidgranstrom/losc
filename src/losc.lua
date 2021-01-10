@@ -1,7 +1,7 @@
 ------------------
 -- API.
 --
--- In most cases this will be the only module required to use losc.
+-- The following functions are called in protected mode internally.
 --
 -- @module losc
 -- @author David Granström
