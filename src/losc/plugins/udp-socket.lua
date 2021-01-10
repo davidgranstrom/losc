@@ -33,14 +33,10 @@ end
 -- This function is used to dispatch  messages contained inside OSC bundles.
 -- @tparam number timestamp When to schedule the bundle.
 -- @tparam function handler The OSC handler to call.
-function M.schedule(timestamp, handler)
-  timestamp = math.max(0, timestamp) -- luacheck: ignore
+function M:schedule(timestamp, handler) -- luacheck: ignore
+  -- timestamp = math.max(0, timestamp)
+  -- TODO: scheduling
   handler()
-  -- local co = coroutine.create(function()
-  --   socket.sleep(timestamp)
-  --   coroutine.yield(handler())
-  -- end)
-  -- co.resume()
 end
 
 --- Start UDP server.
