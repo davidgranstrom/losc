@@ -53,18 +53,19 @@ end
 -- @return An OSC message object.
 -- @usage local message = Message.new_from_bytes(data)
 function Message.new_from_bytes(data)
-  Message.bytes_validate(data)
+  local ok, err = pcall(Message.bytes_validate, data)
+  assert(ok, err)
   return Message.new(Message.unpack(data))
 end
 
---- Append arguments to the message.
+--- Add arguments to the message.
 --
 -- @param type OSC type string.
--- @param[opt] item Item to append.
+-- @param[opt] item Item to add.
 -- @see losc.types
--- @usage message:append('i', 123)
--- @usage message:append('T')
-function Message:append(type, item)
+-- @usage message:add('i', 123)
+-- @usage message:add('T')
+function Message:add(type, item)
   self.content.types = self.content.types .. type
   if item then
     self.content[#self.content + 1] = item
@@ -79,18 +80,6 @@ function Message:append(type, item)
   end
 end
 
---- Check that the message is valid.
--- @return true or error if table is missing keys.
-function Message:is_valid()
-  return pcall(Message.tbl_validate, self.content)
-end
-
---- Get the OSC type string.
--- @return OSC type string or empty string.
-function Message:get_types()
-  return self.content.types
-end
-
 --- Message iterator.
 --
 -- Iterate over message types and arguments.
@@ -100,9 +89,6 @@ end
 --   print(i, type, arg)
 -- end
 function Message:iter()
-  if not self.content then
-    return function() end, nil, nil
-  end
   local tbl = {self.content.types, self.content}
   local function msg_it(t, i)
     i = i + 1
@@ -118,24 +104,39 @@ end
 
 --- Get the OSC address.
 -- @return The OSC address.
-function Message:get_address()
+function Message:address()
   return self.content.address
 end
 
---- Set the OSC address.
--- @param str The address to set.
-function Message:set_address(str)
-  self.content.address = str
+--- Get the OSC type string.
+-- @return OSC type string or empty string.
+function Message:types()
+  return self.content.types
+end
+
+--- Get the OSC arguments.
+-- @return Table with arguments.
+function Message:args()
+  local args = {}
+  for _, a in ipairs(self.content) do
+    args[#args + 1] = a
+  end
+  return args
 end
 
 --- Low level API
 -- @section low-level-api
+
+function Message.address_validate(addr)
+  return not addr:find('[%s#*,%[%]{}%?]')
+end
 
 --- Validate a table to be used as a message constructor.
 -- @param tbl The table to create the message with.
 -- @return true or error if table is missing keys.
 function Message.tbl_validate(tbl)
   assert(tbl.address, 'Missing "address" field.')
+  assert(Message.address_validate(tbl.address, 'Invalid characters in "address".'))
   assert(tbl.types, 'Missing "types" field.')
   assert(#tbl.types == #tbl, 'Types and arguments mismatch')
 end

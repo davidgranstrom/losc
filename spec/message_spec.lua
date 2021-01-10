@@ -12,49 +12,55 @@ describe('Message', function()
       local msg = {address = '/foo/bar', types = 's', 'hello'}
       local message = Message.new(msg)
       assert.not_nil(message)
-      assert.is_true(message:is_valid())
     end)
 
     it('can create message object from binary data', function()
       local data = '/foo/bar\0\0\0\0,s\0\0hello\0\0\0'
       local message = Message.new_from_bytes(data)
       assert.not_nil(message)
-      assert.is_true(message:is_valid())
     end)
   end)
 
   describe('methods', function()
-    it('can set and get OSC address', function()
+    it('can get the address', function()
       local message = Message.new('/foo/bar')
-      assert.are.equal(message:get_address(), '/foo/bar')
-      message:set_address('/baz')
-      assert.are.equal(message:get_address(), '/baz')
+      assert.are.equal(message:address(), '/foo/bar')
     end)
 
-    it('can check that the message is valid', function()
-      local message = Message.new('/foo/bar', 'isf', 1, 'hello', 1.2345)
-      assert.is_true(message:is_valid())
-    end)
-
-    it('can append arguments', function()
+    it('can add arguments', function()
       local message = Message.new('/foo/bar')
-      assert.is_true(message:is_valid())
-      message:append('i', 123)
-      message:append('f', 1.234)
-      message:append('T')
-      message:append('s', 'foo')
-      assert.are.equal('ifTs', message:get_types())
+      message:add('i', 123)
+      message:add('f', 1.234)
+      message:add('T')
+      message:add('s', 'foo')
+      assert.are.equal('ifTs', message:types())
       assert.are.equal(#message.content.types, #message.content)
     end)
 
     it('can iterate over types and arguments', function()
       local msg = {address = '/foo/bar', types = 'isFf', 1, 'hello', true, 1.234}
       local message = Message.new(msg)
-      assert.is_true(message:is_valid())
       for i, type, arg in message:iter() do
         assert.are.equal(msg.types:sub(i, i), type)
         assert.are.equal(msg[i], arg)
       end
+      message = Message.new()
+      for i, type, arg in message:iter() do
+        assert.is_nil(true) -- this should never be triggered
+      end
+    end)
+
+    it('can validate an address', function()
+      assert.is_false(Message.address_validate('/foo/ /123'))
+      assert.is_false(Message.address_validate('/foo/#/123'))
+      assert.is_false(Message.address_validate('/foo/*/123'))
+      assert.is_false(Message.address_validate('/foo/,/123'))
+      assert.is_false(Message.address_validate('/foo/?/123'))
+      assert.is_false(Message.address_validate('/foo/[/123'))
+      assert.is_false(Message.address_validate('/foo/]/123'))
+      assert.is_false(Message.address_validate('/foo/{/123'))
+      assert.is_false(Message.address_validate('/foo/}/123'))
+      assert.is_true(Message.address_validate('/foo/bar/123'))
     end)
   end)
 
