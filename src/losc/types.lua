@@ -171,6 +171,21 @@ Types.unpack.t = function(data, offset)
   return Timetag.unpack(data, offset)
 end
 
+--- 64-bit big-endian IEEE 754 floating point number.
+-- @param value The value to pack.
+-- @return Binary string buffer.
+Types.pack.d = function(value)
+  return _pack('>d', value)
+end
+
+--- 64-bit big-endian IEEE 754 floating point number.
+-- @param data The data to unpack.
+-- @param[opt] offset Initial offset into data.
+-- @return value, index of the bytes read + 1.
+Types.unpack.d = function(data, offset)
+  return _unpack('>d', data, offset)
+end
+
 --- Boolean true.
 -- This type does not have a corresponding `pack` method.
 -- @param _ Not used.
