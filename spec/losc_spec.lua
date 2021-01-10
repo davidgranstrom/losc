@@ -1,4 +1,3 @@
-local inspect = require'inspect'
 local losc = require'losc'
 local Timetag = require'losc.timetag'
 

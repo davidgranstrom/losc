@@ -18,11 +18,7 @@ local Packet = {}
 -- @tparam string|table item The packet to check.
 -- @return True if packet is a bundle otherwise false.
 function Packet.is_bundle(item)
-  if type(item) == 'string' then
-    return pcall(Bundle.bytes_validate, item)
-  elseif type(item) == 'table' then
-    return pcall(Bundle.tbl_validate, item)
-  end
+  return pcall(Bundle.validate, item)
 end
 
 --- Pack a bundle or message to a byte string.
@@ -30,9 +26,9 @@ end
 -- @return OSC data packet (byte string).
 function Packet.pack(tbl)
   if Packet.is_bundle(tbl) then
-    return Bundle.pack(tbl.content)
+    return Bundle.pack(tbl.content or tbl)
   else
-    return Message.pack(tbl.content)
+    return Message.pack(tbl.content or tbl)
   end
 end
 

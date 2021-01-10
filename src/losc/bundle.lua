@@ -102,6 +102,14 @@ function Bundle:timetag(tt)
   end
 end
 
+function Bundle.validate(bundle)
+  if type(bundle) == 'string' then
+    Bundle.bytes_validate(bundle)
+  elseif type(bundle) == 'table' then
+    Bundle.tbl_validate(bundle.content or bundle)
+  end
+end
+
 --- Low level API
 -- @section low-level-api
 
