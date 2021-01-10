@@ -175,9 +175,8 @@ function Message.pack(tbl)
   for type in types:gmatch('.') do
     local item = tbl[index]
     if item then
-      local ok, data = Types.pack(type, item)
-      if ok then
-        packet[#packet + 1] = data
+      if Types.pack[type] then
+        packet[#packet + 1] = Types.pack[type](item)
       end
       index = index + 1
     end
@@ -203,10 +202,9 @@ function Message.unpack(data, offset)
   local types = value:sub(2) -- remove prefix
   message.types = types
   -- arguments
-  local ok
   for type in types:gmatch('.') do
-    ok, value, index = Types.unpack(type, data, index)
-    if ok then
+    if Types.unpack[type] then
+      value, index = Types.unpack[type](data, index)
       message[#message + 1] = value
     end
   end
