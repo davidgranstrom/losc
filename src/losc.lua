@@ -1,5 +1,5 @@
 ------------------
--- API.
+-- High level API.
 --
 -- The following functions are called in protected mode internally.
 --
@@ -19,14 +19,14 @@ losc.handlers = {}
 
 --- Create a new Message.
 --
--- @param[opt] ... arguments.
+-- @tparam[opt] string|table args OSC address or table constructor.
 -- @return status, message object or error.
 -- @see losc.message
 -- @usage local ok, message = losc.new_message()
 -- @usage local ok, message = losc.new_message('/address')
 -- @usage local ok, message = losc.new_message({ address = '/foo', types = 'iif', 1, 2, 3})
-function losc.new_message(...)
-  return pcall(Message.new, ...)
+function losc.new_message(args)
+  return pcall(Message.new, args)
 end
 
 --- Create a new OSC bundle.
@@ -48,15 +48,16 @@ function losc.new_bundle(...)
   return pcall(Bundle.new, ...)
 end
 
---- Specify a plugin.
+--- Specify a plugin to use as transport layer.
 -- @param plugin The plugin to use.
 function losc:use(plugin)
   self.plugin = plugin
   self.plugin.handlers = self.handlers
 end
 
---- Get a OSC timetag with the current timestamp.
--- Will fall back to os.time() if now() is not implemented by a plugin.
+--- Get an OSC timetag with the current timestamp.
+-- Will fall back to `os.time()` if `now()` is not implemented by the plugin
+-- in use.
 function losc:now()
   if self.plugin.now then
     return self.plugin:now()
@@ -72,6 +73,7 @@ function losc:open(...)
 end
 
 --- Closes an OSC server.
+-- @param[opt] ... Plugin specific arguments.
 -- @return status, nil or error
 function losc:close(...)
   return pcall(self.plugin.close, self.plugin, ...)
