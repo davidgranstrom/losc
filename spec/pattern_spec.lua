@@ -113,5 +113,33 @@ describe('Pattern', function()
       Pattern.dispatch(shouldmatch, plugin)
       assert.are.equal(1, num_matches)
     end)
+
+    it('can match groups {}', function()
+      local num_matches = 0
+      losc:add_handler('/foo/{bar,baz}/123', function(data)
+        assert.not_nil(data)
+        num_matches = num_matches + 1
+      end)
+      local shouldmatch = Message.pack({address = '/foo/bar/123', types = 'i', 1})
+      local nomatch = Message.pack({address = '/foo/zig/123', types = 'i', 1})
+      Pattern.dispatch(nomatch, plugin)
+      assert.are.equal(0, num_matches)
+      Pattern.dispatch(shouldmatch, plugin)
+      assert.are.equal(1, num_matches)
+
+      num_matches = 0
+      losc:remove_handler('/foo/{bar,baz}/123')
+      losc:add_handler('/foo/{bar,baz}/{x,y,z}/123', function(data)
+        assert.not_nil(data)
+        num_matches = num_matches + 1
+      end)
+
+      shouldmatch = Message.pack({address = '/foo/baz/z/123', types = 'i', 1})
+      nomatch = Message.pack({address = '/foo/baz/q/123', types = 'i', 1})
+      Pattern.dispatch(nomatch, plugin)
+      assert.are.equal(0, num_matches)
+      Pattern.dispatch(shouldmatch, plugin)
+      assert.are.equal(1, num_matches)
+    end)
   end)
 end)

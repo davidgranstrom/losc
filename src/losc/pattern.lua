@@ -29,13 +29,30 @@ function Pattern.escape(pattern)
   return pattern
 end
 
+local function match(key, address)
+  local result = address:match(key) == address
+  -- try and match group instead
+  if not result and key:find('{') then
+    local index = 1
+    local tmps = ''
+    for c in key:gmatch('.') do
+      local a = address:sub(index, index)
+      if a == c then
+        tmps = tmps .. c
+        index = index + 1
+      end
+    end
+    result = tmps == address
+  end
+  return result
+end
+
 local function invoke(message, timestamp, plugin)
   local address = message.address
   local now = plugin.now():timestamp(plugin.precision)
   if plugin.handlers then
     for _, handler in pairs(plugin.handlers) do
-      local match = address:match(handler.pattern) == address
-      if match then
+      if match(handler.pattern, address) then
         plugin.schedule(timestamp - now, function()
           handler.callback({
             timestamp = now,
