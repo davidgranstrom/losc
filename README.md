@@ -1,7 +1,7 @@
 # losc
 
-![lint](https://github.com/davidgranstrom/losc/workflows/lint/badge.svg)
-![unit-tests](https://github.com/davidgranstrom/losc/workflows/unit-tests/badge.svg)
+[![lint](https://github.com/davidgranstrom/losc/workflows/lint/badge.svg)](https://github.com/davidgranstrom/losc/actions?query=workflow%3Alint)
+[![unit-tests](https://github.com/davidgranstrom/losc/workflows/unit-tests/badge.svg)](https://github.com/davidgranstrom/losc/actions?query=workflow%3Aunit-tests)
 [![documentation](https://github.com/davidgranstrom/losc/workflows/docs/badge.svg)][docs]
 
 [OSC][osc] 1.0 implementation for `lua` and `luajit`.
