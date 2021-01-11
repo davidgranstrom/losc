@@ -5,8 +5,8 @@ describe('Packet', function()
   local message, bundle
   local mdata, bdata
   setup(function()
-    _, message = losc.new_message('/foo')
-    _, bundle = losc.new_bundle(losc:now(), message)
+    message = losc.new_message('/foo')
+    bundle = losc.new_bundle(losc:now(), message)
   end)
 
   it('can pack messages', function()

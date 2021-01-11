@@ -20,32 +20,34 @@ losc.handlers = {}
 --- Create a new Message.
 --
 -- @tparam[opt] string|table args OSC address or table constructor.
--- @return status, message object or error.
+-- @return message object or nil if there was an error.
 -- @see losc.message
--- @usage local ok, message = losc.new_message()
--- @usage local ok, message = losc.new_message('/address')
--- @usage local ok, message = losc.new_message({ address = '/foo', types = 'iif', 1, 2, 3})
+-- @usage local message = losc.new_message()
+-- @usage local message = losc.new_message('/address')
+-- @usage local message = losc.new_message({ address = '/foo', types = 'iif', 1, 2, 3})
 function losc.new_message(args)
-  return pcall(Message.new, args)
+  local ok, message = pcall(Message.new, args)
+  return ok and message or nil
 end
 
 --- Create a new OSC bundle.
 --
 -- @param[opt] ... arguments.
--- @return status, bundle object or error.
+-- @return bundle object or nil if there was an error.
 -- @see losc.bundle
 -- @usage local bundle = losc.new_bundle()
 -- @usage
 -- local tt = Timetag.new_raw()
--- local ok, bundle = losc.new_bundle(tt)
+-- local bundle = losc.new_bundle(tt)
 -- @usage
 -- local tt = Timetag.new(os.time(), 0)
--- local ok, bundle = losc.new_bundle(tt, osc_msg, osc_msg2)
+-- local bundle = losc.new_bundle(tt, osc_msg, osc_msg2)
 -- @usage
 -- local tt = Timetag.new(os.time(), 0)
--- local ok, bundle = losc.new_bundle(tt, osc_msg, other_bundle)
+-- local bundle = losc.new_bundle(tt, osc_msg, other_bundle)
 function losc.new_bundle(...)
-  return pcall(Bundle.new, ...)
+  local ok, bundle = pcall(Bundle.new, ...)
+  return ok and bundle or nil
 end
 
 --- Specify a plugin to use as transport layer.

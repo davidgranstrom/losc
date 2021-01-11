@@ -1,16 +1,19 @@
 local losc = require'losc'
 local Timetag = require'losc.timetag'
+local Packet = require'losc.packet'
 
 describe('losc', function()
   it('can create a message', function()
-    local _, message = losc.new_message('/test')
-    assert.not_nil(message)
+    local message = losc.new_message('/test')
+    assert.is_true(pcall(Packet.validate, message))
     message = losc.new_message({address = '/test/123', types = 'if', 1, 2.3})
-    assert.not_nil(message)
+    assert.is_true(pcall(Packet.validate, message))
+    message = losc.new_message({'/test/123'})
+    assert.is_nil(message)
   end)
 
   it('prepends / to message address if missing', function()
-    local _, message = losc.new_message('addr')
+    local message = losc.new_message('addr')
     assert.are.equal('/addr', message:address())
   end)
 
@@ -18,7 +21,9 @@ describe('losc', function()
     local tt = losc:now()
     local message = losc.new_message({address = '/test/123', types = 'if', 1, 2.3})
     local bundle = losc.new_bundle(tt, message)
-    assert.not_nil(bundle)
+    assert.is_true(pcall(Packet.validate, bundle))
+    bundle = losc.new_bundle(nil, message)
+    assert.is_nil(bundle)
   end)
 
   it('can add and remove OSC handlers', function()
@@ -70,10 +75,17 @@ describe('losc', function()
       end
       plugin.close = function(self)
       end
-      plugin.send = function(self, tt)
-        return tt.seconds ~= nil
+      plugin.send = function(self, msg)
+        assert.are.equal(msg.content.address, '/test')
       end
       losc:use(plugin)
+    end)
+
+    it('return current time as Timetag', function()
+      local now = losc:now()
+      assert.not_nil(now)
+      assert.not_nil(now.seconds)
+      assert.not_nil(now.fractions)
     end)
 
     it('can open', function()
@@ -88,10 +100,9 @@ describe('losc', function()
     end)
 
     it('can send', function()
-      local now = losc:now()
-      local ok, err = losc:send(now)
+      local message = losc.new_message('/test')
+      local ok, err = losc:send(message)
       assert.is_true(ok)
     end)
   end)
-
 end)

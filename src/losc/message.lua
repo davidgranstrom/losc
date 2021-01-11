@@ -128,6 +128,7 @@ end
 --- Validate a message.
 -- @tparam table|string message The message to validate. Can be in packed or unpacked form.
 function Message.validate(message)
+  assert(message)
   if type(message) == 'string' then
     Message.bytes_validate(message)
   elseif type(message) == 'table' then

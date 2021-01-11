@@ -28,6 +28,16 @@ function Packet.is_bundle(packet)
   end
 end
 
+--- Validate a packet. Can be a message or a bundle.
+-- @tparam string|table packet The packet to validate.
+function Packet.validate(packet)
+  if Packet.is_bundle(packet) then
+    Bundle.validate(packet)
+  else
+    Message.validate(packet)
+  end
+end
+
 --- Pack a bundle or message to a byte string.
 -- @param tbl The table to pack.
 -- @return OSC data packet (byte string).
