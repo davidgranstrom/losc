@@ -72,12 +72,6 @@ describe('Message', function()
       end)
     end)
 
-    it('prepends / to address if missing', function()
-      local m = {address = 'foo/bar', types = 'T'}
-      local msg = Message.unpack(Message.pack(m))
-      assert.are.equal('/foo/bar', msg.address)
-    end)
-
     it('has a size that is an multiple of 4', function()
       local m = {
         address = '/fo',

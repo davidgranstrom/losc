@@ -30,18 +30,20 @@ Message.__index = Message
 -- @usage
 -- local tbl = {address = '/some/addr', types = 'ifs', 1, 2.0, 'hi'}
 -- local msg = Message.new(tbl)
-function Message.new(m)
+function Message.new(msg)
   local self = setmetatable({}, Message)
   self.content = {}
   self.content.address = ''
   self.content.types = ''
-  if m then
-    if type(m) == 'string' then
-      self.content.address = m
-    elseif type(m) == 'table' then
-      local ok, err = pcall(Message.tbl_validate, m)
-      assert(ok, err)
-      self.content = m
+  if msg then
+    if type(msg) == 'string' then
+      if msg:sub(1,1) ~= '/' then
+        msg = '/' .. msg
+      end
+      self.content.address = msg
+    elseif type(msg) == 'table' then
+      Message.tbl_validate(msg)
+      self.content = msg
     end
   end
   return self
@@ -49,12 +51,11 @@ end
 
 --- Create a new OSC message from binary data.
 --
--- @param data Binary string of OSC data.
+-- @tparam string data Binary string of OSC data.
 -- @return An OSC message object.
 -- @usage local message = Message.new_from_bytes(data)
 function Message.new_from_bytes(data)
-  local ok, err = pcall(Message.bytes_validate, data)
-  assert(ok, err)
+  Message.bytes_validate(data)
   return Message.new(Message.unpack(data))
 end
 
@@ -124,16 +125,28 @@ function Message:args()
   return args
 end
 
+--- Validate a message.
+-- @tparam table|string message The message to validate. Can be in packed or unpacked form.
+function Message.validate(message)
+  if type(message) == 'string' then
+    Message.bytes_validate(message)
+  elseif type(message) == 'table' then
+    Message.tbl_validate(message)
+  end
+end
+
 --- Low level API
 -- @section low-level-api
 
+--- Validate an OSC message address.
+-- @tparam string addr The address to validate.
+-- @return True if address is a valid OSC address otherwise false.
 function Message.address_validate(addr)
   return not addr:find('[%s#*,%[%]{}%?]')
 end
 
 --- Validate a table to be used as a message constructor.
--- @param tbl The table to create the message with.
--- @return true or error if table is missing keys.
+-- @tparam table tbl The table to validate.
 function Message.tbl_validate(tbl)
   assert(tbl.address, 'Missing "address" field.')
   assert(Message.address_validate(tbl.address, 'Invalid characters in "address".'))
@@ -142,14 +155,15 @@ function Message.tbl_validate(tbl)
 end
 
 --- Validate a binary string to see if it is a valid OSC message.
--- @param bytes The byte string to validate.
--- @param[opt] offset Byte offset.
--- @return true or error.
+-- @tparam string bytes The byte string to validate.
+-- @tparam[opt] integer offset Byte offset.
 function Message.bytes_validate(bytes, offset)
-  local ok, value = Types.unpack('s', bytes, offset)
-  assert(ok, value)
-  assert(value:sub(1, 1) == '/', 'Invalid OSC address.')
+  local value
   assert(#bytes % 4 == 0, 'OSC message data must be a multiple of 4.')
+  value, offset = Types.unpack.s(bytes, offset)
+  assert(value:sub(1, 1) == '/', 'Invalid OSC address.')
+  value, offset = Types.unpack.s(bytes, offset)
+  assert(value:sub(1, 1) == ',', 'Error: malformed type tag.')
 end
 
 --- Pack a table to a byte string.
@@ -157,17 +171,15 @@ end
 -- The returned object is suitable for sending via a transport layer such as
 -- UDP or TCP.
 --
+-- Call `Message.validate()` before passing arguments to this function to
+-- ensure that the table is suitable for packing.
+--
 -- @param tbl The content to pack.
 -- @return OSC data packet (byte string).
 function Message.pack(tbl)
-  assert(tbl.address, 'An OSC message must have an address.')
   local packet = {}
   local address = tbl.address
-  local types = tbl.types or ''
-  -- address (prefix if missing)
-  if address:sub(1,1) ~= '/' then
-    address = '/' .. address
-  end
+  local types = tbl.types
   -- types
   packet[#packet + 1] = Types.pack.s(address)
   packet[#packet + 1] = Types.pack.s(',' .. types)
@@ -187,6 +199,9 @@ end
 
 --- Unpack OSC message byte string.
 --
+-- Call `Message.validate()` before passing arguments to this function to
+-- ensure that the table is suitable for unpacking.
+--
 -- @param data The data to unpack.
 -- @param offset The initial offset into data.
 -- @return table with the content of the OSC message.
@@ -199,7 +214,6 @@ function Message.unpack(data, offset)
   message.address = value
   -- type tag
   value, index = Types.unpack.s(data, index)
-  assert(value:sub(1, 1) == ',', 'Error: malformed type tag.')
   local types = value:sub(2) -- remove prefix
   message.types = types
   -- arguments

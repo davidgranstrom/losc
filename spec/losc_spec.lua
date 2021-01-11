@@ -3,10 +3,15 @@ local Timetag = require'losc.timetag'
 
 describe('losc', function()
   it('can create a message', function()
-    local message = losc.new_message('/test')
+    local _, message = losc.new_message('/test')
     assert.not_nil(message)
     message = losc.new_message({address = '/test/123', types = 'if', 1, 2.3})
     assert.not_nil(message)
+  end)
+
+  it('prepends / to message address if missing', function()
+    local _, message = losc.new_message('addr')
+    assert.are.equal('/addr', message:address())
   end)
 
   it('can create a bundle', function()
