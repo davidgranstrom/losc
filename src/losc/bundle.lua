@@ -36,7 +36,7 @@ end
 
 local function _unpack(data, bundle, offset, ret_bundle)
   local value, index
-  value, index = Types.unpack.s(data, offset)
+  index = select(2, Types.unpack.s(data, offset))
   value, index = Types.unpack.t(data, index)
   bundle.timetag = value
   while index < #data do
@@ -125,7 +125,7 @@ function Bundle.bytes_validate(data, offset)
   assert(#data % 4 == 0, 'OSC bundle data must be a multiple of 4.')
   value, offset = Types.unpack.s(data, offset or 1)
   assert(value == '#bundle', 'Missing bundle marker')
-  value, offset = Types.unpack.t(data, offset)
+  value = Types.unpack.t(data, offset)
   assert(type(value) == 'table', 'Missing bundle timetag')
 end
 

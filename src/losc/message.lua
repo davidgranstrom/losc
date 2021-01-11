@@ -163,7 +163,7 @@ function Message.bytes_validate(bytes, offset)
   assert(#bytes % 4 == 0, 'OSC message data must be a multiple of 4.')
   value, offset = Types.unpack.s(bytes, offset)
   assert(value:sub(1, 1) == '/', 'Invalid OSC address.')
-  value, offset = Types.unpack.s(bytes, offset)
+  value = Types.unpack.s(bytes, offset)
   assert(value:sub(1, 1) == ',', 'Error: malformed type tag.')
 end
 
