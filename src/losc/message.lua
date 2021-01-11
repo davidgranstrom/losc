@@ -131,7 +131,7 @@ function Message.validate(message)
   if type(message) == 'string' then
     Message.bytes_validate(message)
   elseif type(message) == 'table' then
-    Message.tbl_validate(message)
+    Message.tbl_validate(message.content or message)
   end
 end
 

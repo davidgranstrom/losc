@@ -36,14 +36,9 @@ end
 
 local function _unpack(data, bundle, offset, ret_bundle)
   local value, index
-  -- marker
   value, index = Types.unpack.s(data, offset)
-  assert(value == '#bundle', 'missing marker')
-  -- timetag
   value, index = Types.unpack.t(data, index)
-  assert(value, 'missing timetag')
   bundle.timetag = value
-  -- contents
   while index < #data do
     -- check if value is a nested bundle
     local nested = data:sub(index, index + 7) == '#bundle\0'
@@ -102,6 +97,8 @@ function Bundle:timetag(tt)
   end
 end
 
+--- Validate a bundle.
+-- @tparam table|string message The bundle to validate. Can be in packed or unpacked form.
 function Bundle.validate(bundle)
   if type(bundle) == 'string' then
     Bundle.bytes_validate(bundle)
@@ -123,10 +120,12 @@ end
 -- @param data The byte string to validate.
 -- @param[opt] offset Byte offset.
 function Bundle.bytes_validate(data, offset)
-  local _, s, index = Types.unpack('s', data, offset or 1)
-  assert(s == '#bundle', 'Missing bundle marker')
-  local ok = Types.unpack('t', data, index)
-  assert(ok, 'Missing bundle timetag')
+  local value
+  assert(#data % 4 == 0, 'OSC bundle data must be a multiple of 4.')
+  value, offset = Types.unpack.s(data, offset or 1)
+  assert(value == '#bundle', 'Missing bundle marker')
+  value, offset = Types.unpack.t(data, offset)
+  assert(type(value) == 'table', 'Missing bundle timetag')
 end
 
 --- Pack an OSC bundle.
@@ -137,7 +136,6 @@ end
 -- @param tbl The content to pack.
 -- @return OSC data packet (byte string).
 function Bundle.pack(tbl)
-  Bundle.tbl_validate(tbl)
   local packet = {}
   return _pack(tbl, packet)
 end
