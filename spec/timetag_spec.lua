@@ -15,14 +15,6 @@ describe('Timetag', function()
       assert.are.equal((now + 5) * 1000, tt:timestamp())
     end)
 
-    it('can create a timetag from OSC data', function()
-      local data = '\0\0\1\0\0\0\1\0'
-      local tt = Timetag.new_from_bytes(data)
-      assert.not_nil(tt)
-      assert.are.equal(256, tt.content.seconds)
-      assert.are.equal(256, tt.content.fractions)
-    end)
-
     it('can create a timetag from a timestamp', function()
       local now = os.time()
       local tt = Timetag.new(now, 1234)

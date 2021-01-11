@@ -97,16 +97,6 @@ function Timetag.new(seconds, fractions, precision)
   return Timetag.new_raw(secs, frac)
 end
 
---- Create a new OSC Timetag from binary data.
---
--- @param data Binary string of OSC data.
--- @return A Timetag object.
--- @usage local tt = Timetag.new_from_bytes(data)
-function Timetag.new_from_bytes(data)
-  local tt = assert(Timetag.unpack(data), 'Could not unpack timetag data')
-  return Timetag.new_raw(tt)
-end
-
 --- Create a new OSC Timetag from a timestamp.
 --
 -- @param time The timestamp to use.
@@ -156,25 +146,17 @@ function Timetag.get_timestamp(tbl, precision)
   return seconds + fractions
 end
 
---- Validate a table to be used as a Timetag.
--- @param tbl The table with the Timetag content.
-function Timetag.tbl_validate(tbl)
-  assert(tbl.seconds, 'Missing field "seconds"')
-  assert(tbl.fractions, 'Missing field "fractions"')
-end
-
 --- Pack an OSC Timetag.
 --
 -- The returned object is suitable for sending via a transport layer such as
 -- UDP or TCP.
 --
--- @param tbl The timetag to pack.
+-- @tparam table tbl The timetag to pack.
 -- @return OSC data packet (byte string).
 -- @usage
 -- local tt = {seconds = os.time(), fractions = 0}
 -- local data = Timetag.pack(tt)
 function Timetag.pack(tbl)
-  Timetag.tbl_validate(tbl)
   local data = {}
   data[#data + 1] = _pack('>I4', tbl.seconds)
   data[#data + 1] = _pack('>I4', tbl.fractions)
