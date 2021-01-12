@@ -64,6 +64,7 @@ function Message.new(msg)
       if msg:sub(1,1) ~= '/' then
         msg = '/' .. msg
       end
+      Message.address_validate(msg)
       self.content.address = msg
     elseif type(msg) == 'table' then
       Message.tbl_validate(msg)
@@ -165,16 +166,15 @@ end
 
 --- Validate an OSC message address.
 -- @tparam string addr The address to validate.
--- @return True if address is a valid OSC address otherwise false.
 function Message.address_validate(addr)
-  return not addr:find('[%s#*,%[%]{}%?]')
+  assert(not addr:find('[%s#*,%[%]{}%?]'), 'Invalid characters found in address.')
 end
 
 --- Validate a table to be used as a message constructor.
 -- @tparam table tbl The table to validate.
 function Message.tbl_validate(tbl)
   assert(tbl.address, 'Missing "address" field.')
-  assert(Message.address_validate(tbl.address, 'Invalid characters in "address".'))
+  Message.address_validate(tbl.address)
   assert(tbl.types, 'Missing "types" field.')
   assert(#tbl.types == #tbl, 'Types and arguments mismatch')
 end
