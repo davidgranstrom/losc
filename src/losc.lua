@@ -42,22 +42,23 @@ losc.__index = losc
 losc.handlers = {}
 
 --- Create a new Message.
---
 -- @tparam[opt] string|table args OSC address or table constructor.
--- @return message object or nil if there was an error.
+-- @return message object
 -- @see losc.message
 -- @usage local message = losc.new_message()
 -- @usage local message = losc.new_message('/address')
 -- @usage local message = losc.new_message({ address = '/foo', types = 'iif', 1, 2, 3})
 function losc.new_message(args)
   local ok, message = pcall(Message.new, args)
-  return ok and message or nil
+  if not ok then
+    error(message)
+  end
+  return message
 end
 
 --- Create a new OSC bundle.
---
 -- @param[opt] ... arguments.
--- @return bundle object or nil if there was an error.
+-- @return bundle object
 -- @see losc.bundle
 -- @usage local bundle = losc.new_bundle()
 -- @usage
@@ -71,7 +72,10 @@ end
 -- local bundle = losc.new_bundle(tt, osc_msg, other_bundle)
 function losc.new_bundle(...)
   local ok, bundle = pcall(Bundle.new, ...)
-  return ok and bundle or nil
+  if not ok then
+    error(message)
+  end
+  return bundle
 end
 
 --- Specify a plugin to use as transport layer.
