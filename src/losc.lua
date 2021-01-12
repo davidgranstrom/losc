@@ -73,7 +73,7 @@ end
 function losc.new_bundle(...)
   local ok, bundle = pcall(Bundle.new, ...)
   if not ok then
-    error(message)
+    error(bundle)
   end
   return bundle
 end
