@@ -15,7 +15,7 @@ jobs:
         id: cache
         with:
           path: ./.env
-          key: ${{ runner.os }}-${{ matrix.lua-version }}
+          key: ${{ runner.os }}-${{ matrix.lua-version }}-${{ secrets.CACHE_VERSION }}
       - name: Setup python
         uses: actions/setup-python@v2
         with:
@@ -32,9 +32,15 @@ jobs:
           luarocks install inspect
           luarocks install busted
           luarocks install luacov 
+          luarocks install luacov-reporter-lcov
           exit 0
       - name: Run tests
         run: |
           source .env/bin/activate
           busted --coverage --output plainTerminal
-          luacov src
+          luacov -r lcov
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ./luacov.report.out
