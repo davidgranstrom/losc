@@ -47,6 +47,33 @@ implement new high level API:s on top of the serialization functions if needed.
 
 Read more about it in the [documentation][docs].
 
+## Benchmarks
+
+Generated with lua 5.1.5 running on a 2.3 GHz Intel i5 processor.
+
+```plain
+Message pack:
+ -> Iterations:  1000
+ -> Time:  26.456378 ms
+ -> Avg:  0.026456378 ms
+ -> Bytes:  48000
+Message unpack:
+ -> Iterations:  1000
+ -> Time:  32.237467 ms
+ -> Avg:  0.032237467 ms
+ -> Bytes:  48000
+Bundle pack:
+ -> Iterations:  1000
+ -> Time:  71.503527 ms
+ -> Avg:  0.071503527 ms
+ -> Bytes:  120000
+Bundle unpack:
+ -> Iterations:  1000
+ -> Time:  80.274404 ms
+ -> Avg:  0.080274404 ms
+ -> Bytes:  120000
+```
+
 ## License
 
 ```
