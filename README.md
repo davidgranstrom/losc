@@ -2,6 +2,7 @@
 
 [![lint](https://github.com/davidgranstrom/losc/workflows/lint/badge.svg)](https://github.com/davidgranstrom/losc/actions?query=workflow%3Alint)
 [![unit-tests](https://github.com/davidgranstrom/losc/workflows/unit-tests/badge.svg)](https://github.com/davidgranstrom/losc/actions?query=workflow%3Aunit-tests)
+[![Coverage Status](https://coveralls.io/repos/github/davidgranstrom/losc/badge.svg?branch=main)](https://coveralls.io/github/davidgranstrom/losc?branch=main)
 [![documentation](https://github.com/davidgranstrom/losc/workflows/docs/badge.svg)][docs]
 
 [OSC][osc] 1.0 implementation for `lua` and `luajit`.
