@@ -32,9 +32,15 @@ jobs:
           luarocks install inspect
           luarocks install busted
           luarocks install luacov 
+          luarocks install luacov-coveralls --server=http://rocks.moonscript.org/dev
           exit 0
       - name: Run tests
         run: |
           source .env/bin/activate
           busted --coverage --output plainTerminal
-          luacov src
+          luacov-coveralls -c .luacov --dryrun
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ./luacov.report.out
