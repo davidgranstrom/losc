@@ -103,4 +103,4 @@ SOFTWARE.
 ```
 
 [osc]: http://opensoundcontrol.org/spec-1_0
-[docs]: https://davidgranstrom.github.io/losc
+[docs]: https://davidgranstrom.github.io/losc/
