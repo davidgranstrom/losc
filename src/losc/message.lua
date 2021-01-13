@@ -43,7 +43,7 @@ Message.__index = Message
 
 --- Create a new OSC message.
 --
--- @tparam[opt] string|table m OSC address or table constructor.
+-- @tparam[opt] string|table msg OSC address or table constructor.
 --
 -- @return An OSC message object.
 -- @see losc.types

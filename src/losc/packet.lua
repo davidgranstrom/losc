@@ -76,8 +76,7 @@ function Packet.pack(tbl)
 end
 
 --- Unpack an OSC packet.
--- @param data The data to unpack.
--- @param offset The initial offset into data.
+-- @tparam string data The data to unpack.
 -- @return table with the content of the OSC message (bundle or message).
 function Packet.unpack(data)
   if Packet.is_bundle(data) then

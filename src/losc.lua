@@ -25,7 +25,7 @@ SOFTWARE.
 ------------------
 -- High level API.
 --
--- The following functions are called in protected mode internally.
+-- Main module of losc.
 --
 -- @module losc
 -- @author David Granström

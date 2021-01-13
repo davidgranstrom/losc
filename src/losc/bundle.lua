@@ -122,7 +122,7 @@ function Bundle:timetag(tt)
 end
 
 --- Validate a bundle.
--- @tparam table|string message The bundle to validate. Can be in packed or unpacked form.
+-- @tparam table|string bundle The bundle to validate. Can be in packed or unpacked form.
 function Bundle.validate(bundle)
   assert(bundle)
   if type(bundle) == 'string' then
