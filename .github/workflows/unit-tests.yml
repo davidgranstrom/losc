@@ -15,7 +15,7 @@ jobs:
         id: cache
         with:
           path: ./.env
-          key: ${{ runner.os }}-${{ matrix.lua-version }}
+          key: ${{ runner.os }}-${{ matrix.lua-version }}-${{ secrets.CACHE_VERSION }}
       - name: Setup python
         uses: actions/setup-python@v2
         with:
