@@ -12,8 +12,10 @@ Compatible with lua 5.1 >= 5.4 luajit 2.0 and luajit 2.1.0-beta3
 
 * Implements the complete OSC 1.0 specification.
 * Pure lua implementation, no platform dependent libraries.
-* Support for extended OSC types
+* Support for extended OSC types.
 * Plugin system for transport layers.
+* Address pattern matching.
+* Scheduled bundle evaluation (plugin dependent).
 
 ## Basic usage
 
@@ -21,15 +23,15 @@ Compatible with lua 5.1 >= 5.4 luajit 2.0 and luajit 2.1.0-beta3
 local losc = require'losc'
 local udp = require'losc.plugins.udp-socket'
 
--- Register to use lua-socket UDP plugin
+-- Register to use the `lua-socket` UDP plugin
 losc:use(udp)
 
 -- Create a message
-local message = losc.new_message({
+local message = losc.new_message {
   address = '/foo/bar',
   types = 'ifsb',
   123, 1.234, 'hi', 'blobdata'
-})
+}
 
 -- Send it over UDP
 losc:send(message, 'localhost', 9000)
@@ -39,11 +41,11 @@ losc:send(message, 'localhost', 9000)
 
 The API is divided into two parts:
 
-1. Opaque high level API exposed through `losc.lua` module.
-2. Low level API exposing serialization functions and types and based on plain lua tables.
+1. Opaque high level API exposed through the `losc.lua` module.
+2. Low level API exposing serialization/deserialization functions and types based on plain lua tables.
 
 The two API:s are decoupled from each other which makes it possible to
-implement new high level API:s on top of the serialization functions if needed.
+implement new high level API:s on top of the low level API functions if needed.
 
 Read more about it in the [documentation][docs].
 
