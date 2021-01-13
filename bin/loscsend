@@ -48,7 +48,7 @@ if not arg[1] then
   os.exit(0)
 end
 local ip, port, address, types = opt_parse(arg)
-local ok, message = losc.new_message(address) -- TODO: address validation
+local ok, message = pcall(losc.new_message, address)
 if not ok then
   print(message)
   os.exit(1)
