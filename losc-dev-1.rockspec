@@ -1,16 +1,18 @@
 package = "losc"
 version = "dev-1"
 source = {
-   url = "git+ssh://git@github.com/davidgranstrom/losc.git"
+   url = "git+https://github.com/davidgranstrom/losc.git"
 }
 description = {
-   summary = "",
-   detailed = "",
-   homepage = "",
+   summary = "OSC 1.0 library.",
+   detailed = [[
+       A lua implementation of the Open Sound Control (OSC) specification.
+   ]],
+   homepage = "https://github.com/davidgranstrom/losc",
    license = "MIT"
 }
 dependencies = {
-   "lua >= 5.1, < 5.5"
+   "lua >= 5.1",
 }
 build = {
    type = "builtin",
@@ -26,9 +28,6 @@ build = {
       ["losc.serializer"] = "src/losc/serializer.lua",
       ["losc.timetag"] = "src/losc/timetag.lua",
       ["losc.types"] = "src/losc/types.lua"
-   },
-   copy_directories = {
-      "docs"
    },
    install = {
       bin = {
