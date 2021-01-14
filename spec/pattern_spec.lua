@@ -1,6 +1,8 @@
 local inspect = require'inspect'
 local Pattern = require'losc.pattern'
 local Message = require'losc.message'
+local Bundle = require'losc.bundle'
+local Packet = require'losc.packet'
 local Timetag = require'losc.timetag'
 local losc = require'losc'
 
@@ -8,6 +10,8 @@ local losc = require'losc'
 local plugin = {}
 -- timetag precision
 plugin.precision = 1000
+plugin.options = {}
+plugin.options.ignore_late = true
 plugin.now = function()
   return Timetag.new(os.time())
 end
@@ -34,6 +38,20 @@ describe('Pattern', function()
       assert.are.equal(1, data.message[1])
     end)
     Pattern.dispatch(data, plugin)
+  end)
+
+  it('ignores late messages', function()
+    local num = 0
+    local message = Message.new {address = '/foo/bar', types = 'i', 1}
+    local bundle = Bundle.new(Timetag.new(1), message)
+    losc:add_handler('/foo/bar', function(data)
+      num = num + 1
+    end)
+    Pattern.dispatch(Packet.pack(bundle), plugin)
+    assert.are.equal(0, num)
+    plugin.options.ignore_late = false
+    Pattern.dispatch(Packet.pack(bundle), plugin)
+    assert.are.equal(1, num)
   end)
 
   describe('pattern matching', function()

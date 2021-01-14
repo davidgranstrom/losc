@@ -79,6 +79,10 @@ end
 local function invoke(message, timestamp, plugin)
   local address = message.address
   local now = plugin:now():timestamp(plugin.precision)
+  local ignore_late = plugin.options.ignore_late or false
+  if ignore_late and timestamp > 0 and timestamp < now then
+    return
+  end
   if plugin.handlers then
     for _, handler in pairs(plugin.handlers) do
       if match(handler.pattern, address) then

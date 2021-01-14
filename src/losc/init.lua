@@ -82,6 +82,10 @@ end
 --- Specify a plugin to use as transport layer.
 -- @param plugin The plugin to use.
 function losc:use(plugin)
+  if not plugin then
+    error('plugin can not be nil')
+  end
+  plugin.options = plugin.options or {}
   self.plugin = plugin
   self.plugin.handlers = self.handlers
 end
