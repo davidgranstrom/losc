@@ -1,9 +1,5 @@
 #!/usr/bin/env lua
 
--- TODO: Remove later
-package.path = package.path .. ';./src/?.lua'
-package.path = package.path .. ';./src/?/?.lua'
-
 local losc = require'losc'
 local Timetag = require'losc.timetag'
 local ok, udp = pcall(require, 'losc.plugins.udp-socket')

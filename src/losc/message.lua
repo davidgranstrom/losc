@@ -33,7 +33,8 @@ SOFTWARE.
 -- @license MIT
 -- @copyright David Granström 2020
 
-local Types = require'losc.types'
+local relpath = (...):gsub('%.[^%.]+$', '')
+local Types = require(relpath .. '.types')
 
 local Message = {}
 Message.__index = Message

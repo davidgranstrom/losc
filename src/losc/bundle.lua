@@ -33,9 +33,10 @@ SOFTWARE.
 -- @license MIT
 -- @copyright David Granström 2020
 
-local Types = require'losc.types'
-local Message = require'losc.message'
-local Timetag = require'losc.timetag'
+local relpath = (...):gsub('%.[^%.]+$', '')
+local Types = require(relpath .. '.types')
+local Message = require(relpath .. '.message')
+local Timetag = require(relpath .. '.timetag')
 
 local Bundle = {}
 Bundle.__index = Bundle

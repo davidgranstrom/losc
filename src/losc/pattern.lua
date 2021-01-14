@@ -30,8 +30,9 @@ SOFTWARE.
 -- @license MIT
 -- @copyright David Granström 2021
 
-local Packet = require'losc.packet'
-local Timetag = require'losc.timetag'
+local relpath = (...):gsub('%.[^%.]+$', '')
+local Packet = require(relpath .. '.packet')
+local Timetag = require(relpath .. '.timetag')
 
 local Pattern = {}
 

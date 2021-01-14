@@ -34,6 +34,7 @@ SOFTWARE.
 -- @license MIT
 -- @copyright David Granström 2021
 
+local relpath = (...):gsub('%.[^%.]+$', '')
 local Serializer = {}
 
 --- Require a function for packing.
@@ -46,7 +47,7 @@ function Serializer.pack()
   if ok then
     return require'struct'.pack
   else
-    return require'lib.struct'.pack
+    return require(relpath .. '.lib.struct').pack
   end
 end
 
@@ -60,7 +61,7 @@ function Serializer.unpack()
   if ok then
     return require'struct'.unpack
   else
-    return require'lib.struct'.unpack
+    return require(relpath .. '.lib.struct').unpack
   end
 end
 

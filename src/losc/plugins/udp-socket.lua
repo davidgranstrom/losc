@@ -32,9 +32,11 @@ SOFTWARE.
 
 local socket = require'socket'
 
-local Timetag = require'losc.timetag'
-local Pattern = require'losc.pattern'
-local Packet = require'losc.packet'
+local relpath = (...):gsub('%.[^%.]+$', '')
+relpath = (relpath):gsub('%.[^%.]+$', '')
+local Timetag = require(relpath .. '.timetag')
+local Pattern = require(relpath .. '.pattern')
+local Packet = require(relpath .. '.packet')
 
 local M = {}
 M.__index = M

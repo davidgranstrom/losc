@@ -33,9 +33,10 @@ SOFTWARE.
 -- @license MIT
 -- @copyright David Granström 2020
 
-local Message = require'losc.message'
-local Bundle = require'losc.bundle'
-local Types = require'losc.types'
+local relpath = (...):gsub('%.[^%.]+$', '')
+local Message = require(relpath .. '.message')
+local Bundle = require(relpath .. '.bundle')
+local Types = require(relpath .. '.types')
 
 local Packet = {}
 

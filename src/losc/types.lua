@@ -32,8 +32,9 @@ SOFTWARE.
 -- @license MIT
 -- @copyright David Granström 2020
 
-local Serializer = require'losc.serializer'
-local Timetag = require'losc.timetag'
+local relpath = (...):gsub('%.[^%.]+$', '')
+local Serializer = require(relpath .. '.serializer')
+local Timetag = require(relpath .. '.timetag')
 
 local _pack = Serializer.pack()
 local _unpack = Serializer.unpack()

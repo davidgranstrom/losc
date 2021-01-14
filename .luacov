@@ -2,6 +2,6 @@ include = {
   'src'
 }
 exclude = {
-  'src/lib/.+$',
+  'src/losc/lib/.+$',
   'src/losc/serializer'
 }
