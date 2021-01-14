@@ -41,6 +41,12 @@ describe('losc', function()
     assert.is_nil(losc.handlers[pattern])
   end)
 
+  it('can use', function()
+    assert.has_errors(function()
+      losc:use()
+    end) 
+  end)
+
   it('can open', function()
     assert.has_errors(function()
       losc:open()

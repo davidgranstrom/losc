@@ -1,6 +1,12 @@
 name: unit-tests
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   unit-tests:
@@ -37,10 +43,4 @@ jobs:
       - name: Run tests
         run: |
           source .env/bin/activate
-          busted --coverage --output plainTerminal
-          luacov -r lcov
-      - name: Coveralls
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: ./luacov.report.out
+          busted --output plainTerminal
