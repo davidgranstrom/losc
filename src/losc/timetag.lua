@@ -35,7 +35,8 @@ SOFTWARE.
 -- @license MIT
 -- @copyright David Granström 2020
 
-local Serializer = require'losc.serializer'
+local relpath = (...):gsub('%.[^%.]+$', '')
+local Serializer = require(relpath .. '.serializer')
 local _pack = Serializer.pack()
 local _unpack = Serializer.unpack()
 

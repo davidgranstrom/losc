@@ -1,3 +1,3 @@
 return {
-  exclude_files = {'src/lib/struct.lua'}
+  exclude_files = {'src/losc/lib/struct.lua'}
 }
