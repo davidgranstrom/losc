@@ -44,7 +44,7 @@ losc.__index = losc
 --- Create a new instance.
 -- @tparam[options] table options Options.
 -- @usage local osc = losc.new()
--- @usage local osc = losc.new { plugin = plugin.new() }
+-- @usage local osc = losc.new {plugin = plugin.new()}
 function losc.new(options)
   local self = setmetatable({}, losc)
   self.handlers = {}
@@ -99,7 +99,6 @@ function losc:use(plugin)
   if not plugin then
     error('plugin can not be nil')
   end
-  plugin.options = plugin.options or {}
   self.plugin = plugin
   self.plugin.handlers = self.handlers
 end

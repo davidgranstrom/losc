@@ -58,6 +58,8 @@ M.precision = 1000
 function M.new(options)
   local self = setmetatable({}, M)
   self.options = options or {}
+  self.handle = uv.new_udp('inet')
+  assert(self.handle, 'Could not create UDP handle.')
   return self
 end
 
@@ -88,8 +90,6 @@ end
 function M:open(host, port)
   host = host or self.options.recvAddr
   port = port or self.options.recvPort
-  self.handle = uv.new_udp('inet')
-  assert(self.handle, 'Could not create UDP handle')
   self.handle:bind(host, port, {reuseaddr=true})
   self.handle:recv_start(function(err, data, addr)
     assert(not err, err)
@@ -105,7 +105,6 @@ end
 
 --- Close UDP server.
 function M:close()
-  assert(self.handle, 'Server not running.')
   self.handle:recv_stop()
   if not self.handle:is_closing() then
     self.handle:close()
@@ -118,7 +117,6 @@ end
 -- @tparam string address The IP address to send to.
 -- @tparam number port The port to send to.
 function M:send(packet, address, port)
-  assert(self.handle, 'Server not running.')
   address = address or self.options.sendAddr
   port = port or self.options.sendPort
   packet = assert(Packet.pack(packet))

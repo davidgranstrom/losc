@@ -44,7 +44,6 @@ M.__index = M
 -- 1000 is milliseconds. 1000000 is microsends etc. Any precision is valid
 -- that makes sense for the plugin's scheduling function.
 M.precision = 1000
-M.client_handle = assert(socket.udp())
 
 --- Create a new instance.
 -- @tparam[options] table options Options.
@@ -59,6 +58,10 @@ M.client_handle = assert(socket.udp())
 function M.new(options)
   local self = setmetatable({}, M)
   self.options = options or {}
+  self.handle = socket.udp()
+  self.client_handle = socket.udp()
+  assert(self.handle, 'Could not create UDP handle.')
+  assert(self.client_handle, 'Could not create UDP handle.')
   return self
 end
 
@@ -89,7 +92,6 @@ function M:open(host, port)
   host = host or self.options.recvAddr
   host = socket.dns.toip(host)
   port = port or self.options.recvPort
-  self.handle = assert(socket.udp(), 'Could not create UDP handle')
   self.handle:setsockname(host, port)
   while true do
     local data = self.handle:receive()
