@@ -30,7 +30,7 @@ if not port then
   os.exit(0)
 end
 
-local osc = losc.new { plugin = plugin.new }
+local osc = losc.new {plugin = plugin.new()}
 
 osc:add_handler('*', function(data)
   local tt = Timetag.new_from_timestamp(data.timestamp)

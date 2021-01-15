@@ -10,7 +10,7 @@ if not ok then
 end
 
 local unpack = unpack or table.unpack
-local osc = losc.new {plugin = plugin.new}
+local osc = losc.new {plugin = plugin.new()}
 
 local function usage()
   local str = ''
