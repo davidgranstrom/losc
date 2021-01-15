@@ -3,35 +3,25 @@
 -- Uses the udp-socket plugin.
 
 local losc = require'losc'
-local udp = require'losc.plugins.udp-socket'
+local plugin = require'losc.plugins.udp-socket'
 
--- Plugin specific options
-udp.options = {
-  recvAddr = 'localhost',
-  recvPort = 9000,
-}
+local udp = plugin.new { recvAddr = 'localhost', recvPort = 9000 }
+local osc = losc.new { plugin = udp }
 
--- Register to use `lua-socket` UDP plugin
-losc:use(udp)
-
-losc:add_handler('/test', function(data)
+local function print(data)
   local msg = data.message
   print('address: ' .. msg.address, 'timestamp: ' .. data.timestamp)
-  io.write('args: ')
   for index, argument in ipairs(msg) do
-    io.write(tostring(argument) .. ' ')
+    print('index: ' .. index, 'arg: ' .. argument)
   end
-  print('\n')
+end
+
+losc:add_handler('/test', function(data)
+  print(data)
 end)
 
 losc:add_handler('/param/{x,y,z}', function(data)
-  local msg = data.message
-  print('address: ' .. msg.address, 'timestamp: ' .. data.timestamp)
-  io.write('args: ')
-  for index, argument in ipairs(msg) do
-    io.write(tostring(argument) .. ' ')
-  end
-  print('\n')
+  print(data)
 end)
 
 losc:open() -- blocking call

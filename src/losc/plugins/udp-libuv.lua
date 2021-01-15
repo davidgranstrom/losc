@@ -45,6 +45,22 @@ M.__index = M
 -- that makes sense for the plugin's scheduling function.
 M.precision = 1000
 
+--- Create a new instance.
+-- @tparam[options] table options Options.
+-- @usage local udp = plugin.new()
+-- @usage
+-- local udp = plugin.new {
+--   sendAddr = '127.0.0.1'
+--   sendPort = 9000
+--   recvAddr = '127.0.0.1'
+--   recvPort = 8000
+-- }
+function M.new(options)
+  local self = setmetatable({}, M)
+  self.options = options or {}
+  return self
+end
+
 --- Create a Timetag with the current time.
 -- Precision is in milliseconds.
 -- @return Timetag object with current time.
@@ -70,22 +86,20 @@ end
 -- @tparam string host IP address (e.g. 'localhost').
 -- @tparam number port The port to listen on.
 function M:open(host, port)
-  if self.options and not host then
-    host = self.options.recvAddr
-  end
-  if self.options and not port then
-    port = self.options.recvPort
-  end
+  host = host or self.options.recvAddr
+  port = port or self.options.recvPort
   self.handle = uv.new_udp('inet')
   assert(self.handle, 'Could not create UDP handle')
   self.handle:bind(host, port, {reuseaddr=true})
-  self.handle:recv_start(function(err, data)
+  self.handle:recv_start(function(err, data, addr)
     assert(not err, err)
     if data then
+      self.remote_info = addr
       Pattern.dispatch(data, self)
     end
   end)
-  self.port = self.handle:getsockname().port
+  -- updated if port 0 is passed in as default (chooses a random port)
+  self.options.recvPort = self.handle:getsockname().port
   uv.run()
 end
 
@@ -105,13 +119,8 @@ end
 -- @tparam number port The port to send to.
 function M:send(packet, address, port)
   assert(self.handle, 'Server not running.')
-  assert(packet, 'OSC packet is nil.')
-  if self.options and not address then
-    address = self.options.sendAddr
-  end
-  if self.options and not port then
-    port = self.options.sendPort
-  end
+  address = address or self.options.sendAddr
+  port = port or self.options.sendPort
   packet = assert(Packet.pack(packet))
   self.handle:udp_try_send(packet, address, port)
 end

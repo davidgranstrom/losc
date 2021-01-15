@@ -40,7 +40,21 @@ local Pattern = require(relpath .. '.pattern')
 
 local losc = {}
 losc.__index = losc
-losc.handlers = {}
+
+--- Create a new instance.
+-- @tparam[options] table options Options.
+-- @usage local osc = losc.new()
+-- @usage local osc = losc.new { plugin = plugin.new() }
+function losc.new(options)
+  local self = setmetatable({}, losc)
+  self.handlers = {}
+  if options then
+    if options.plugin then
+      self:use(options.plugin)
+    end
+  end
+  return self
+end
 
 --- Create a new Message.
 -- @tparam[opt] string|table args OSC address or table constructor.

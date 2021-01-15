@@ -3,15 +3,15 @@
 -- Uses the udp-socket plugin.
 
 local losc = require'losc'
-local udp = require'losc.plugins.udp-socket'
+local plugin = require'losc.plugins.udp-socket'
 
--- Register to use `lua-socket` UDP plugin
-losc:use(udp)
+local udp = plugin.new { sendAddr = 'localhost', sendPort = 9000 }
+local osc = losc.new { plugin = udp }
 
-local message = losc.new_message {
+local message = osc.new_message {
   address = '/foo/bar',
   types = 'ifsb',
   123, 1.234, 'hi', 'blobdata'
 }
 
-losc:send(message, 'localhost', 9000)
+osc:send(message)
