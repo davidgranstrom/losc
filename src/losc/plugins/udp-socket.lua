@@ -46,6 +46,22 @@ M.__index = M
 M.precision = 1000
 M.client_handle = assert(socket.udp())
 
+--- Create a new instance.
+-- @tparam[options] table options Options.
+-- @usage local udp = plugin.new()
+-- @usage
+-- local udp = plugin.new {
+--   sendAddr = '127.0.0.1'
+--   sendPort = 9000
+--   recvAddr = '127.0.0.1'
+--   recvPort = 8000
+-- }
+function M.new(options)
+  local self = setmetatable({}, M)
+  self.options = options or {}
+  return self
+end
+
 --- Create a Timetag with the current time.
 -- Precision is in milliseconds.
 -- @return Timetag object with current time.
@@ -70,15 +86,9 @@ end
 -- @tparam string host IP address (e.g. 'localhost').
 -- @tparam number port The port to listen on.
 function M:open(host, port)
-  if self.options and not host then
-    host = self.options.recvAddr
-    if type(host) == 'string' then
-      host = socket.dns.toip(host)
-    end
-  end
-  if self.options and not port then
-    port = self.options.recvPort
-  end
+  host = host or self.options.recvAddr
+  host = socket.dns.toip(host)
+  port = port or self.options.recvPort
   self.handle = assert(socket.udp(), 'Could not create UDP handle')
   self.handle:setsockname(host, port)
   while true do
@@ -105,16 +115,9 @@ end
 -- @tparam string address The IP address to send to.
 -- @tparam number port The port to send to.
 function M:send(packet, address, port)
-  assert(packet, 'OSC packet is nil.')
-  if self.options and not address then
-    address = self.options.sendAddr
-  end
-  if self.options and not port then
-    port = self.options.sendPort
-  end
-  if address == 'localhost' then
-    address = socket.dns.toip(address)
-  end
+  address = address or self.options.sendAddr
+  address = socket.dns.toip(address)
+  port = port or self.options.sendPort
   packet = assert(Packet.pack(packet))
   self.client_handle:sendto(packet, address, port)
 end

@@ -2,7 +2,7 @@
 
 local losc = require'losc'
 local Timetag = require'losc.timetag'
-local ok, udp = pcall(require, 'losc.plugins.udp-socket')
+local ok, plugin = pcall(require, 'losc.plugins.udp-socket')
 if not ok then
   local msg = 'loscsend requires `luasocket`. Try: `luarocks install luasocket`'
   io.stderr:write(msg)
@@ -30,8 +30,9 @@ if not port then
   os.exit(0)
 end
 
-losc:use(udp)
-losc:add_handler('*', function(data)
+local osc = losc.new { plugin = plugin.new }
+
+osc:add_handler('*', function(data)
   local tt = Timetag.new_from_timestamp(data.timestamp)
   local time = string.format('%04x.%04x', tt:seconds(), tt:fractions())
   io.write(time .. ' ')
@@ -42,4 +43,4 @@ losc:add_handler('*', function(data)
   end
   io.write('\n')
 end)
-losc:open("127.0.0.1", arg[1] or 0)
+osc:open('127.0.0.1', arg[1] or 0)

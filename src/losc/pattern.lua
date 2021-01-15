@@ -90,7 +90,7 @@ local function invoke(message, timestamp, plugin)
           handler.callback({
             timestamp = now,
             message = message,
-            plugin = plugin,
+            remote_info = plugin.remote_info or {},
           })
         end)
       end

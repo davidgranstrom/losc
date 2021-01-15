@@ -11,6 +11,7 @@ local plugin = {}
 plugin.precision = 1000
 plugin.options = {}
 plugin.options.ignore_late = true
+plugin.remote_info = {}
 plugin.now = function()
   return Timetag.new(os.time())
 end
@@ -18,20 +19,20 @@ plugin.schedule = function(self, timestamp, handler)
   handler()
 end
 
-losc:use(plugin)
+local osc = losc.new {plugin = plugin}
 
 before_each(function()
-  losc:remove_all()
+  osc:remove_all()
 end)
 
 describe('Pattern', function()
   it('can dispatch incoming data', function()
     local data = Message.pack({address = '/foo/bar', types = 'i', 1})
-    losc:add_handler('/foo/bar', function(data)
+    osc:add_handler('/foo/bar', function(data)
       assert.not_nil(data)
       assert.not_nil(data.message)
       assert.not_nil(data.timestamp)
-      assert.not_nil(data.plugin)
+      assert.not_nil(data.remote_info)
       assert.are.equal('/foo/bar', data.message.address)
       assert.are.equal('i', data.message.types)
       assert.are.equal(1, data.message[1])
@@ -43,7 +44,7 @@ describe('Pattern', function()
     local num = 0
     local message = Message.new {address = '/foo/bar', types = 'i', 1}
     local bundle = Bundle.new(Timetag.new(1), message)
-    losc:add_handler('/foo/bar', function(data)
+    osc:add_handler('/foo/bar', function(data)
       num = num + 1
     end)
     Pattern.dispatch(Packet.pack(bundle), plugin)
@@ -56,11 +57,11 @@ describe('Pattern', function()
   describe('pattern matching', function()
     it('can match any single character (?)', function()
       local num_matches = 0
-      losc:add_handler('/foo/ba?', function(data)
+      osc:add_handler('/foo/ba?', function(data)
         assert.not_nil(data)
         assert.not_nil(data.message)
         assert.not_nil(data.timestamp)
-        assert.not_nil(data.plugin)
+        assert.not_nil(data.remote_info)
         num_matches = num_matches + 1
       end)
       local data = Message.pack({address = '/foo/bar', types = 'i', 1})
@@ -73,11 +74,11 @@ describe('Pattern', function()
     it('can match any sequence (*)', function()
       local num_matches = 0
       local data = Message.pack({address = '/foo/bar/baz', types = 'i', 1})
-      losc:add_handler('*', function(data)
+      osc:add_handler('*', function(data)
         assert.not_nil(data)
         assert.not_nil(data.message)
         assert.not_nil(data.timestamp)
-        assert.not_nil(data.plugin)
+        assert.not_nil(data.remote_info)
         num_matches = num_matches + 1
       end)
       Pattern.dispatch(data, plugin)
@@ -86,11 +87,11 @@ describe('Pattern', function()
 
     it('can match wildcard sequence (*)', function()
       local num_matches = 0
-      losc:add_handler('/foo/*/baz', function(data)
+      osc:add_handler('/foo/*/baz', function(data)
         assert.not_nil(data)
         num_matches = num_matches + 1
       end)
-      losc:add_handler('/foo/bar/*', function(data)
+      osc:add_handler('/foo/bar/*', function(data)
         assert.not_nil(data)
         num_matches = num_matches + 1
       end)
@@ -104,7 +105,7 @@ describe('Pattern', function()
 
     it('can match sequence of characters ([])', function()
       local num_matches = 0
-      losc:add_handler('/foo/[0-9]', function(data)
+      osc:add_handler('/foo/[0-9]', function(data)
         assert.not_nil(data)
         num_matches = num_matches + 1
       end)
@@ -116,10 +117,10 @@ describe('Pattern', function()
       Pattern.dispatch(shouldmatch, plugin)
       assert.are.equal(2, num_matches)
 
-      losc:remove_all()
+      osc:remove_all()
 
       num_matches = 0
-      losc:add_handler('/[!a-f]/foo', function(data)
+      osc:add_handler('/[!a-f]/foo', function(data)
         assert.not_nil(data)
         num_matches = num_matches + 1
       end)
@@ -133,7 +134,7 @@ describe('Pattern', function()
 
     it('can match groups {}', function()
       local num_matches = 0
-      losc:add_handler('/foo/{bar,baz}/123', function(data)
+      osc:add_handler('/foo/{bar,baz}/123', function(data)
         assert.not_nil(data)
         num_matches = num_matches + 1
       end)
@@ -145,8 +146,8 @@ describe('Pattern', function()
       assert.are.equal(1, num_matches)
 
       num_matches = 0
-      losc:remove_handler('/foo/{bar,baz}/123')
-      losc:add_handler('/foo/{bar,baz}/{x,y,z}/123', function(data)
+      osc:remove_handler('/foo/{bar,baz}/123')
+      osc:add_handler('/foo/{bar,baz}/{x,y,z}/123', function(data)
         assert.not_nil(data)
         num_matches = num_matches + 1
       end)

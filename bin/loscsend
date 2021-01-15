@@ -2,16 +2,15 @@
 
 local losc = require'losc'
 local Types = require'losc.types'
-local ok, udp = pcall(require, 'losc.plugins.udp-socket')
+local ok, plugin = pcall(require, 'losc.plugins.udp-socket')
 if not ok then
   local msg = 'loscsend requires `luasocket`. Try: `luarocks install luasocket`'
   io.stderr:write(msg)
   return
 end
 
-losc:use(udp)
-
 local unpack = unpack or table.unpack
+local osc = losc.new {plugin = plugin.new}
 
 local function usage()
   local str = ''
@@ -43,12 +42,14 @@ if not arg[1] then
   usage()
   os.exit(0)
 end
+
 local ip, port, address, types = opt_parse(arg)
 local ok, message = pcall(losc.new_message, address)
 if not ok then
   print(message)
   os.exit(1)
 end
+
 if types then
   local index = 5
   for type in types:gmatch('.') do
@@ -60,10 +61,12 @@ if types then
     index = index + 1
   end
 end
+
 if ip and port then
-  losc:send(message, ip, port)
+  osc:send(message, ip, port)
 else
   print('Must specify ip and port. See loscsend -h for usage.')
   os.exit(1)
 end
-losc:close()
+
+osc:close()

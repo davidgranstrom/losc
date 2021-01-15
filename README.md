@@ -22,20 +22,20 @@ Compatible with lua 5.1 >= 5.4 luajit 2.0 and luajit 2.1.0-beta3
 
 ```lua
 local losc = require'losc'
-local udp = require'losc.plugins.udp-socket'
+local plugin = require'losc.plugins.udp-socket'
 
--- Register to use the `lua-socket` UDP plugin
-losc:use(udp)
+local udp = plugin.new { sendAddr = 'localhost', sendPort = 9000 }
+local osc = losc.new { plugin = udp }
 
 -- Create a message
-local message = losc.new_message {
+local message = osc.new_message {
   address = '/foo/bar',
   types = 'ifsb',
   123, 1.234, 'hi', 'blobdata'
 }
 
 -- Send it over UDP
-losc:send(message, 'localhost', 9000)
+osc:send(message)
 ```
 
 ## API
