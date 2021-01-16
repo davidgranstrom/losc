@@ -41,7 +41,7 @@ local Packet = require(relpath .. '.packet')
 local M = {}
 M.__index = M
 --- Fractional precision for bundle scheduling.
--- 1000 is milliseconds. 1000000 is microsends etc. Any precision is valid
+-- 1000 is milliseconds. 1000000 is microseconds etc. Any precision is valid
 -- that makes sense for the plugin's scheduling function.
 M.precision = 1000
 
@@ -50,10 +50,10 @@ M.precision = 1000
 -- @usage local udp = plugin.new()
 -- @usage
 -- local udp = plugin.new {
---   sendAddr = '127.0.0.1'
---   sendPort = 9000
---   recvAddr = '127.0.0.1'
---   recvPort = 8000
+--   sendAddr = '127.0.0.1',
+--   sendPort = 9000,
+--   recvAddr = '127.0.0.1',
+--   recvPort = 8000,
 -- }
 function M.new(options)
   local self = setmetatable({}, M)
@@ -71,8 +71,8 @@ function M:now() -- luacheck: ignore
   return Timetag.new(s, m / M.precision)
 end
 
---- Schedule a method for dispatch.
--- This function is used to dispatch  messages contained inside OSC bundles.
+--- Schedule a OSC method for dispatch.
+--
 -- @tparam number timestamp When to schedule the bundle.
 -- @tparam function handler The OSC handler to call.
 function M:schedule(timestamp, handler) -- luacheck: ignore
