@@ -162,21 +162,38 @@ end
 --- Extended types.
 -- @section extended-types
 
---- 64 bit big-endian two's complement integer
+--- 64 bit big-endian two's complement integer.
+--
+-- WARNING This type is only supported for lua >= 5.3.
+-- versions < 5.3 versions will truncate the value to a signed 32-bit integer.
 -- @param value The value to pack.
 -- @return Binary string buffer.
 Types.pack.h = function(value)
-  local fmt = has_string_pack and '>i8' or '>l'
-  return _pack(fmt, value)
+  if has_string_pack then
+    return _pack('>i8', value)
+  else
+    if value > 2147483647 then
+      value = 2147483647
+    elseif value < -2147483648 then
+      value = -2147483648
+    end
+    return _pack('>i4', value)
+  end
 end
 
---- 64 bit big-endian two's complement integer
+--- 64 bit big-endian two's complement integer.
+--
+-- WARNING This type is only supported for lua >= 5.3.
+-- versions < 5.3 versions will truncate the value to a signed 32-bit integer.
 -- @param data The data to unpack.
 -- @param[opt] offset Initial offset into data.
 -- @return value, index of the bytes read + 1.
 Types.unpack.h = function(data, offset)
-  local fmt = has_string_pack and '>i8' or '>l'
-  return _unpack(fmt, data, offset)
+  if has_string_pack then
+    return _unpack('>i8', data, offset)
+  else
+    return _unpack('>i4', data, offset)
+  end
 end
 
 --- Timetag (64-bit integer divided into upper and lower part)

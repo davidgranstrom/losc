@@ -1,7 +1,9 @@
 include = {
-  'src'
+  'src%/losc$',
+  'src%/losc%/.+$',
+  'src%/losc%/plugins%/.+$',
 }
 exclude = {
   'src/losc/lib/.+$',
-  'src/losc/serializer'
+  'src/losc/serializer',
 }
