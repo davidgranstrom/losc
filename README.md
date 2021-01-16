@@ -52,30 +52,40 @@ Read more about it in the [documentation][docs].
 
 ## Benchmarks
 
-Generated with lua 5.1.5 running on a 2.3 GHz Intel i5 processor.
+Generated with lua 5.1.5 (using `struct`) running on a 2.3 GHz Intel i5 processor.
 
 ```plain
 Message pack:
  -> Iterations:  1000
- -> Time:  26.456378 ms
- -> Avg:  0.026456378 ms
+ -> Time:  5.868736 ms
+ -> Avg:  0.005868736 ms
  -> Bytes:  48000
 Message unpack:
  -> Iterations:  1000
- -> Time:  32.237467 ms
- -> Avg:  0.032237467 ms
+ -> Time:  5.499933 ms
+ -> Avg:  0.005499933 ms
  -> Bytes:  48000
 Bundle pack:
  -> Iterations:  1000
- -> Time:  71.503527 ms
- -> Avg:  0.071503527 ms
+ -> Time:  15.244311 ms
+ -> Avg:  0.015244311 ms
  -> Bytes:  120000
 Bundle unpack:
  -> Iterations:  1000
- -> Time:  80.274404 ms
- -> Avg:  0.080274404 ms
+ -> Time:  12.260707 ms
+ -> Avg:  0.012260707 ms
  -> Bytes:  120000
 ```
+
+### Note on performance
+
+The OSC serialization functions are implemented differently depending on the
+lua interpreter in use and locally available packages. `losc` will always work
+out-of-the-box regardless of lua version since
+[`lua-struct`](https://github.com/iryont/lua-struct) is a bundled dependency.
+
+To achieve **better performance** for lua versions < 5.3 it is
+recommended to install the [`struct`](http://www.inf.puc-rio.br/~roberto/struct/) package locally.
 
 ## License
 
