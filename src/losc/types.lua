@@ -76,6 +76,19 @@ setmetatable(Types.unpack, {
   end
 })
 
+--- Get available types.
+-- @tparam table tbl `Types.unpack` or `Types.pack`
+-- @return Table with available types.
+-- @usage local types = Types.types(Types.pack)
+-- @usage local types = Types.types(Types.unpack)
+function Types.get(tbl)
+  local types = {}
+  for k, _ in pairs(tbl) do
+    types[#types + 1] = k
+  end
+  return types
+end
+
 local function strsize(s)
   return 4 * (math.floor(#s / 4) + 1)
 end
@@ -162,37 +175,26 @@ end
 --- Extended types.
 -- @section extended-types
 
---- 64 bit big-endian two's complement integer.
---
--- WARNING This type is only supported for lua >= 5.3.
--- versions < 5.3 versions will truncate the value to a signed 32-bit integer.
--- @param value The value to pack.
--- @return Binary string buffer.
-Types.pack.h = function(value)
-  if has_string_pack then
+if has_string_pack then
+  --- 64 bit big-endian two's complement integer.
+  --
+  -- **NOTE** This type is only supported for lua >= 5.3.
+  -- @param value The value to pack.
+  -- @return Binary string buffer.
+  Types.pack.h = function(value)
     return _pack('>i8', value)
-  else
-    if value > 2147483647 then
-      value = 2147483647
-    elseif value < -2147483648 then
-      value = -2147483648
-    end
-    return _pack('>i4', value)
   end
 end
 
---- 64 bit big-endian two's complement integer.
---
--- WARNING This type is only supported for lua >= 5.3.
--- versions < 5.3 versions will truncate the value to a signed 32-bit integer.
--- @param data The data to unpack.
--- @param[opt] offset Initial offset into data.
--- @return value, index of the bytes read + 1.
-Types.unpack.h = function(data, offset)
-  if has_string_pack then
+if has_string_pack then
+  --- 64 bit big-endian two's complement integer.
+  --
+  -- **NOTE** This type is only supported for lua >= 5.3.
+  -- @param data The data to unpack.
+  -- @param[opt] offset Initial offset into data.
+  -- @return value, index of the bytes read + 1.
+  Types.unpack.h = function(data, offset)
     return _unpack('>i8', data, offset)
-  else
-    return _unpack('>i4', data, offset)
   end
 end
 
