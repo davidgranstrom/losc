@@ -27,7 +27,7 @@ SOFTWARE.
 --
 -- Lua >= 5.3 will use `string.pack`/`string.unpack`
 --
--- Lua < 5.3 and luajit will use `struct` if available, otherwise `lua-struct` (which is bundled as fallback).
+-- Lua < 5.3 and luajit will use `struct` if available, otherwise `lua-struct` (which is bundled as a fallback).
 --
 -- @module losc.serializer
 -- @author David Granström

@@ -63,7 +63,7 @@ function Packet.validate(packet)
   end
 end
 
---- Pack a bundle or message to a byte string.
+--- Pack a Bundle or Message.
 -- @param tbl The table to pack.
 -- @return OSC data packet (byte string).
 function Packet.pack(tbl)
