@@ -40,16 +40,10 @@ describe('double', function()
   end)
 end)
 
--- https://github.com/iryont/lua-struct/issues/3
--- lua < 5.3 will truncate the value to a signed 32-bit integer.
-describe('int64', function()
+local test_int64 = function()
   local data, expected_bytes
   local value = 9223372036854775807
-  if string.pack then
-    expected_bytes = {127, 255, 255, 255, 255, 255, 255, 255}
-  else
-    expected_bytes = {127, 255, 255, 255}
-  end
+  expected_bytes = {127, 255, 255, 255, 255, 255, 255, 255}
 
   describe('pack', function()
     setup(function()
@@ -76,19 +70,15 @@ describe('int64', function()
     end)
 
     it('returns the correct offset', function()
-      if string.pack then
-        assert.are.equal(offset, 9)
-      else
-        assert.are.equal(offset, 5)
-      end
+      assert.are.equal(offset, 9)
     end)
 
     it('returns the correct value', function()
-      if string.pack then
-        assert.are.equal(value, h)
-      else
-        assert.are.equal(2147483647, h)
-      end
+      assert.are.equal(value, h)
     end)
   end)
-end)
+end
+
+-- https://github.com/iryont/lua-struct/issues/3
+-- lua < 5.1 can not represent this type.
+describe('int64', string.pack and test_int64 or function() end)
