@@ -4,7 +4,7 @@ local losc = require'losc'
 local Timetag = require'losc.timetag'
 local ok, plugin = pcall(require, 'losc.plugins.udp-socket')
 if not ok then
-  local msg = 'loscsend requires `luasocket`. Try: `luarocks install luasocket`'
+  local msg = 'loscsend requires `luasocket`\nTry: `luarocks install luasocket`'
   io.stderr:write(msg)
   return
 end
