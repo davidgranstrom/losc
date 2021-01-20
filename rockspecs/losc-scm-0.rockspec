@@ -6,7 +6,7 @@ source = {
 description = {
    summary = "OSC 1.0 library.",
    detailed = [[
-       Open Sound Control (OSC) for lua/luajit.
+       Open Sound Control (OSC) for lua/luajit with no external dependencies.
    ]],
    homepage = "https://github.com/davidgranstrom/losc",
    license = "MIT"
@@ -17,7 +17,6 @@ dependencies = {
 build = {
    type = "builtin",
    modules = {
-      losc = "src/losc.lua",
       ["losc.bundle"] = "src/losc/bundle.lua",
       ["losc.init"] = "src/losc/init.lua",
       ["losc.lib.struct"] = "src/losc/lib/struct.lua",
