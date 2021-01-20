@@ -75,16 +75,6 @@ function Message.new(msg)
   return self
 end
 
---- Create a new OSC message from binary data.
---
--- @tparam string data Binary string of OSC data.
--- @return An OSC message object.
--- @usage local message = Message.new_from_bytes(data)
-function Message.new_from_bytes(data)
-  Message.bytes_validate(data)
-  return Message.new(Message.unpack(data))
-end
-
 --- Add arguments to the message.
 --
 -- @param type OSC type string.

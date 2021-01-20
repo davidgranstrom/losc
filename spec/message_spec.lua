@@ -13,12 +13,6 @@ describe('Message', function()
       local message = Message.new(msg)
       assert.not_nil(message)
     end)
-
-    it('can create message object from binary data', function()
-      local data = '/foo/bar\0\0\0\0,s\0\0hello\0\0\0'
-      local message = Message.new_from_bytes(data)
-      assert.not_nil(message)
-    end)
   end)
 
   describe('methods', function()
