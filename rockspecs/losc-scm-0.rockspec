@@ -1,12 +1,12 @@
 package = "losc"
-version = "dev-1"
+version = "scm-0"
 source = {
    url = "git+https://github.com/davidgranstrom/losc.git"
 }
 description = {
    summary = "OSC 1.0 library.",
    detailed = [[
-       A lua implementation of the Open Sound Control (OSC) specification.
+       Open Sound Control (OSC) for lua/luajit.
    ]],
    homepage = "https://github.com/davidgranstrom/losc",
    license = "MIT"
@@ -17,9 +17,10 @@ dependencies = {
 build = {
    type = "builtin",
    modules = {
-      ["lib.struct"] = "src/lib/struct.lua",
       losc = "src/losc.lua",
       ["losc.bundle"] = "src/losc/bundle.lua",
+      ["losc.init"] = "src/losc/init.lua",
+      ["losc.lib.struct"] = "src/losc/lib/struct.lua",
       ["losc.message"] = "src/losc/message.lua",
       ["losc.packet"] = "src/losc/packet.lua",
       ["losc.pattern"] = "src/losc/pattern.lua",
