@@ -114,8 +114,8 @@ end
 
 --- Send a OSC packet.
 -- @tparam table packet The packet to send.
--- @tparam string address The IP address to send to.
--- @tparam number port The port to send to.
+-- @tparam[opt] string address The IP address to send to.
+-- @tparam[opt] number port The port to send to.
 function M:send(packet, address, port)
   address = address or self.options.sendAddr
   port = port or self.options.sendPort

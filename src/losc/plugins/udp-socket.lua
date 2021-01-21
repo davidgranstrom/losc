@@ -76,7 +76,7 @@ end
 
 --- Schedule a OSC method for dispatch.
 --
--- *This plugin does not support scheduled bundles, timestamps will be ignored.*
+-- *This plugin does not support scheduled bundles - timestamps will be ignored.*
 -- @tparam number timestamp When to schedule the bundle.
 -- @tparam function handler The OSC handler to call.
 function M:schedule(timestamp, handler) -- luacheck: ignore
@@ -113,8 +113,8 @@ end
 
 --- Send a OSC packet.
 -- @tparam table packet The packet to send.
--- @tparam string address The IP address to send to.
--- @tparam number port The port to send to.
+-- @tparam[opt] string address The IP address to send to.
+-- @tparam[opt] number port The port to send to.
 function M:send(packet, address, port)
   address = address or self.options.sendAddr
   address = socket.dns.toip(address)

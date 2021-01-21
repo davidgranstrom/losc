@@ -177,4 +177,21 @@ describe('Bundle', function()
       assert.is_true((compare_msg(data[2][3][3], bundle[2][3][3])))
     end)
   end)
+
+  describe('methods', function()
+    local bundle
+
+    setup(function()
+      local tt = Timetag.new()
+      bundle = Bundle.new(tt)
+    end)
+
+    it('can get and set a Timetag', function()
+      local tt = Timetag.new(123)
+      local stamp = tt:timestamp(1)
+      assert.is_true(type(bundle:timetag()) == 'table')
+      bundle:timetag(tt) -- update
+      assert.are.equal(stamp, bundle:timetag():timestamp(1))
+    end)
+  end)
 end)

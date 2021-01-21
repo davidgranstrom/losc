@@ -104,7 +104,7 @@ end
 -- @see losc.bundle
 -- @usage local bundle = losc.new_bundle()
 -- @usage
--- local tt = Timetag.new_raw()
+-- local tt = Timetag.new()
 -- local bundle = losc.new_bundle(tt)
 -- @usage
 -- local tt = Timetag.new(os.time(), 0)

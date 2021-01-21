@@ -116,9 +116,9 @@ end
 -- If no parameter is given it returns the current Timetag.
 function Bundle:timetag(tt)
   if tt then
-    self.timetag = tt.content
+    self.content.timetag = tt.content
   else
-    return self.timetag
+    return Timetag.new_raw(self.content.timetag)
   end
 end
 

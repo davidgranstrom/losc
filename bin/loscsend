@@ -4,7 +4,7 @@ local losc = require'losc'
 local Types = require'losc.types'
 local ok, plugin = pcall(require, 'losc.plugins.udp-socket')
 if not ok then
-  local msg = 'loscsend requires `luasocket`. Try: `luarocks install luasocket`'
+  local msg = 'loscsend requires `luasocket`\nTry: `luarocks install luasocket`'
   io.stderr:write(msg)
   return
 end
@@ -17,13 +17,10 @@ local function usage()
   str = str .. 'loscsend - Send an OSC message via UDP.\n'
   str = str .. '\nusage: loscsend ip port address [types [args]]'
   str = str .. '\nsupported types: '
-  local types = {}
-  for key, _ in pairs(Types.pack) do
-    types[#types + 1] = key
-  end
+  local types = Types.get(Types.pack)
   table.sort(types)
   str = str .. table.concat(types, ', ')
-  str = str .. '\n\nexample: loscsend localhost 57120 ifs 1 2.3 "hi"\n'
+  str = str .. '\n\nexample: loscsend localhost 57120 /test ifs 1 2.3 "hi"\n'
   io.write(str)
 end
 
