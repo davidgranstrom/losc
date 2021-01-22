@@ -41,22 +41,26 @@ local Timetag = require(relpath .. '.timetag')
 local Bundle = {}
 Bundle.__index = Bundle
 
-local function _pack(bndl, packet)
+local ts = Timetag.get_timestamp
+
+local function _pack(bundle, packet)
   packet[#packet + 1] = Types.pack.s('#bundle')
-  packet[#packet + 1] = Types.pack.t(bndl.timetag)
-  for _, item in ipairs(bndl) do
-    if item.timetag then
-      if Timetag.get_timestamp(item.timetag) >= Timetag.get_timestamp(bndl.timetag) then
-        return _pack(item, packet)
+  packet[#packet + 1] = Types.pack.t(bundle.timetag)
+  for _, item in ipairs(bundle) do
+    if item.address and item.types then
+      local message = Message.pack(item)
+      packet[#packet + 1] = Types.pack.i(#message)
+      packet[#packet + 1] = message
+    elseif item.timetag then
+      if ts(item.timetag) < ts(bundle.timetag) then
+        error('Bundle timetag is less than enclosing bundle.')
       end
-      error('Nested bundle requires timetag greater than enclosing bundle.')
+      local bndl = Bundle.pack(item)
+      packet[#packet + 1] = Types.pack.i(#bndl)
+      packet[#packet + 1] = bndl
     end
-    local message = Message.pack(item)
-    packet[#packet + 1] = Types.pack.i(#message)
-    packet[#packet + 1] = message
   end
-  packet = table.concat(packet, '')
-  return packet
+  return table.concat(packet, '')
 end
 
 local function _unpack(data, bundle, offset, ret_bundle)
