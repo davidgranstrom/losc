@@ -1,4 +1,3 @@
-local inspect = require'inspect'
 local Pattern = require'losc.pattern'
 local Message = require'losc.message'
 local Bundle = require'losc.bundle'
