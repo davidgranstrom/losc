@@ -222,24 +222,22 @@ end
 -- @param offset The initial offset into data.
 -- @return table with the content of the OSC message.
 function Message.unpack(data, offset)
-  local message = {}
-  local value, index
-  offset = offset or 1
+  local message = {}, value
   -- address
-  value, index = Types.unpack.s(data, offset)
+  value, offset = Types.unpack.s(data, offset)
   message.address = value
   -- type tag
-  value, index = Types.unpack.s(data, index)
+  value, offset = Types.unpack.s(data, offset)
   local types = value:sub(2) -- remove prefix
   message.types = types
   -- arguments
   for type in types:gmatch('.') do
     if Types.unpack[type] then
-      value, index = Types.unpack[type](data, index)
+      value, offset = Types.unpack[type](data, offset)
       message[#message + 1] = value
     end
   end
-  return message, index
+  return message, offset
 end
 
 return Message
