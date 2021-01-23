@@ -33,6 +33,7 @@ SOFTWARE.
 local relpath = (...):gsub('%.[^%.]+$', '')
 local Packet = require(relpath .. '.packet')
 local Timetag = require(relpath .. '.timetag')
+local inspect = require'inspect'
 
 local Pattern = {}
 
@@ -105,7 +106,7 @@ local function dispatch(packet, plugin)
         if ts(item.timetag, plugin.precision) < ts(packet.timetag, plugin.precision) then
           error('Bundle timestamp is older than timestamp of enclosing bundle')
         end
-        return dispatch(item, plugin)
+        dispatch(item, plugin)
       else
         invoke(item, ts(packet.timetag, plugin.precision), plugin)
       end

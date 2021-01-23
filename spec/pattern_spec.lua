@@ -1,3 +1,4 @@
+local inspect = require'inspect'
 local Pattern = require'losc.pattern'
 local Message = require'losc.message'
 local Bundle = require'losc.bundle'
@@ -52,6 +53,20 @@ describe('Pattern', function()
     plugin.options.ignore_late = false
     Pattern.dispatch(Packet.pack(bundle), plugin)
     assert.are.equal(1, num)
+  end)
+
+  it('can dispatch nested bundles', function()
+    local message = Message.new {address = '/foo/123', types = 'i', 1}
+    local message2 = Message.new {address = '/foo/abc', types = 'f', 1.234}
+    local bundle = Bundle.new(Timetag.new(123), message)
+    local bundle2 = Bundle.new(Timetag.new(), bundle, message2)
+    local num = 0
+    osc:add_handler('/foo/*', function(data)
+      num = num + 1
+    end)
+    plugin.options.ignore_late = false
+    Pattern.dispatch(Packet.pack(bundle2), plugin)
+    assert.are.equal(2, num)
   end)
 
   describe('pattern matching', function()
