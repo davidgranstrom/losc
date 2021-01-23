@@ -37,15 +37,31 @@ local relpath = (...):gsub('%.[^%.]+$', '')
 local Types = require(relpath .. '.types')
 local Message = require(relpath .. '.message')
 local Timetag = require(relpath .. '.timetag')
+local inspect = require'inspect'
 
 local Bundle = {}
 Bundle.__index = Bundle
 
 local ts = Timetag.get_timestamp
 
+local function _pack_header(bundle)
+  return table.concat({
+    Types.pack.s('#bundle'),
+    Types.pack.t(bundle.timetag),
+  }, '')
+end
+
+local function _unpack_header(data, offset)
+  local value
+  value, offset = Types.unpack.s(data, offset)
+  assert(value == '#bundle', 'Missing bundle marker.')
+  value, offset = Types.unpack.t(data, offset)
+  return value, offset
+end
+
+--- Pack a Bundle recursively.
 local function _pack(bundle, packet)
-  packet[#packet + 1] = Types.pack.s('#bundle')
-  packet[#packet + 1] = Types.pack.t(bundle.timetag)
+  packet[#packet + 1] = _pack_header(bundle)
   for _, item in ipairs(bundle) do
     if item.address and item.types then
       local message = Message.pack(item)
@@ -63,24 +79,25 @@ local function _pack(bundle, packet)
   return table.concat(packet, '')
 end
 
-local function _unpack(data, bundle, offset, ret_bundle)
-  local value, index
-  index = select(2, Types.unpack.s(data, offset))
-  value, index = Types.unpack.t(data, index)
+--- Unpack a Bundle recursively.
+local function _unpack(data, bundle, offset, length)
+  local value
+  value, offset = _unpack_header(data, offset)
   bundle.timetag = value
-  while index < #data do
-    -- check if value is a nested bundle
-    local nested = data:sub(index, index + 7) == '#bundle\0'
-    if nested then
-      local bndl = {}
-      bundle[#bundle + 1] = bndl
-      return _unpack(data, bndl, index, ret_bundle or bundle)
+  length = length or #data
+  while offset < length do
+    -- content length
+    value, offset = Types.unpack.i(data, offset)
+    local head = data:sub(offset, offset)
+    if head == '#' then
+      value, offset = _unpack(data, {}, offset, offset + value - 1)
+      bundle[#bundle + 1] = value
+    elseif head == '/' then
+      value, offset = Message.unpack(data, offset)
+      bundle[#bundle + 1] = value
     end
-    index = select(2, Types.unpack.i(data, index))
-    value, index = Message.unpack(data, index)
-    bundle[#bundle + 1] = value
   end
-  return ret_bundle or bundle, index
+  return bundle, offset
 end
 
 --- High level API
@@ -103,7 +120,7 @@ function Bundle.new(...)
   if #args >= 1 then
     self.content.timetag = args[1].content
     for index = 2, #args do
-      self.content[#self.content + 1] = args[index].content
+      self:add(args[index])
     end
   end
   return self
