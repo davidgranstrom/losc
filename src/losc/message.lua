@@ -222,7 +222,8 @@ end
 -- @param offset The initial offset into data.
 -- @return table with the content of the OSC message.
 function Message.unpack(data, offset)
-  local message = {}, value
+  local value
+  local message = {}
   -- address
   value, offset = Types.unpack.s(data, offset)
   message.address = value

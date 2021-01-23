@@ -37,7 +37,6 @@ local relpath = (...):gsub('%.[^%.]+$', '')
 local Types = require(relpath .. '.types')
 local Message = require(relpath .. '.message')
 local Timetag = require(relpath .. '.timetag')
-local inspect = require'inspect'
 
 local Bundle = {}
 Bundle.__index = Bundle

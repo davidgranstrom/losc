@@ -33,7 +33,6 @@ SOFTWARE.
 local relpath = (...):gsub('%.[^%.]+$', '')
 local Packet = require(relpath .. '.packet')
 local Timetag = require(relpath .. '.timetag')
-local inspect = require'inspect'
 
 local Pattern = {}
 
