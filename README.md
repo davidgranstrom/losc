@@ -57,23 +57,23 @@ Generated with lua 5.1.5 (using `struct`) running on a 2.3 GHz Intel i5 processo
 ```plain
 Message pack:
  -> Iterations:  1000
- -> Time:  5.868736 ms
- -> Avg:  0.005868736 ms
+ -> Time:  5.765507 ms
+ -> Avg:  0.005765507 ms
  -> Bytes:  48000
 Message unpack:
  -> Iterations:  1000
- -> Time:  5.499933 ms
- -> Avg:  0.005499933 ms
+ -> Time:  5.715137 ms
+ -> Avg:  0.005715137 ms
  -> Bytes:  48000
 Bundle pack:
  -> Iterations:  1000
- -> Time:  15.244311 ms
- -> Avg:  0.015244311 ms
+ -> Time:  15.804163 ms
+ -> Avg:  0.015804163 ms
  -> Bytes:  120000
 Bundle unpack:
  -> Iterations:  1000
- -> Time:  12.260707 ms
- -> Avg:  0.012260707 ms
+ -> Time:  11.864412 ms
+ -> Avg:  0.011864412 ms
  -> Bytes:  120000
 ```
 
