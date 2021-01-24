@@ -31,7 +31,7 @@ describe('Bundle', function()
       end)
     end)
 
-    it('can pack a messages correctly', function()
+    it('can pack messages correctly', function()
       local bndl = {
         timetag = {seconds = 0, fractions = 1},
         {address = 'hello', types = 'T'},
