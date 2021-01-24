@@ -43,24 +43,10 @@ Bundle.__index = Bundle
 
 local ts = Timetag.get_timestamp
 
-local function _pack_header(bundle)
-  return table.concat({
-    Types.pack.s('#bundle'),
-    Types.pack.t(bundle.timetag),
-  }, '')
-end
-
-local function _unpack_header(data, offset)
-  local value
-  value, offset = Types.unpack.s(data, offset)
-  assert(value == '#bundle', 'Missing bundle marker.')
-  value, offset = Types.unpack.t(data, offset)
-  return value, offset
-end
-
 --- Pack a Bundle recursively.
 local function _pack(bundle, packet)
-  packet[#packet + 1] = _pack_header(bundle)
+  packet[#packet + 1] = Types.pack.s('#bundle')
+  packet[#packet + 1] = Types.pack.t(bundle.timetag)
   for _, item in ipairs(bundle) do
     if item.address and item.types then
       local message = Message.pack(item)
@@ -80,8 +66,9 @@ end
 
 --- Unpack a Bundle recursively.
 local function _unpack(data, bundle, offset, length)
-  local value
-  value, offset = _unpack_header(data, offset)
+  local value, _
+  _, offset = Types.unpack.s(data, offset)
+  value, offset = Types.unpack.t(data, offset)
   bundle.timetag = value
   length = length or #data
   while offset < length do
