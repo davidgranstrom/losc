@@ -95,7 +95,10 @@ function M:open(host, port)
     assert(not err, err)
     if data then
       self.remote_info = addr
-      Pattern.dispatch(data, self)
+      local ok, errormsg = pcall(Pattern.dispatch, data, self)
+      if not ok then
+        print(errormsg)
+      end
     end
   end)
   -- updated if port 0 is passed in as default (chooses a random port)
