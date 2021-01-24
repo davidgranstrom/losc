@@ -95,9 +95,9 @@ function M:open(host, port)
     assert(not err, err)
     if data then
       self.remote_info = addr
-      local ok, err = pcall(Pattern.dispatch, data, self)
+      local ok, errormsg = pcall(Pattern.dispatch, data, self)
       if not ok then
-        print(err)
+        print(errormsg)
       end
     end
   end)
