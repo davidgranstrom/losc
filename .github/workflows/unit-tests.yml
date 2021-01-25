@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        lua-version: ['lua 5.1', 'lua 5.2', 'lua 5.3', 'lua 5.4', 'luajit 2.0']
+        lua-version: ['lua 5.1', 'lua 5.2', 'lua 5.3', 'lua 5.4', 'luajit 2.0', 'luajit 2.1.0-beta3']
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
