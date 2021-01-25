@@ -54,6 +54,7 @@ M.precision = 1000
 --   sendPort = 9000,
 --   recvAddr = '127.0.0.1',
 --   recvPort = 8000,
+--   ignore_late = true, -- ignore late bundles
 -- }
 function M.new(options)
   local self = setmetatable({}, M)
