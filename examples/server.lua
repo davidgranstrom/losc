@@ -5,8 +5,12 @@
 local losc = require'losc'
 local plugin = require'losc.plugins.udp-socket'
 
-local udp = plugin.new { recvAddr = 'localhost', recvPort = 9000 }
-local osc = losc.new { plugin = udp }
+local udp = plugin.new {
+  recvAddr = 'localhost',
+  recvPort = 9000,
+  ignore_late = true, -- ignore late bundles
+}
+local osc = losc.new {plugin = udp}
 
 local function print_data(data)
   local msg = data.message
