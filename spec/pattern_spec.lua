@@ -69,13 +69,9 @@ describe('Pattern', function()
   end)
 
   it('throws an error if bundled timetag is older than enclosing bundle', function()
-    local message = Message.new {address = '/foo/123', types = 'i', 1}
-    local message2 = Message.new {address = '/foo/abc', types = 'f', 1.234}
-    local tt = Timetag.new(os.time())
-    local bundle = Bundle.new(tt, message)
-    local bundle2 = Bundle.new(tt + 1, bundle, message2)
+    local data = '#bundle\0\1\1\1\1\1\1\1\1\0\0\0(#bundle\0\0\0\0\0\0\0\0\1\0\0\0\20/foo/123\0\0\0\0,i\0\0\0\0\0\1\0\0\0\20/foo/abc\0\0\0\0,i\0\0\0\0\0\2'
     assert.has_errors(function()
-      Pattern.dispatch(Packet.pack(bundle2), plugin)
+      Pattern.dispatch(data, plugin)
     end)
   end)
 
