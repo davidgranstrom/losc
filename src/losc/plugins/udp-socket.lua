@@ -33,7 +33,7 @@ SOFTWARE.
 local socket = require'socket'
 
 local relpath = (...):gsub('%.[^%.]+$', '')
-relpath = (relpath):gsub('%.[^%.]+$', '')
+relpath = relpath:gsub('%.[^%.]+$', '')
 local Timetag = require(relpath .. '.timetag')
 local Pattern = require(relpath .. '.pattern')
 local Packet = require(relpath .. '.packet')
