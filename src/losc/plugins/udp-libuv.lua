@@ -77,11 +77,13 @@ end
 -- @tparam number timestamp When to schedule the bundle.
 -- @tparam function handler The OSC handler to call.
 function M:schedule(timestamp, handler) -- luacheck: ignore
-  local timer = uv.new_timer()
   timestamp = math.max(0, timestamp)
-  timer:start(timestamp, 0, function()
+  if timestamp > 0 then
+    local timer = uv.new_timer()
+    timer:start(timestamp, 0, handler)
+  else
     handler()
-  end)
+  end
 end
 
 --- Start UDP server.
