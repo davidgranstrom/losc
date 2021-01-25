@@ -68,6 +68,17 @@ describe('Pattern', function()
     assert.are.equal(2, num)
   end)
 
+  it('throws an error if bundled timetag is older than enclosing bundle', function()
+    local message = Message.new {address = '/foo/123', types = 'i', 1}
+    local message2 = Message.new {address = '/foo/abc', types = 'f', 1.234}
+    local tt = Timetag.new(os.time())
+    local bundle = Bundle.new(tt, message)
+    local bundle2 = Bundle.new(tt + 1, bundle, message2)
+    assert.has_errors(function()
+      Pattern.dispatch(Packet.pack(bundle2), plugin)
+    end)
+  end)
+
   describe('pattern matching', function()
     it('can match any single character (?)', function()
       local num_matches = 0
