@@ -191,16 +191,30 @@ end
 -- The callback will get a single argument `data` from where the messsage can be retrived.
 -- @usage
 -- osc:add_handler('/pattern', function(data)
---   -- message table
+--   -- message table, can be converted to Message if needed.
 --   local message = data.message
---   -- timestamp when message was received
+--   -- timestamp when message was received, can be converted to Timetag if needed.
 --   local timestamp = data.timestamp
---   -- table with remote (sender) info
+--   -- table with remote (sender) info, can be empty depending on plugin.
 --   local remote_info = data.remote_info
+-- end)
+-- @usage
+-- osc:add_handler('/pattern', function(data)
+--   -- arguments can be accessed by index from the message table
+--   local arg1 = data.message[1]
+--   local arg2 = data.message[2]
+--   -- iterate over incoming OSC arguments
+--   for _, argument in ipairs(data.message) do
+--     print(argument)
+--   end
 -- end)
 -- @usage
 -- -- Pattern matching (groups)
 -- osc:add_handler('/param/{x,y}/123', function(data) end)
+-- -- Pattern matching (sequence)
+-- osc:add_handler('/param/[a-f]/123', function(data) end)
+-- -- Pattern matching (sequence)
+-- osc:add_handler('/param/[!a-f]/123', function(data) end)
 -- -- Pattern matching (wildcard)
 -- osc:add_handler('/param/*/123', function(data) end)
 -- osc:add_handler('*', function(data) end)
