@@ -124,13 +124,12 @@ function losc.new_bundle(...)
 end
 
 --- Specify a plugin to use as transport layer.
--- @param plugin The plugin to use.
+-- @param plugin The plugin to use, pass nil to disable current plugin.
 function losc:use(plugin)
-  if not plugin then
-    error('plugin can not be nil')
-  end
   self.plugin = plugin
-  self.plugin.handlers = self.handlers
+  if plugin then
+    self.plugin.handlers = self.handlers
+  end
 end
 
 --- Get an OSC timetag with the current timestamp.
