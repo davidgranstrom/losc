@@ -28,4 +28,4 @@ osc:add_handler('/param/{x,y,z}', function(data)
   print_data(data)
 end)
 
-osc:open() -- blocking call
+osc:open() -- blocking call (depending on plugin used)
