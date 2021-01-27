@@ -31,7 +31,7 @@ SOFTWARE.
 -- @module losc.packet
 -- @author David Granström
 -- @license MIT
--- @copyright David Granström 2020
+-- @copyright David Granström 2021
 
 local relpath = (...):gsub('%.[^%.]+$', '')
 local Message = require(relpath .. '.message')

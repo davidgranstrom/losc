@@ -25,6 +25,8 @@ SOFTWARE.
 -------------------------------------------------
 -- UDP client/server implemented using luasocket.
 --
+-- These methods should be called from the main `losc` API.
+--
 -- @module losc.plugins.udp-socket
 -- @author David Granström
 -- @license MIT
@@ -33,7 +35,7 @@ SOFTWARE.
 local socket = require'socket'
 
 local relpath = (...):gsub('%.[^%.]+$', '')
-relpath = (relpath):gsub('%.[^%.]+$', '')
+relpath = relpath:gsub('%.[^%.]+$', '')
 local Timetag = require(relpath .. '.timetag')
 local Pattern = require(relpath .. '.pattern')
 local Packet = require(relpath .. '.packet')
@@ -54,6 +56,7 @@ M.precision = 1000
 --   sendPort = 9000,
 --   recvAddr = '127.0.0.1',
 --   recvPort = 8000,
+--   ignore_late = true, -- ignore late bundles
 -- }
 function M.new(options)
   local self = setmetatable({}, M)

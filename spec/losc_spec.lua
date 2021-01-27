@@ -44,9 +44,7 @@ describe('osc', function()
   end)
 
   it('can use', function()
-    assert.has_errors(function()
-      osc:use()
-    end) 
+    assert.not_nil(osc.use)
   end)
 
   it('can open', function()

@@ -68,6 +68,13 @@ describe('Pattern', function()
     assert.are.equal(2, num)
   end)
 
+  it('throws an error if bundled timetag is older than enclosing bundle', function()
+    local data = '#bundle\0\1\1\1\1\1\1\1\1\0\0\0(#bundle\0\0\0\0\0\0\0\0\1\0\0\0\20/foo/123\0\0\0\0,i\0\0\0\0\0\1\0\0\0\20/foo/abc\0\0\0\0,i\0\0\0\0\0\2'
+    assert.has_errors(function()
+      Pattern.dispatch(data, plugin)
+    end)
+  end)
+
   describe('pattern matching', function()
     it('can match any single character (?)', function()
       local num_matches = 0

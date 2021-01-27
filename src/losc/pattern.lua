@@ -102,10 +102,11 @@ local function dispatch(packet, plugin)
   if Packet.is_bundle(packet) then
     for _, item in ipairs(packet) do
       if Packet.is_bundle(item) then
-        if ts(item.timetag, plugin.precision) < ts(packet.timetag, plugin.precision) then
+        if ts(item.timetag, plugin.precision) >= ts(packet.timetag, plugin.precision) then
+          dispatch(item, plugin)
+        else
           error('Bundle timestamp is older than timestamp of enclosing bundle')
         end
-        dispatch(item, plugin)
       else
         invoke(item, ts(packet.timetag, plugin.precision), plugin)
       end

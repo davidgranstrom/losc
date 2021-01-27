@@ -24,8 +24,8 @@ Compatible with lua 5.1 >= 5.4 luajit 2.0 and luajit 2.1.0-beta3
 local losc = require'losc'
 local plugin = require'losc.plugins.udp-socket'
 
-local udp = plugin.new { sendAddr = 'localhost', sendPort = 9000 }
-local osc = losc.new { plugin = udp }
+local udp = plugin.new {sendAddr = 'localhost', sendPort = 9000}
+local osc = losc.new {plugin = udp}
 
 -- Create a message
 local message = osc.new_message {

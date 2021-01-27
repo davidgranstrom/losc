@@ -25,6 +25,8 @@ SOFTWARE.
 --------------------------------------------
 -- UDP client/server implemented with libuv.
 --
+-- These methods should be called from the main `losc` API.
+--
 -- @module losc.plugins.udp-libuv
 -- @author David Granström
 -- @license MIT
@@ -33,7 +35,7 @@ SOFTWARE.
 local uv = require'luv'
 
 local relpath = (...):gsub('%.[^%.]+$', '')
-relpath = (relpath):gsub('%.[^%.]+$', '')
+relpath = relpath:gsub('%.[^%.]+$', '')
 local Timetag = require(relpath .. '.timetag')
 local Pattern = require(relpath .. '.pattern')
 local Packet = require(relpath .. '.packet')
@@ -54,6 +56,7 @@ M.precision = 1000
 --   sendPort = 9000,
 --   recvAddr = '127.0.0.1',
 --   recvPort = 8000,
+--   ignore_late = true, -- ignore late bundles
 -- }
 function M.new(options)
   local self = setmetatable({}, M)
@@ -76,11 +79,13 @@ end
 -- @tparam number timestamp When to schedule the bundle.
 -- @tparam function handler The OSC handler to call.
 function M:schedule(timestamp, handler) -- luacheck: ignore
-  local timer = uv.new_timer()
   timestamp = math.max(0, timestamp)
-  timer:start(timestamp, 0, function()
+  if timestamp > 0 then
+    local timer = uv.new_timer()
+    timer:start(timestamp, 0, handler)
+  else
     handler()
-  end)
+  end
 end
 
 --- Start UDP server.

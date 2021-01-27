@@ -30,7 +30,7 @@ SOFTWARE.
 -- @module losc.types
 -- @author David Granström
 -- @license MIT
--- @copyright David Granström 2020
+-- @copyright David Granström 2021
 
 local relpath = (...):gsub('%.[^%.]+$', '')
 local Serializer = require(relpath .. '.serializer')
