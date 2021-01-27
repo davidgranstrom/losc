@@ -2,8 +2,8 @@
 
 [![lint](https://github.com/davidgranstrom/losc/workflows/lint/badge.svg)](https://github.com/davidgranstrom/losc/actions?query=workflow%3Alint)
 [![unit-tests](https://github.com/davidgranstrom/losc/workflows/unit-tests/badge.svg)](https://github.com/davidgranstrom/losc/actions?query=workflow%3Aunit-tests)
-[![Coverage Status](https://coveralls.io/repos/github/davidgranstrom/losc/badge.svg?branch=main)](https://coveralls.io/github/davidgranstrom/losc?branch=main)
 [![documentation](https://github.com/davidgranstrom/losc/workflows/docs/badge.svg)][docs]
+[![Coverage Status](https://coveralls.io/repos/github/davidgranstrom/losc/badge.svg?branch=main)](https://coveralls.io/github/davidgranstrom/losc?branch=main)
 
 [OSC][osc] 1.0 implementation for `lua` and `luajit`.
 
@@ -17,6 +17,14 @@ Compatible with lua 5.1 >= 5.4 luajit 2.0 and luajit 2.1.0-beta3
 * Plugin system for transport layers.
 * Address pattern matching.
 * Scheduled bundle evaluation (plugin dependent).
+
+## Installation
+
+```
+luarocks install losc
+```
+
+Or clone this repo and copy the `losc` directory into your lua project.
 
 ## Basic usage
 
