@@ -25,6 +25,8 @@ SOFTWARE.
 -------------------------------------------------
 -- UDP client/server implemented using luasocket.
 --
+-- These methods should be called from the main `losc` API.
+--
 -- @module losc.plugins.udp-socket
 -- @author David Granström
 -- @license MIT

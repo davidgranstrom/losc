@@ -25,6 +25,8 @@ SOFTWARE.
 --------------------------------------------
 -- UDP client/server implemented with libuv.
 --
+-- These methods should be called from the main `losc` API.
+--
 -- @module losc.plugins.udp-libuv
 -- @author David Granström
 -- @license MIT
