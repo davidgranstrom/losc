@@ -64,7 +64,7 @@
 <p> Main module of losc.</p>
     <h3>Info:</h3>
     <ul>
-        <li><strong>Copyright</strong>: David Granström 2020</li>
+        <li><strong>Copyright</strong>: David Granström 2021</li>
         <li><strong>License</strong>: MIT</li>
         <li><strong>Author</strong>: David Granström</li>
     </ul>
@@ -184,7 +184,7 @@
     <ul>
         <li><pre class="example"><span class="keyword">local</span> message = losc.new_message()</pre></li>
         <li><pre class="example"><span class="keyword">local</span> message = losc.new_message(<span class="string">'/address'</span>)</pre></li>
-        <li><pre class="example"><span class="keyword">local</span> message = losc.new_message({ address = <span class="string">'/foo'</span>, types = <span class="string">'iif'</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>})</pre></li>
+        <li><pre class="example"><span class="keyword">local</span> message = losc.new_message{address = <span class="string">'/test'</span>, types = <span class="string">'iif'</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>}</pre></li>
     </ul>
 
 </dd>
@@ -218,13 +218,16 @@
 
     <h3>Usage:</h3>
     <ul>
-        <li><pre class="example"><span class="keyword">local</span> bundle = losc.new_bundle()</pre></li>
-        <li><pre class="example"><span class="keyword">local</span> tt = Timetag.new()
-<span class="keyword">local</span> bundle = losc.new_bundle(tt)</pre></li>
-        <li><pre class="example"><span class="keyword">local</span> tt = Timetag.new(<span class="global">os</span>.time(), <span class="number">0</span>)
-<span class="keyword">local</span> bundle = losc.new_bundle(tt, osc_msg, osc_msg2)</pre></li>
-        <li><pre class="example"><span class="keyword">local</span> tt = Timetag.new(<span class="global">os</span>.time(), <span class="number">0</span>)
-<span class="keyword">local</span> bundle = losc.new_bundle(tt, osc_msg, other_bundle)</pre></li>
+        <li><pre class="example"><span class="keyword">local</span> tt = losc:now()
+<span class="keyword">local</span> bundle = losc.new_bundle()
+bundle:timetag(tt)
+<span class="comment">-- packet can be a message or another bundle
+</span>bundle:add(packet)</pre></li>
+        <li><pre class="example"><span class="keyword">local</span> tt = losc:now()
+<span class="keyword">local</span> bundle = losc.new_bundle(tt)
+bundle:add(packet)</pre></li>
+        <li><pre class="example"><span class="keyword">local</span> tt = losc:now()
+<span class="keyword">local</span> bundle = losc.new_bundle(tt, packet, packet2)</pre></li>
     </ul>
 
 </dd>
@@ -239,7 +242,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">plugin</span>
-         The plugin to use.
+         The plugin to use, pass nil to disable current plugin.
         </li>
     </ul>
 
@@ -262,6 +265,12 @@
 
 
 
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example"><span class="keyword">local</span> tt = losc:now()</pre></li>
+        <li><pre class="example"><span class="comment">-- 0.25 seconds into the future.
+</span><span class="keyword">local</span> tt = losc:now() + <span class="number">0.25</span></pre></li>
+    </ul>
 
 </dd>
     <dt>
@@ -270,6 +279,7 @@
     </dt>
     <dd>
     Opens an OSC server.
+ This function might be blocking depending on the plugin in use.
 
 
     <h3>Parameters:</h3>
@@ -288,6 +298,10 @@
 
 
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">losc:open()</pre>
+    </ul>
 
 </dd>
     <dt>
@@ -314,6 +328,10 @@
 
 
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">losc:close()</pre>
+    </ul>
 
 </dd>
     <dt>
@@ -340,6 +358,14 @@
 
 
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="comment">-- can be message or bundle.
+</span><span class="keyword">local</span> packet = losc.new_message{address = <span class="string">'/x'</span>, types = <span class="string">'i'</span>, <span class="number">1</span>}
+losc:send(packet)
+<span class="comment">-- additional plugin arguments (can vary between plugins)
+</span>losc:send(packet, <span class="string">'localhost'</span>, <span class="number">9000</span>)</pre>
+    </ul>
 
 </dd>
     <dt>
@@ -364,6 +390,35 @@
 
 
 
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example">osc:add_handler(<span class="string">'/pattern'</span>, <span class="keyword">function</span>(data)
+  <span class="comment">-- message table, can be converted to Message if needed.
+</span>  <span class="keyword">local</span> message = data.message
+  <span class="comment">-- timestamp when message was received, can be converted to Timetag if needed.
+</span>  <span class="keyword">local</span> timestamp = data.timestamp
+  <span class="comment">-- table with remote (sender) info, can be empty depending on plugin.
+</span>  <span class="keyword">local</span> remote_info = data.remote_info
+<span class="keyword">end</span>)</pre></li>
+        <li><pre class="example">osc:add_handler(<span class="string">'/pattern'</span>, <span class="keyword">function</span>(data)
+  <span class="comment">-- arguments can be accessed by index from the message table
+</span>  <span class="keyword">local</span> arg1 = data.message[<span class="number">1</span>]
+  <span class="keyword">local</span> arg2 = data.message[<span class="number">2</span>]
+  <span class="comment">-- iterate over incoming OSC arguments
+</span>  <span class="keyword">for</span> _, argument <span class="keyword">in</span> <span class="global">ipairs</span>(data.message) <span class="keyword">do</span>
+    <span class="global">print</span>(argument)
+  <span class="keyword">end</span>
+<span class="keyword">end</span>)</pre></li>
+        <li><pre class="example"><span class="comment">-- Pattern matching (groups)
+</span>osc:add_handler(<span class="string">'/param/{x,y}/123'</span>, <span class="keyword">function</span>(data) <span class="keyword">end</span>)
+<span class="comment">-- Pattern matching (sequence)
+</span>osc:add_handler(<span class="string">'/param/[a-f]/123'</span>, <span class="keyword">function</span>(data) <span class="keyword">end</span>)
+<span class="comment">-- Pattern matching (sequence)
+</span>osc:add_handler(<span class="string">'/param/[!a-f]/123'</span>, <span class="keyword">function</span>(data) <span class="keyword">end</span>)
+<span class="comment">-- Pattern matching (wildcard)
+</span>osc:add_handler(<span class="string">'/param/*/123'</span>, <span class="keyword">function</span>(data) <span class="keyword">end</span>)
+osc:add_handler(<span class="string">'*'</span>, <span class="keyword">function</span>(data) <span class="keyword">end</span>)</pre></li>
+    </ul>
 
 </dd>
     <dt>
@@ -384,6 +439,10 @@
 
 
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">losc:remove_handler(<span class="string">'/handler/to/remove'</span>)</pre>
+    </ul>
 
 </dd>
     <dt>
@@ -398,6 +457,10 @@
 
 
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">losc:remove_all()</pre>
+    </ul>
 
 </dd>
 </dl>
@@ -407,7 +470,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2021-01-24 17:12:58 </i>
+<i style="float:right;">Last updated 2021-01-27 19:59:49 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
