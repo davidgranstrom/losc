@@ -90,7 +90,7 @@ end
 
 --- Start UDP server.
 -- This function is blocking.
--- @tparam string host IP address (e.g. 'localhost').
+-- @tparam string host IP address (e.g. '127.0.0.1').
 -- @tparam number port The port to listen on.
 function M:open(host, port)
   host = host or self.options.recvAddr
