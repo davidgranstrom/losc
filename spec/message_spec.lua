@@ -100,7 +100,16 @@ describe('Message', function()
       }
       local data = Message.pack(m)
       assert.not_nil(data)
-      assert.are.equal('/fo\0,TiiFs\0\0\0\0\0\1\0\0\0\2', data)
+      assert.are.equal(24, #data)
+      assert.are.equal('/fo\0,TiiFs\0\0\0\0\0\1\0\0\0\2hi\0\0', data)
+    end)
+
+    it('correctly skips false items', function()
+      local msg = {address = '/', types = 'iFi', 1, false, 2};
+      local data = Message.pack(msg)
+      assert.not_nil(data)
+      assert.are.equal(20, #data)
+      assert.are.equal('/\0\0\0,iFi\0\0\0\0\0\0\0\1\0\0\0\2', data)
     end)
   end)
 
