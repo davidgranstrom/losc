@@ -34,7 +34,7 @@ local osc = losc.new {plugin = plugin.new()}
 
 osc:add_handler('*', function(data)
   local tt = Timetag.new_from_timestamp(data.timestamp)
-  local time = string.format('%04x.%04x', tt:seconds(), tt:fractions())
+  local time = string.format('%08x.%08x', tt:seconds(), tt:fractions())
   io.write(time .. ' ')
   io.write(data.message.address .. ' ')
   io.write(data.message.types .. ' ')
