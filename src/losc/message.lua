@@ -203,7 +203,7 @@ function Message.pack(tbl)
   local index = 1
   for type in types:gmatch('.') do
     local item = tbl[index]
-    if item then
+    if item ~= nil then
       if Types.pack[type] then
         packet[#packet + 1] = Types.pack[type](item)
       end
