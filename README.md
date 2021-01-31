@@ -46,6 +46,28 @@ local message = osc.new_message {
 osc:send(message)
 ```
 
+## Command line utilities
+
+`losc` provides two command line tools, `loscsend`/`loscrecv`, that can
+send and receive OSC data over UDP.
+
+Note that both tools requires that [`lua-socket`](https://luarocks.org/modules/luasocket/luasocket) is installed.
+
+```shell
+loscsend - Send an OSC message via UDP.
+
+usage: loscsend ip port address [types [args]]
+supported types: b, d, f, h, i, s, t
+example: loscsend localhost 57120 /test ifs 1 2.3 "hi"
+```
+
+```shell
+loscrecv - Dump incoming OSC data.
+
+usage: loscsend port
+example: loscrecv 9000
+```
+
 ## API
 
 The API is divided into two parts:
