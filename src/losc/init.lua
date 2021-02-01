@@ -39,7 +39,7 @@ local Timetag = require(relpath .. '.timetag')
 local Pattern = require(relpath .. '.pattern')
 
 local losc = {
-  _VERSION = 'losc v1.0.0',
+  _VERSION = 'losc v1.0.1',
   _URL = 'https://github.com/davidgranstrom/losc',
   _DESCRIPTION = 'Open Sound Control (OSC) library for lua/luajit.',
   _LICENSE = [[

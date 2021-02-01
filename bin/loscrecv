@@ -34,12 +34,30 @@ local osc = losc.new {plugin = plugin.new()}
 
 osc:add_handler('*', function(data)
   local tt = Timetag.new_from_timestamp(data.timestamp)
-  local time = string.format('%04x.%04x', tt:seconds(), tt:fractions())
+  local time = string.format('%08x.%08x', tt:seconds(), tt:fractions())
+  local ok, message = pcall(osc.new_message, data.message)
+  if not ok then
+    print(message)
+    return
+  end
   io.write(time .. ' ')
-  io.write(data.message.address .. ' ')
-  io.write(data.message.types .. ' ')
-  for _, a in ipairs(data.message) do
-    io.write(tostring(a) .. ' ')
+  io.write(message:address() .. ' ')
+  io.write(message:types() .. ' ')
+  for i, type_, arg_ in message:iter() do
+    if type_ == 's' then
+      io.write(string.format('"%s" ', arg_))
+    elseif type_ == 'b' then
+      io.write(string.format('[%d byte blob] ', #arg_))
+    elseif type_ == 'f' or type_ == 'd' then
+      io.write(string.format('%06f ', arg_))
+    elseif type_ == 'i' or type_ 'h' then
+      io.write(string.format('%d ', arg_))
+    elseif type_ == 't' then
+      local tmp = Timetag.new_from_timestamp(arg_)
+      string.format('%08x.%08x', tmp:seconds(), tmp:fractions())
+    else
+      io.write(tostring(arg_) .. ' ')
+    end
   end
   io.write('\n')
 end)

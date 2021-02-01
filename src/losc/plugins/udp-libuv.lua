@@ -128,7 +128,7 @@ function M:send(packet, address, port)
   address = address or self.options.sendAddr
   port = port or self.options.sendPort
   packet = assert(Packet.pack(packet))
-  self.handle:udp_try_send(packet, address, port)
+  self.handle:try_send(packet, address, port)
 end
 
 return M
