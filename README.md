@@ -48,10 +48,10 @@ osc:send(message)
 
 ## Command line utilities
 
-`losc` provides two command line tools, `loscsend`/`loscrecv`, that can
-send and receive OSC data over UDP.
+`losc` provides two command line tools, `loscsend`/`loscrecv` that can be used
+to send and receive OSC data via UDP.
 
-Note that both tools requires that [`lua-socket`](https://luarocks.org/modules/luasocket/luasocket) is installed.
+Note that both tools requires [`lua-socket`](https://luarocks.org/modules/luasocket/luasocket).
 
 ```shell
 loscsend - Send an OSC message via UDP.
