@@ -158,6 +158,13 @@ function losc:open(...)
   return pcall(self.plugin.open, self.plugin, ...)
 end
 
+function losc:poll(...)
+  if not self.plugin then
+    error('"poll" must be implemented using a plugin.')
+  end
+  return pcall(self.plugin.poll, self.plugin, ...)
+end
+
 --- Closes an OSC server.
 -- @param[opt] ... Plugin specific arguments.
 -- @return status, nil or error

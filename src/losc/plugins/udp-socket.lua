@@ -95,6 +95,9 @@ function M:open(host, port)
   host = socket.dns.toip(host)
   port = port or self.options.recvPort
   self.handle:setsockname(host, port)
+  if self.options.non_blocking == true then
+    return
+  end
   while true do
     local data = self.handle:receive()
     if data then
@@ -104,6 +107,22 @@ function M:open(host, port)
       end
     end
   end
+end
+
+function M:poll(timeout)
+  if self.options.non_blocking ~= true then
+    return
+  end
+  self.handle:settimeout((timeout == nil and 0.1) or timeout)
+  local data = self.handle:receive()
+  if data == nil then return false end
+  if data then
+    local ok, err = pcall(Pattern.dispatch, data, self)
+    if not ok then
+      print(err)
+    end
+  end
+  return true
 end
 
 --- Close UDP server.
